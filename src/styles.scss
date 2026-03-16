@@ -1,0 +1,482 @@
+@use "app/styles/theme" as theme;
+@use "app/styles/global" as global;
+@import "primeicons/primeicons.css";
+@layer primeng;
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #003d82 0%, #001856 50%, #000d3a 100%);
+  background-attachment: fixed;
+  font-family: "Inter var", sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input[pInputText],
+textarea,
+.p-autocomplete,
+.p-multiselect,
+.p-select {
+  @include theme.control_base;
+}
+
+// Split-screen public layout
+.login-split-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+
+  // Left brand panel (wider than right)
+  .login-brand-panel {
+    flex: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 3rem;
+    margin-bottom: 5rem;
+
+    .brand-content {
+      position: relative;
+      z-index: 2;
+      max-width: 420px;
+    }
+
+    .brand-logo {
+      max-width: 25rem;
+      height: auto;
+      margin-bottom: 5rem;
+      filter: brightness(0) invert(1)
+        drop-shadow(0 2px 12px rgba(0, 155, 233, 0.3));
+    }
+
+    .brand-tagline {
+      color: #ffffff;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin: 0 0 1rem 0;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      margin: 0 0 2rem 0;
+    }
+
+    .brand-features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+
+      li {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9375rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .pi {
+          color: #009be9;
+          font-size: 1.125rem;
+        }
+      }
+    }
+
+    .brand-watermark {
+      position: absolute;
+      top: 90%;
+      left: 80%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+
+      img {
+        width: 400px;
+        height: auto;
+        opacity: 0.04;
+        filter: blur(1px);
+      }
+    }
+  }
+
+  // Right login card panel
+  .login-card-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background: #f1f5f9;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("/assets/lokalix-eyes.png");
+      background-position: center;
+      background-size: 25%;
+      background-repeat: no-repeat;
+      opacity: 0.015;
+      pointer-events: none;
+    }
+  }
+
+  .login-card-wrapper {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInScale 0.5s ease-out;
+
+    .p-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.08);
+      padding: 2.5rem 2.5rem 2rem;
+
+      .p-card-body {
+        padding: 0;
+      }
+
+      .p-card-content {
+        padding: 0;
+      }
+    }
+  }
+
+  .login-card-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .login-card-logo {
+    max-width: 160px;
+    height: auto;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 2px 8px rgba(0, 1, 113, 0.1));
+  }
+
+  .login-card-title {
+    color: #0f172a;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .login-card-subtitle {
+    color: #64748b;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0.75rem 0 0;
+    padding: 0 0.5rem;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #334155;
+        letter-spacing: 0.01em;
+      }
+    }
+
+    input.p-inputtext-lg {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 0.9375rem;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      color: #0f172a;
+      transition: all 0.2s ease;
+
+      &::placeholder {
+        color: #94a3b8;
+        font-weight: 400;
+      }
+
+      &:hover {
+        border-color: #cbd5e1;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #007fbe;
+        box-shadow: 0 0 0 3px rgba(0, 127, 190, 0.1);
+      }
+    }
+
+    .login-submit-btn .p-button {
+      margin-top: 0.75rem;
+      width: 100%;
+      padding: 0.9375rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      color: #ffffff;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 8px rgba(0, 127, 190, 0.25);
+      cursor: pointer;
+      letter-spacing: 0.01em;
+
+      &:hover:not(:disabled) {
+        box-shadow: 0 4px 16px rgba(0, 127, 190, 0.35);
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 127, 190, 0.2);
+      }
+
+      &:disabled {
+        background: #cbd5e1;
+        color: #94a3b8;
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+
+      .p-button-label {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .password-container {
+    position: relative;
+
+    input.p-inputtext-lg {
+      padding-right: 3rem !important;
+    }
+
+    .pi {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+      font-size: 1.125rem;
+      transition: color 0.2s ease;
+      z-index: 1;
+
+      &:hover {
+        color: #334155;
+      }
+    }
+  }
+
+  .disconnected-text {
+    text-align: center;
+    padding: 0.75rem 1rem;
+    background: #fef2f2;
+    border-radius: 10px;
+    border: 1px solid #fecaca;
+
+    .p-error {
+      color: #dc2626;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+  }
+
+  .link-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+
+    .go-to-link {
+      color: #007fbe;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #005a8a;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  // Responsive: collapse to single column on tablet/mobile
+  @media (max-width: 960px) {
+    flex-direction: column;
+
+    .login-brand-panel {
+      padding: 2.5rem 2rem 2rem;
+      min-height: auto;
+
+      .brand-content {
+        max-width: 100%;
+        text-align: center;
+      }
+
+      .brand-tagline {
+        font-size: 1.5rem;
+      }
+
+      .brand-subtitle {
+        font-size: 0.9375rem;
+      }
+
+      .brand-features {
+        align-items: center;
+      }
+
+      .brand-watermark img {
+        width: 250px;
+      }
+    }
+
+    .login-card-panel {
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .login-card-wrapper {
+      max-width: 100%;
+
+      .p-card {
+        padding: 2rem 1.75rem 1.5rem;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .login-brand-panel {
+      padding: 2rem 1.5rem 1.5rem;
+
+      .brand-logo {
+        max-width: 150px;
+      }
+
+      .brand-tagline {
+        font-size: 1.25rem;
+      }
+
+      .brand-features {
+        display: none;
+      }
+    }
+
+    .login-card-panel {
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    .login-card-wrapper .p-card {
+      padding: 1.75rem 1.5rem 1.25rem;
+    }
+
+    .login-card-logo {
+      max-width: 120px;
+    }
+
+    .login-card-title {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Animation
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Terms & Conditions inline date picker styles
+.inline-field-date {
+  .p-datepicker-input {
+    padding: 2px 8px;
+    border: 1px solid var(--surface-border);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 600;
+    color: #6b7280;
+    background-color: rgba(107, 114, 128, 0.1);
+    transition: all 0.2s;
+    text-align: center;
+    width: 100%;
+    height: 25px;
+  }
+
+  &.editing .p-datepicker-input {
+    color: #22c55e;
+    background-color: rgba(34, 197, 94, 0.1);
+    border-color: #22c55e;
+    animation: inline-field-pulse 1.5s ease-in-out infinite;
+  }
+
+  &.modified:not(.editing) .p-datepicker-input {
+    color: #f97316;
+    background-color: rgba(249, 115, 22, 0.1);
+    border-color: #f97316;
+  }
+}
+
+@keyframes inline-field-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// IconField with autocomplete: push placeholder/text away from left icon
+.p-iconfield .p-autocomplete-input-multiple {
+  padding-left: 2.5rem;
+}
+
+// Emails overlay panel customization
+.p-overlay-panel.emails-overlay {
+  .p-overlay-panel-content {
+    padding: 0.75rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+  }
+}
+
+// At-risk drawer width — class is on the <p-drawer> host, target the internal panel
+p-drawer.at-risk-drawer .p-drawer {
+  width: 480px !important;
+
+  @media (max-width: 600px) {
+    width: 100vw !important;
+  }
+}

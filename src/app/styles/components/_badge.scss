@@ -1,0 +1,49 @@
+@mixin badge-value-color($color) {
+  .p-badge {
+    color: $color;
+  }
+}
+
+.icon-badge-without-bg {
+  .p-badge {
+    background-color: transparent;
+    color: var(--p-primary-color);
+  }
+
+  .p-overlaybadge .p-badge {
+    transform: translate(5px, -5px);
+    outline-color: transparent;
+  }
+
+  &.filter-badge {
+    .p-overlaybadge .p-badge {
+      transform: translate(10px, -14px);
+      outline-color: transparent;
+    }
+  }
+}
+
+.p-overlaybadge .p-badge {
+  transform: translate(5px, -8px);
+  outline-color: transparent;
+}
+
+.p-badge-warning {
+  @include badge-value-color(var(--warn-color));
+}
+
+.p-badge-secondary {
+  @include badge-value-color(var(--secondary-color));
+}
+
+.p-badge-info {
+  background-color: var(--p-primary-400);
+}
+
+.p-badge-success {
+  @include badge-value-color(var(--success-color));
+}
+
+.p-badge-circle {
+  border-radius: 30px;
+}

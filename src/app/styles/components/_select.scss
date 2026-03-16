@@ -1,0 +1,36 @@
+// ==========================================================================
+// Select Dropdown Design System
+// ==========================================================================
+
+.p-select {
+  width: 100%;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+
+  .p-select-clear-icon {
+    display: none;
+  }
+
+  &:hover .p-select-clear-icon {
+    display: inline;
+  }
+
+  &.modal-select {
+    span {
+      max-width: 18rem;
+    }
+
+    .p-select-dropdown {
+      position: absolute;
+      top: 33%;
+      inset-inline-end: -0.1rem;
+    }
+  }
+
+  &.small-input-select-transaction {
+    width: 10rem;
+  }
+}

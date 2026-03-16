@@ -1,0 +1,80 @@
+// ==========================================================================
+// Button Design System
+// ==========================================================================
+
+@mixin button-icon-style($color, $hover-color: var(--btn-primary-color)) {
+  button {
+    color: $color;
+
+    &:hover {
+      color: $hover-color;
+    }
+  }
+}
+
+@mixin button-style($background, $hover-color: var(--btn-primary-color)) {
+  button {
+    background: $background;
+    color: white;
+    border-color: $background;
+
+    &:hover {
+      background: $hover-color;
+    }
+  }
+}
+
+.without-padding {
+  button {
+    padding: 0;
+  }
+}
+
+.no-clickable {
+  button {
+    cursor: default;
+  }
+}
+
+.p-button {
+  border-radius: var(--radius-sm, 6px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    color: var(--secondary-color-light);
+    border-color: var(--secondary-color-light);
+    opacity: 0.65;
+  }
+
+  &.p-button-rounded {
+    border-radius: 10rem;
+  }
+
+  &.p-button-icon-only {
+    border: none;
+
+    &:disabled {
+      border: none;
+    }
+  }
+
+  // Text buttons (icon-only action buttons) in tables
+  &.p-button-text {
+    border-radius: var(--radius-sm, 6px);
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+.modal-btn {
+  button {
+    width: 100%;
+  }
+}

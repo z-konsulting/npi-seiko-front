@@ -1,0 +1,64 @@
+<div class="p-fields-row">
+  @if (showPeriod()) {
+    <div class="p-field">
+      <label>Period:</label>
+      <p-select
+        [(ngModel)]="selectedPeriodTypeValue"
+        [options]="chartPeriodTypeOptions"
+        appendTo="body"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </div>
+  }
+
+  @if (showCustomer()) {
+    <div class="p-field">
+      <label>Customer :</label>
+      <div class="customer-field-wrapper">
+        <p-multiSelect
+          [(ngModel)]="selectedCustomers"
+          [filter]="true"
+          [maxSelectedLabels]="2"
+          [options]="customers()"
+          [showClear]="true"
+          appendTo="body"
+          class="export-customer-multi-select"
+          display="chip"
+          optionLabel="name"
+          panelStyleClass="customer-multi-select-panel"
+          placeholder="Select customers"
+        />
+        @if (selectedCustomers && selectedCustomers.length > 1) {
+          <p-button
+            (onClick)="customerPopover.toggle($event)"
+            [icon]="Icons.CIRCLE_INFO"
+            [outlined]="true"
+            [text]="true"
+            class="customer-info-btn"
+            pTooltip="View selected customers"
+            severity="info"
+            tooltipPosition="top"
+          />
+          <p-popover #customerPopover>
+            <div class="selected-customers-list">
+              <h4>Selected Customers ({{ selectedCustomers.length }})</h4>
+              <ul>
+                @for (customer of selectedCustomers; track customer) {
+                  <li>{{ customer }}</li>
+                }
+              </ul>
+            </div>
+          </p-popover>
+        }
+      </div>
+    </div>
+  }
+</div>
+<p-button
+  (onClick)="onValidateFiler()"
+  [icon]="Icons.CHECK"
+  class="modal-btn"
+  label="Validate"
+  severity="success"
+></p-button>

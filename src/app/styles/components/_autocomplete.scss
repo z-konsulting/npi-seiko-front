@@ -1,0 +1,25 @@
+.p-autocomplete {
+  width: 100%;
+
+  &:focus-within {
+    border-color: var(--p-primary-color);
+    box-shadow: 1px 1px 2px 0 hsla(0, 0%, 0%, 0.2);
+  }
+
+  &:has(.p-autocomplete-input-multiple) {
+    height: auto;
+    min-height: var(--input-field-height);
+  }
+
+  .p-autocomplete-input-multiple {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    flex-wrap: wrap;
+
+    .p-autocomplete-chip {
+      padding: 0.25rem 0.5rem;
+      font-size: 1rem;
+    }
+  }
+}

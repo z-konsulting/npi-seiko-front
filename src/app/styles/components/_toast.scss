@@ -1,0 +1,75 @@
+// ==========================================================================
+// Toast Design System
+// ==========================================================================
+
+$toast-warn-color: #cc8925;
+$toast-danger-color: #dc3545;
+$toast-success-color: #1ea97c;
+
+@mixin toast-style($color) {
+  border: solid $color;
+  border-width: 0 0 0 5px;
+  color: $color;
+
+  .p-toast-message-icon {
+    color: $color;
+  }
+
+  .p-toast-message-text {
+    .p-toast-summary {
+      color: $color;
+    }
+
+    .p-toast-detail {
+      color: $color;
+    }
+  }
+}
+
+.p-toast-message {
+  opacity: 1;
+  margin: 0 0 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md, 10px);
+  backdrop-filter: blur(8px);
+
+  &.p-toast-message-warn {
+    background: rgba(253, 245, 235, 0.96);
+    @include toast-style($toast-warn-color);
+  }
+
+  &.p-toast-message-error {
+    background: rgba(253, 235, 235, 0.96);
+    @include toast-style($toast-danger-color);
+
+    .p-toast-message-content {
+      .p-toast-message-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  &.p-toast-message-success {
+    background: rgba(240, 253, 235, 0.96);
+    @include toast-style($toast-success-color);
+  }
+
+  .p-toast-message-content {
+    .p-toast-message-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .p-toast-message-text {
+      .p-toast-summary {
+        font-weight: 600;
+      }
+
+      .p-toast-detail {
+        font-size: 0.9375rem;
+      }
+    }
+  }
+}

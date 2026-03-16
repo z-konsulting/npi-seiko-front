@@ -1,0 +1,14 @@
+<p-tabs [value]="indexSelected">
+  <p-tablist>
+    @for (tab of tabsToDisplay(); track $index) {
+      <p-tab [value]="$index" (click)="onchangeTabView(tab)">
+        <div class="tab-label">
+          <span>{{ RoutingService.getRouteTitle(tab) }}</span>
+          @if (tabBadges()[tab] !== undefined && tabBadges()[tab] !== null) {
+            <span class="custom-tag-info tab-badge">{{ tabBadges()[tab] }}</span>
+          }
+        </div>
+      </p-tab>
+    }
+  </p-tablist>
+</p-tabs>

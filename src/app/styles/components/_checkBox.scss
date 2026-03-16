@@ -1,0 +1,54 @@
+// ==========================================================================
+// Checkbox Design System
+// ==========================================================================
+
+.p-checkbox {
+  align-items: center;
+  height: 100%;
+
+  &.size-small {
+    width: var(--p-checkbox-width);
+    height: var(--p-checkbox-height);
+  }
+}
+
+.p-checkbox-box {
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.success {
+  .p-checkbox-box {
+    &:hover {
+      border-color: var(--success-color);
+    }
+
+    &.p-highlight {
+      border-color: var(--success-color);
+      background: var(--success-color);
+    }
+
+    &.p-focus {
+      box-shadow: 0 0 0 3px rgba(72, 180, 97, 0.15);
+      border-color: var(--success-color);
+    }
+  }
+}
+
+.size-medium {
+  .p-checkbox-box {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.size-small {
+  .p-checkbox-box {
+    width: 20px;
+    height: 20px;
+  }
+}

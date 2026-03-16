@@ -1,0 +1,168 @@
+// ── Tokens ────────────────────────────────────────────────────────────────────
+$primary: #0a84c1;
+$primary-glow: rgba(10, 132, 193, 0.35);
+$primary-track: rgba(10, 132, 193, 0.12);
+$card-bg: #111827;
+$card-border: rgba(10, 132, 193, 0.2);
+$text: #f1f5f9;
+$text-muted: rgba(148, 163, 184, 0.7);
+
+// ── Overlay ───────────────────────────────────────────────────────────────────
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 8, 20, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: overlay-in 0.2s ease forwards;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.loader-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 2.5rem 3rem;
+  background: linear-gradient(145deg, #1a2332 0%, $card-bg 100%);
+  border-radius: 14px;
+  border: 1px solid $card-border;
+  box-shadow:
+    0 0 0 1px rgba(10, 132, 193, 0.06),
+    0 24px 48px rgba(0, 0, 0, 0.5),
+    0 8px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  animation: card-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  min-width: 240px;
+
+  // top accent line
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(10, 132, 193, 0.6) 50%,
+      transparent
+    );
+    border-radius: 999px;
+  }
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.loader-spinner {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  filter: drop-shadow(0 0 8px $primary-glow);
+}
+
+.spinner-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid $primary-track;
+}
+
+.spinner-arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  border-top-color: $primary;
+  border-right-color: rgba(10, 132, 193, 0.35);
+  animation: spin 0.9s linear infinite;
+}
+
+// ── Text ──────────────────────────────────────────────────────────────────────
+.loader-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.loader-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: $text;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+// ── Three-dot ─────────────────────────────────────────────────────────────────
+.loader-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  span {
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: $primary;
+    opacity: 0.25;
+    animation: dot-pulse 1.2s ease-in-out infinite;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dot-pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.2;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}

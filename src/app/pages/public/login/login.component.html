@@ -1,0 +1,86 @@
+<div class="login-split-container">
+  <!-- Left: Brand panel -->
+  <div class="login-brand-panel">
+    <div class="brand-content">
+      <img alt="Lokalix logo" class="brand-logo" src="assets/lokalix.svg" />
+      <h1 class="brand-tagline">Industrial Cost Management</h1>
+      <p class="brand-subtitle">
+        Streamline your cost tracking, reporting and analysis in one unified
+        platform.
+      </p>
+      <ul class="brand-features">
+        <li><i class="pi pi-check-circle"></i> Real-time cost monitoring</li>
+        <li><i class="pi pi-check-circle"></i> Role-based access control</li>
+        <li><i class="pi pi-check-circle"></i> Export & reporting tools</li>
+      </ul>
+    </div>
+    <div class="brand-watermark">
+      <img alt="" src="assets/lokalix-eyes.png" />
+    </div>
+  </div>
+
+  <!-- Right: Login card -->
+  <div class="login-card-panel">
+    <div class="login-card-wrapper">
+      <p-card>
+        <div class="login-card-header">
+          <h2 class="login-card-title">Sign in to your account</h2>
+        </div>
+        <form
+          (ngSubmit)="onSubmit()"
+          [formGroup]="userLoginForm"
+          class="login-form"
+        >
+          @if (disconnected) {
+            <div class="disconnected-text">
+              <span class="p-error">You have been disconnected</span>
+            </div>
+          }
+          <div class="form-field">
+            <label for="login">Email or Username</label>
+            <input
+              class="p-inputtext-lg"
+              formControlName="login"
+              id="login"
+              pInputText
+              placeholder="Enter your email or username"
+              type="text"
+            />
+          </div>
+          <div class="form-field">
+            <label for="password">Password</label>
+            <div class="password-container">
+              <i
+                (click)="changeInputType()"
+                [className]="
+                  passwordType !== 'password' ? Icons.EYE_SLASH : Icons.EYE
+                "
+                class="pi"
+              ></i>
+              <input
+                [type]="passwordType"
+                class="p-inputtext-lg"
+                formControlName="password"
+                id="password"
+                pInputText
+                placeholder="Enter your password"
+              />
+            </div>
+          </div>
+          <p-button
+            [disabled]="userLoginForm.invalid"
+            class="login-submit-btn"
+            label="Sign in"
+            pRipple
+            type="submit"
+          ></p-button>
+        </form>
+        <div class="link-wrapper">
+          <a class="go-to-link" routerLink="/forgot-password"
+            >Forgot password?</a
+          >
+        </div>
+      </p-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+.p-inputnumber {
+  width: 100%;
+
+  input {
+    padding: 11px;
+  }
+
+  &.p-inputnumber-horizontal {
+    input {
+      border-radius: 0;
+    }
+  }
+}

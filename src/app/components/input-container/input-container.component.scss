@@ -1,0 +1,47 @@
+:host {
+  flex: 1;
+}
+
+.custom-input {
+  width: 100%;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &.text-uppercase {
+    text-transform: uppercase;
+  }
+
+  &.text-lowercase {
+    text-transform: lowercase;
+  }
+
+  &.text-capitalize {
+    text-transform: capitalize;
+  }
+}
+
+.help-text {
+  color: var(--text-color-secondary, #64748b);
+  font-size: 0.75rem;
+  margin-top: 0.375rem;
+  display: block;
+}
+
+.error-message {
+  font-size: 0.75rem;
+  margin-top: 0.375rem;
+  display: block;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-color, #334155);
+
+  .required-indicator {
+    color: var(--danger-color, #dc3545);
+    margin-left: 2px;
+    font-weight: 700;
+  }
+}

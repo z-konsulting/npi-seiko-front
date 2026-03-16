@@ -1,0 +1,49 @@
+.customer-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.customer-field-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+
+  .export-customer-multi-select {
+    flex: 1;
+  }
+
+  .customer-info-btn {
+    flex-shrink: 0;
+  }
+}
+
+.selected-customers-list {
+  padding: 1rem;
+  max-width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+
+  h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--surface-border);
+      font-size: 0.875rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}

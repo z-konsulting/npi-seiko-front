@@ -1,0 +1,352 @@
+// ==========================================================================
+// App Table Design System
+// Usage: add class="app-table" on <p-table>
+//        add class="app-table app-table--compact" for denser variant
+// ==========================================================================
+
+// --------------------------------------------------------------------------
+// Caption (toolbar above table) — applies to all p-table
+// --------------------------------------------------------------------------
+$table-border-radius: 8px;
+
+p-table {
+  width: 100%;
+
+  .table-caption {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .caption-action-button {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+}
+
+.p-datatable-header {
+  background: transparent;
+  padding: 0;
+  border: none;
+  margin-bottom: 0.75rem;
+}
+
+// --------------------------------------------------------------------------
+// Core table styles — scoped to .app-table
+// --------------------------------------------------------------------------
+.app-table {
+  // Header
+  .p-datatable-thead > tr > th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.875rem 1rem;
+    border-bottom: 2px solid #e2e8f0;
+    border-top: none;
+    white-space: nowrap;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+    font-size: 0.8125rem;
+
+    &:first-child {
+      border-radius: $table-border-radius 0 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 $table-border-radius 0 0;
+    }
+
+    &.p-sortable-column {
+      cursor: pointer;
+
+      &:hover {
+        background: #eef2f7;
+        color: #334155;
+      }
+    }
+
+    &.p-sortable-column.p-highlight {
+      background: #e0eaf4;
+      color: #007fbe;
+    }
+  }
+
+  // Body rows
+  .p-datatable-tbody > tr {
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f1f5f9;
+
+    > td {
+      padding: 0.75rem 1rem;
+      line-height: 1.5;
+      border: none;
+      vertical-align: middle;
+      max-width: 325px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #334155;
+    }
+
+    // First data column emphasis
+    td {
+      &.text-bold {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      &.col-align-flex {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+    }
+
+    &.selected-row > td {
+      background: var(--p-primary-alpha05);
+      height: 100%;
+    }
+
+    // Zebra striping - manual control for expanded rows support
+    &:not(.expanded-row) {
+      &.row-even {
+        background: #ffffff;
+      }
+
+      &.row-odd {
+        background: #fafbfc;
+      }
+
+      // Fallback to nth-child when classes not applied
+      &:not(.row-even):not(.row-odd) {
+        &:nth-child(even) {
+          background: #fafbfc;
+        }
+
+        &:nth-child(odd) {
+          background: #ffffff;
+        }
+      }
+
+      // Highlight expanded row
+      &.row-expanded {
+        background: var(--primary-50) !important;
+        border-left: 3px solid var(--p-primary-color);
+
+        td {
+          font-weight: 600;
+        }
+      }
+
+      // Hover
+      &:hover {
+        background: #f0f6fc;
+      }
+    }
+
+    // Expanded row template should not have striping or hover
+    &.expanded-row {
+      background: transparent !important;
+
+      &:hover {
+        background: transparent !important;
+      }
+    }
+
+    // Accessibility focus
+    &:focus-visible {
+      outline: 2px solid #007fbe;
+      outline-offset: -2px;
+    }
+  }
+
+  // Status row variants
+  .p-datatable-tbody > tr {
+    &.success > td {
+      background-color: rgba(72, 180, 97, 0.06);
+    }
+
+    &.danger > td {
+      background-color: rgba(220, 53, 69, 0.06);
+    }
+
+    &.warning > td {
+      background-color: rgba(249, 115, 22, 0.06);
+    }
+
+    &.soft-warning > td {
+      background-color: rgba(249, 115, 22, 0.04);
+    }
+  }
+
+  // Actions column utility
+  .col-actions {
+    display: flex;
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+    align-items: center;
+
+    p-button {
+      button {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 6px;
+        padding: 0.5rem;
+        width: 2.25rem;
+        height: 2.25rem;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-1px) scale(1.05);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      &:has(button.p-button-success) button:hover:not(:disabled) {
+        box-shadow: 0 4px 12px rgba(72, 180, 97, 0.3);
+      }
+
+      &:has(button.p-button-danger) button:hover:not(:disabled) {
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+
+      &:has(button.p-button-info) button:hover:not(:disabled) {
+        box-shadow: 0 4px 12px rgba(10, 132, 193, 0.3);
+      }
+    }
+  }
+
+  // Numeric column utility
+  .col-numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Center column utility
+  .col-center {
+    text-align: center;
+  }
+
+  // Empty state
+  .p-datatable-emptymessage {
+    td {
+      font-size: 0.875rem;
+      position: relative;
+      padding: 2.5rem 1rem;
+      color: #94a3b8;
+      text-align: center;
+      font-style: italic;
+      letter-spacing: 0.01em;
+    }
+  }
+
+  // Loading overlay
+  .p-datatable-loading-overlay {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(3px);
+  }
+
+  // Expanded row styles
+  .expansion-cell {
+    background-color: var(--primary-50);
+    padding: 0 !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  .expansion-container {
+    padding: 1.5rem;
+    background-color: var(--surface-0);
+    border-left: 3px solid var(--p-primary-color);
+    border-radius: var(--radius-sm, 6px);
+    margin: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Paginator
+// --------------------------------------------------------------------------
+.p-paginator {
+  border: none;
+  background: transparent;
+  padding: 0.875rem 0 0;
+  gap: 0.25rem;
+
+  .p-paginator-element {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-sm, 6px);
+    font-weight: 500;
+    color: #475569;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    &.p-highlight {
+      background: #007fbe;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 127, 190, 0.3);
+    }
+  }
+
+  .p-select {
+    width: 6rem;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Compact variant
+// --------------------------------------------------------------------------
+.app-table--compact {
+  .p-datatable-thead > tr > th {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .p-datatable-tbody > tr > td {
+    padding: 0.4375rem 0.75rem;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Responsive
+// --------------------------------------------------------------------------
+@media (max-width: 768px) {
+  .app-table {
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 0.5rem 0.625rem;
+    }
+
+    .p-datatable-tbody > tr > td {
+      max-width: 160px;
+    }
+  }
+
+  .table-caption {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Legacy support
+// --------------------------------------------------------------------------
+.header-actions,
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+}

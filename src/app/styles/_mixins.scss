@@ -1,0 +1,44 @@
+$control-radius: var(--radius-sm);
+$control-border: 1.5px solid rgb(209, 213, 219);
+@mixin control-base {
+  height: var(--input-field-height);
+  border: $control-border;
+  border-radius: $control-radius;
+  display: flex;
+  align-items: center;
+  &:focus {
+    outline: none;
+    border-color: var(--p-primary-color);
+    box-shadow: 1px 1px 2px 0 hsla(0, 0%, 0%, 0.2);
+  }
+  // Disabled in multiple mode (input inside is disabled)
+  &:disabled,
+  &:has(input:disabled),
+  &:has(.p-disabled),
+  &:has([aria-disabled="true"]) {
+    opacity: 0.8;
+    background-color: var(--secondary-color-light);
+    border-color: var(--control-border-disabled, rgb(209, 213, 219));
+    color: var(--p-inputtext-disabled-color);
+  }
+
+  &:has(input:disabled) * {
+    pointer-events: none;
+  }
+
+  &:focus-within {
+    border-color: var(--p-primary-color);
+    box-shadow: 1px 1px 2px 0 hsla(0, 0%, 0%, 0.2);
+  }
+  &::placeholder {
+    color: #94a3b8;
+  }
+  &:hover:not(:disabled):not(:focus):not(:focus-within):not(
+      :has(input:disabled)
+    ) {
+    border-color: #94a3b8;
+  }
+  &::placeholder {
+    font-size: 0.875rem;
+  }
+}

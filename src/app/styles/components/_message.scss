@@ -1,0 +1,32 @@
+.p-message {
+  margin: 0.5rem;
+
+  .p-message-wrapper {
+    padding: 0.2rem 1rem;
+  }
+
+  .p-icon {
+    width: 1.2rem;
+  }
+
+  span {
+    .p-icon {
+      margin-top: 5px;
+    }
+  }
+
+  &.p-message-info {
+    border-color: var(--p-primary-color);
+    color: var(--p-primary-color);
+
+    .p-message-wrapper {
+      .p-message-icon {
+        color: var(--p-primary-color);
+      }
+
+      button {
+        color: var(--p-primary-color);
+      }
+    }
+  }
+}

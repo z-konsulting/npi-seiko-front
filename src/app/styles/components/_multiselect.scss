@@ -1,0 +1,26 @@
+.full-multi-select {
+  width: 100%;
+
+  .p-multiselect-label-container {
+    .p-multiselect-label {
+      .p-multiselect-chip-item {
+        .p-multiselect-chip {
+          padding: 0.25rem 0.5rem;
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
+
+.multi-select-panel {
+  .p-multiselect-header {
+    .p-checkbox {
+      width: 4rem;
+    }
+
+    .p-multiselect-filter-container {
+      width: 100%;
+    }
+  }
+}

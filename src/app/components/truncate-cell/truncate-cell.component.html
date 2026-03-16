@@ -1,0 +1,11 @@
+<span
+  #textSpan
+  [pTooltip]="textValue() ?? ''"
+  [style.font-size]="textSize()"
+  [style.max-width]="maxWidth()"
+  [tooltipDisabled]="!isOverflowing()"
+  class="truncate-cell"
+  tooltipPosition="top"
+>
+  {{ textValue() ?? '' }}
+</span>

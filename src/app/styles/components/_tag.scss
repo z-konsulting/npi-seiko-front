@@ -1,0 +1,153 @@
+// ==========================================================================
+// Tag Design System
+// ==========================================================================
+
+@use "sass:color";
+
+@mixin tag-customer-style($color) {
+  background-color: $color;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  font-weight: 600;
+  padding: 0.35rem 0.625rem;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+
+@mixin tag-isSelected-style($color) {
+  .p-tag {
+    background-color: $color;
+    color: white;
+    box-shadow: 0 2px 6px rgba($color, 0.4);
+  }
+}
+
+@mixin tag-notSelected-style($color) {
+  .p-tag {
+    color: $color;
+    transition:
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 6px rgba($color, 0.35);
+      border-color: $color;
+      font-weight: 600;
+    }
+  }
+}
+
+.p-tag-medium {
+  span {
+    font-size: 1rem;
+  }
+}
+
+.p-tag-big {
+  span {
+    font-size: 2rem;
+  }
+}
+
+.tag-info-light {
+  span {
+    color: var(--secondary-color);
+    background: var(--secondary-color-light);
+  }
+}
+
+.p-tag-danger {
+  @include tag-customer-style(var(--danger-color));
+}
+
+.p-tag-warn {
+  @include tag-customer-style(var(--warn-color));
+}
+
+.p-tag-success {
+  @include tag-customer-style(var(--success-color));
+}
+
+.p-tag-warn-yellow {
+  @include tag-customer-style(#ea9658);
+}
+
+.p-tag-secondary {
+  @include tag-customer-style(#6b7280);
+}
+
+.p-tag-info {
+  @include tag-customer-style(#3b82f6);
+}
+
+.p-tag-contrast {
+  @include tag-customer-style(#8b5cf6);
+}
+
+// ==========================================================================
+// CostRequestStatus — custom tag classes
+// Only statuses where the PrimeNG severity alone is not distinctive enough.
+//
+// Statuses handled by severity (no custom class):
+//   PENDING_INFORMATION  → severity="warn"
+//   READY_FOR_REVIEW     → severity="contrast"  (violet)
+//   READY_TO_ESTIMATE    → severity="info"       (blue)
+//   ESTIMATED            → severity="success"    (green)
+//   ABORTED              → severity="danger"     (red)
+// ==========================================================================
+
+// Cyan — breaks the violet→blue gradient, clearly distinct from both
+.p-tag-status-ready-estimate {
+  @include tag-customer-style(var(--status-ready-to-estimate));
+}
+
+// Darker cyan — same family as READY_TO_ESTIMATE, slightly deeper to signal pending action
+.p-tag-status-pending-reestimation {
+  @include tag-customer-style(var(--status-pending-reestimation));
+}
+
+// Orange-yellow — warmer than warn, signals human action needed
+.p-tag-status-pending-approval {
+  @include tag-customer-style(var(--status-pending-approval));
+}
+
+// Neutral grey — aborted, inactive state
+.p-tag-status-aborted {
+  @include tag-customer-style(var(--status-aborted));
+}
+
+// Blue-grey — archived because a new revision was created
+.p-tag-status-new-revision-created {
+  @include tag-customer-style(var(--status-new-revision-created));
+}
+
+// Deep navy — sealed, final, prestigious state
+.p-tag-status-quoted {
+  @include tag-customer-style(var(--status-quoted));
+}
+
+.p-tag-status-ready-to-validate {
+  @include tag-customer-style(var(--status-ready-to-validate));
+}
+
+// Deep teal — quotation sent, awaiting customer response (distinct from markup blue)
+.p-tag-status-active {
+  @include tag-customer-style(var(--status-active));
+}
+
+// Dark forest green — customer approved, deal won
+.p-tag-status-won {
+  @include tag-customer-style(var(--status-won));
+}
+
+// Rose-red — customer rejected, deal lost
+.p-tag-status-lost {
+  @include tag-customer-style(var(--status-lost));
+}
+
+.modal-subtitle {
+  .p-tag {
+    font-size: 0.8rem;
+  }
+}

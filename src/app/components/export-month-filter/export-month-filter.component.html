@@ -1,0 +1,48 @@
+<form [formGroup]="formGroup">
+  <div class="p-fields-row-date">
+    <div class="dates">
+      <div class="p-field-date">
+        <label [for]="DateFormField.START_DATE"
+          >Start date: <span style="color: red">*</span></label
+        >
+        <p-datePicker
+          (onSelect)="onStartDateSelected()"
+          [formControlName]="DateFormField.START_DATE"
+          [id]="DateFormField.START_DATE"
+          [name]="DateFormField.START_DATE"
+          [readonlyInput]="true"
+          [showIcon]="true"
+          [showOnFocus]="false"
+          appendTo="body"
+        />
+      </div>
+      <div class="p-field-date">
+        <label [for]="DateFormField.END_DATE"
+          >End date: <span style="color: red">*</span></label
+        >
+        <p-datePicker
+          [formControlName]="DateFormField.END_DATE"
+          [id]="DateFormField.END_DATE"
+          [maxDate]="maxEndDate"
+          [minDate]="formGroup.get(DateFormField.START_DATE)?.value"
+          [name]="DateFormField.END_DATE"
+          [showIcon]="true"
+          [showOnFocus]="false"
+          appendTo="body"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="export-btn">
+    <p-button
+      (onClick)="onSubmit()"
+      [disabled]="formGroup.invalid"
+      [icon]="Icons.EXPORT"
+      [label]="'Export'"
+      appNoDoubleClick
+      class="modal-btn"
+      pRipple
+      type="submit"
+    ></p-button>
+  </div>
+</form>

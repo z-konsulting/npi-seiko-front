@@ -1,0 +1,11 @@
+.tabs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  .selection-count {
+    border: none;
+    font-weight: 500;
+  }
+}

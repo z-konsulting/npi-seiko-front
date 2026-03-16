@@ -1,0 +1,9 @@
+.none-content {
+  .p-tabview-panels {
+    display: none;
+  }
+}
+
+:root {
+  --p-tabs-tab-padding: 1rem 1rem 1rem 0.6rem;
+}

@@ -1,0 +1,17 @@
+<div class="search-container">
+  <p-iconfield iconPosition="left">
+    <p-inputicon [class]="Icons.SEARCH" />
+    <input
+      (keydown.enter)="onEnterPress()"
+      (keyup)="onKeyUp($event)"
+      [(ngModel)]="searchText"
+      [disabled]="disabled()"
+      class="search-input"
+      id="searchText"
+      name="searchText"
+      pInputText
+      placeholder="Search text"
+      type="text"
+    />
+  </p-iconfield>
+</div>

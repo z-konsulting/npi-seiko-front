@@ -1,0 +1,78 @@
+// ==========================================================================
+// Dialog Design System
+// ==========================================================================
+
+.p-dialog {
+  border-radius: var(--radius-lg, 14px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  .p-dialog-header {
+    padding: 1rem 1rem 0.5rem 1.5rem;
+    border-bottom: 1px solid var(--surface-border, #e2e8f0);
+
+    span {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--p-primary-color);
+      letter-spacing: -0.01em;
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1rem 1.5rem;
+  }
+}
+
+.dialog-without-header {
+  .p-dialog .p-dialog-header {
+    padding: 0;
+    border: none;
+  }
+}
+
+.dialog-without-border {
+  border: 0;
+
+  .p-dialog-mask {
+    .p-dialog {
+      border: 0 !important;
+    }
+  }
+}
+
+.blocked {
+  border: 2px solid var(--danger-color);
+}
+
+.completed {
+  border: 2px solid var(--success-color);
+}
+
+.dialog-raw-material-expirable {
+  .p-overlay-mask {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Dialog form labels
+label {
+  color: var(--text-color, #334155);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.manage-recipe-instance-dialog {
+  min-width: 16rem;
+  min-height: 17rem;
+}
+
+.modal-unique-number {
+  .p-dialog {
+    min-width: 25rem;
+    min-height: 45rem;
+  }
+}

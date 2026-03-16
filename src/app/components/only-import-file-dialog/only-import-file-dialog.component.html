@@ -1,0 +1,20 @@
+<p-fileupload
+  #fileUpload
+  (onError)="onError($event)"
+  (onSend)="onSend()"
+  (onUpload)="onUpload($event)"
+  [chooseIcon]="Icons.UPLOAD"
+  [multiple]="multiple"
+  [url]="uploadUrl"
+  maxFileSize="5242880"
+  method="post"
+  mode="advanced"
+  name="files"
+>
+  <ng-template pTemplate="empty">
+    <div class="empty-upload-place">
+      <span [class]="Icons.UPLOAD"></span>
+      <p class="">Drag and drop files here to upload.</p>
+    </div>
+  </ng-template>
+</p-fileupload>

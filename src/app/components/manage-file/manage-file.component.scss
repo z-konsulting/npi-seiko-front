@@ -1,0 +1,95 @@
+@use "sass:color";
+
+.empty-upload-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span {
+    text-align: center;
+    padding: 15px;
+    border: 2px solid;
+    border-radius: 50%;
+    font-size: 3rem;
+    cursor: default;
+    color: color.adjust(#6b7280, $lightness: 20%);
+  }
+}
+
+.file-card {
+  .file-header {
+    padding: 0 16px 0 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+
+    .file-name {
+      font-size: 1.4rem;
+    }
+
+    .file-action {
+      .pi {
+        font-size: 1.3rem;
+      }
+
+      button {
+        &:first-of-type {
+          margin-left: 6px;
+        }
+      }
+    }
+  }
+
+  .all-files {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+    box-shadow: 1px 3px 6px #eaeaea;
+    margin-top: 7px;
+
+    .file-info {
+      .file-action {
+        button {
+          &:first-of-type {
+            margin-left: 6px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.file-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .pi {
+    font-size: 1.5rem;
+    margin-right: 10px;
+
+    color: color.adjust(#6b7280, $lightness: 30%);
+  }
+
+  .file-name {
+    font-weight: 500;
+  }
+}
+
+.file-action {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  button {
+    width: 2rem;
+
+    &:first-of-type {
+      margin-left: 8px;
+    }
+  }
+}

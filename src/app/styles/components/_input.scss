@@ -1,0 +1,79 @@
+// ==========================================================================
+// Input Design System
+// ==========================================================================
+.p-datepicker {
+  .p-datepicker-input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+input[pInputText] {
+  border-radius: var(--radius-sm, 6px);
+  color: #334155;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--p-primary-color);
+    box-shadow: 0 0 0 3px rgba(10, 132, 193, 0.1);
+  }
+
+  &.dialog-input {
+    width: 100%;
+    margin-bottom: 0.625rem;
+  }
+
+  &.text-uppercase {
+    text-transform: uppercase;
+  }
+
+  &.search-input {
+    width: 260px;
+    border: 1.5px solid #d1d5db;
+    padding-left: 2.5rem;
+    border-radius: var(--radius-sm, 6px);
+
+    &:focus {
+      width: 300px;
+      transition:
+        width 0.25s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+  }
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  display: none;
+}
+
+.input-invalid {
+  border-color: var(--danger-color) !important;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+  }
+}
+
+.input-number {
+  width: 3.5rem;
+}
+
+.input-number-medium {
+  width: 5.5rem !important;
+}
+
+.p-number-full {
+  width: 100%;
+}
+
+.p-inputgroup {
+  &.inputgroup-number {
+    width: 2.5rem;
+  }
+}

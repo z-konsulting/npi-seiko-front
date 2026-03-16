@@ -1,0 +1,9 @@
+router-outlet {
+  display: flex;
+  margin-top: 0;
+  padding-top: 60px;
+
+  &.disconnected {
+    padding-top: 0;
+  }
+}

@@ -1,0 +1,59 @@
+// ==========================================================================
+// Card Design System
+// ==========================================================================
+
+p-card {
+  &.p-card {
+    max-width: 100%;
+    margin: 0.5rem;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .p-card {
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-md);
+    transition: box-shadow 0.25s ease;
+  }
+
+  .p-card-header {
+    padding: 1.25rem 1.5rem 0 1.5rem;
+  }
+
+  &.table .p-card {
+    background: var(--surface-ground);
+  }
+
+  .p-card-body {
+    padding-top: 0.5rem;
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  &.login-card {
+    .p-card {
+      height: 350px;
+    }
+  }
+}
+
+// Card header with title + actions layout
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// Modal footer action bar
+.modal-actions-footer-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--surface-border);
+}

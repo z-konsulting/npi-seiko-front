@@ -1,0 +1,131 @@
+<div class="card flex justify-content-center">
+  @if (fileAlreadySelected) {
+    <small class="p-error">
+      {{ fileAlreadySelected }}
+    </small>
+  }
+  @if (!userOnlyDownloadAccess) {
+    <p-fileupload
+      #fileUpload
+      (onClear)="onClear($event)"
+      (onError)="onError($event)"
+      (onRemove)="onRemove($event)"
+      (onSelect)="onSelect($event)"
+      (onUpload)="onUpload($event)"
+      [chooseIcon]="Icons.UPLOAD"
+      [multiple]="multiple"
+      [showUploadButton]="showUploadButton && !fileAlreadySelected"
+      [url]="uploadUrl"
+      maxFileSize="10485760"
+      method="post"
+      mode="advanced"
+      name="files"
+    >
+      <ng-template pTemplate="empty">
+        <div class="empty-upload-place">
+          <span [class]="Icons.UPLOAD"></span>
+          <p class="">Drag and drop files here to upload.</p>
+        </div>
+      </ng-template>
+    </p-fileupload>
+  }
+  <div class="file-card">
+    @if (multiple && allFiles.length > 0) {
+      <div class="file-header">
+        <div class="file-info">
+          <span class="file-name">Already uploaded</span>
+        </div>
+        <div class="file-action">
+          <p-checkbox
+            (ngModelChange)="selectedFiles($event, true)"
+            [(ngModel)]="selectedAll"
+            [binary]="true"
+            class="success size-medium"
+            inputId="binary"
+          />
+          @if (showDownloadButton && showGlobalDownloadBtn) {
+            <p-button
+              (click)="downloadFiles()"
+              [disabled]="!onlyOneFileSelected"
+              [icon]="Icons.DOWNLOAD"
+              [text]="true"
+              class="download-btn"
+              pTooltip="Download selected files"
+              tooltipPosition="top"
+            >
+            </p-button>
+          }
+
+          @if (canDeletion && !userOnlyDownloadAccess) {
+            <p-button
+              (click)="confirmFilesDeletion($event)"
+              [disabled]="!onlyOneFileSelected"
+              [icon]="Icons.TRASH"
+              [text]="true"
+              pTooltip="Delete selected files"
+              severity="danger"
+              tooltipPosition="top"
+            >
+            </p-button>
+          }
+        </div>
+      </div>
+    }
+    @for (file of allFiles; track file.uid) {
+      <div class="all-files">
+        <div class="file-info">
+          <span [class]="Icons.FILE"></span>
+          <span class="file-name">
+            <app-truncate-cell [textValue]="file.fileName"></app-truncate-cell
+          ></span>
+        </div>
+
+        <div class="file-action">
+          @if (multiple) {
+            <p-checkbox
+              (ngModelChange)="onFileCheckChange(file, $event)"
+              [binary]="true"
+              [ngModel]="file.selected"
+              class="success size-small"
+              inputId="binary"
+            />
+          }
+          @if (fileCanBeVisibleInPreview(file.fileName)) {
+            <p-button
+              (click)="openPreview(file)"
+              [icon]="Icons.EYE"
+              [text]="true"
+              class="preview-btn"
+              pTooltip="Preview file"
+              tooltipPosition="top"
+            >
+            </p-button>
+          }
+          @if (showDownloadButton && allFiles.length > 0) {
+            <p-button
+              (click)="downloadFiles(file)"
+              [icon]="Icons.DOWNLOAD"
+              [text]="true"
+              class="download-btn"
+              pTooltip="Download file"
+              tooltipPosition="top"
+            >
+            </p-button>
+          }
+
+          @if (canDeletion && !userOnlyDownloadAccess) {
+            <p-button
+              (click)="confirmFilesDeletion($event, file)"
+              [icon]="Icons.TIMES"
+              [text]="true"
+              pTooltip="Delete file"
+              severity="danger"
+              tooltipPosition="top"
+            >
+            </p-button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

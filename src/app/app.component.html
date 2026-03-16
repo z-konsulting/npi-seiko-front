@@ -1,0 +1,10 @@
+@if (isConnected()) {
+  <app-nav-bar></app-nav-bar>
+}
+<router-outlet [class.disconnected]="!isConnected()"></router-outlet>
+<p-toast position="top-center" />
+<p-confirmpopup key="confirmPopKey"></p-confirmpopup>
+<p-confirmDialog [closable]="false" key="confirmDialogKey" />
+<app-custom-loader></app-custom-loader>
+<p-toast (click)="reloadApp()" key="updateToast" position="top-center">
+</p-toast>

@@ -1,0 +1,15 @@
+.p-inputgroup {
+  .p-inputgroupaddon {
+    background: #f3f4f6;
+    color: var(--secondary-color);
+  }
+
+  &.global-config-inputgroup {
+    height: 2rem;
+    width: 8rem;
+
+    .p-inputgroupaddon {
+      width: 3rem;
+    }
+  }
+}

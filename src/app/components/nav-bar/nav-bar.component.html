@@ -1,0 +1,42 @@
+<div
+  [class.nav-bar--scrolled]="isScrolled()"
+  [class]="items.length <= 0 ? 'no-nav' : ''"
+  class="nav-bar"
+>
+  <p-menubar [autoDisplay]="true" [autoHide]="true" [model]="items">
+    <ng-template pTemplate="start">
+      <img alt="" class="mr-2" src="assets/lokalix.svg" />
+    </ng-template>
+    <ng-template let-item pTemplate="item">
+      <a
+        (click)="updatedActiveItem(item.id)"
+        [class.active]="item.active"
+        [routerLink]="item.routerLink"
+        class="p-menuitem-link"
+      >
+        <span [class]="item.icon">{{ item.label }}</span>
+        @if (item.items && item.items.length > 0) {
+          @if (isPrincipal(item.id)) {
+            <span [class]="Icons.CHEVRON_DOWN"></span>
+          } @else {
+            <span [class]="Icons.CHEVRON_RIGHT"></span>
+          }
+        }
+      </a>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <div class="logout-btn">
+        @if (isAuthenticated$ | async) {
+          <p-button
+            (onClick)="logout()"
+            [icon]="Icons.LOGOUT"
+            [text]="true"
+            appNoDoubleClick
+            label="Logout"
+            severity="primary"
+          ></p-button>
+        }
+      </div>
+    </ng-template>
+  </p-menubar>
+</div>

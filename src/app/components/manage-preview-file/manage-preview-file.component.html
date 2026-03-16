@@ -1,0 +1,30 @@
+<div class="preview-container">
+  @if (isPreviewLoading()) {
+    <div class="preview-loading">
+      <i [class]="Icons.SPINNER_SPIN" style="font-size: 2rem"></i>
+      <p>Loading preview...</p>
+    </div>
+  } @else {
+    <!-- PDF Preview -->
+    @if (isPdfFile(previewFileName) && previewUrl) {
+      <iframe [src]="previewUrl" class="preview-iframe"></iframe>
+    }
+
+    <!-- Image Preview -->
+    @if (isImageFile(previewFileName) && previewUrl) {
+      <img [alt]="previewFileName" [src]="previewUrl" class="preview-image" />
+    }
+
+    <!-- Excel Preview -->
+    @if (isExcelFile(previewFileName) && excelHtmlContent) {
+      <div [innerHTML]="excelHtmlContent" class="preview-excel"></div>
+    }
+
+    <!-- Text Preview -->
+    @if (isTextFile(previewFileName) && textContent) {
+      <div class="preview-text">
+        <pre>{{ textContent }}</pre>
+      </div>
+    }
+  }
+</div>

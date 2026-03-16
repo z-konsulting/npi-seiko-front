@@ -1,0 +1,33 @@
+.pi {
+  &.danger {
+    color: var(--danger-color);
+
+    &:hover {
+      color: var(--danger-color-hover) !important;
+    }
+  }
+
+  &.warning {
+    color: var(--warn-color);
+
+    &:hover {
+      color: var(--warn-color-hover) !important;
+    }
+  }
+
+  &.success {
+    color: var(--success-color);
+
+    &:hover {
+      color: var(--success-color-hover);
+    }
+  }
+
+  &.secondary {
+    color: rgba(107, 114, 128, 0.63);
+
+    &:hover {
+      color: var(--secondary-color);
+    }
+  }
+}

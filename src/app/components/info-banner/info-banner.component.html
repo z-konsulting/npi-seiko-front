@@ -1,0 +1,10 @@
+<div class="info-banner" [class]="'info-banner--' + severity()">
+  <i [class]="resolvedIcon()"></i>
+  <div class="info-banner__content">
+    <span class="info-banner__title">{{ title() }}</span>
+    @if (description()) {
+      <span class="info-banner__description">{{ description() }}</span>
+    }
+  </div>
+  <ng-content select="[bannerRight]" />
+</div>

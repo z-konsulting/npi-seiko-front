@@ -1,0 +1,71 @@
+<div class="p-field">
+  @if (label()) {
+    <label [for]="id()" class="input-label">
+      {{ label() }}
+      @if (required) {
+        <span class="required-indicator">*</span>
+      }
+    </label>
+  }
+  @if (type() === "textarea") {
+    <textarea
+      (blur)="onBlur()"
+      (focusout)="onFocusOut()"
+      (input)="onInputChange($event)"
+      [autoResize]="true"
+      [class]="inputClasses"
+      [disabled]="isInputDisabled"
+      [id]="id()"
+      [placeholder]="placeholder()"
+      [readonly]="readonly()"
+      [rows]="textAreaRows()"
+      [value]="value"
+      pTextarea
+    ></textarea>
+  } @else if (type() === "number") {
+    <p-inputNumber
+      (onInput)="onNumberChange($event.value)"
+      (onBlur)="onBlur()"
+      [disabled]="isInputDisabled"
+      [inputStyleClass]="inputClasses"
+      [maxFractionDigits]="maxFractionDigits()"
+      [max]="max() ?? undefined"
+      [minFractionDigits]="minFractionDigits()"
+      [min]="min() ?? undefined"
+      [ngModelOptions]="{ standalone: true }"
+      [ngModel]="numberValue"
+      [placeholder]="placeholder()"
+      [prefix]="prefix() ?? undefined"
+      [readonly]="readonly()"
+      [showButtons]="false"
+    />
+  } @else {
+    <input
+      #inputField
+      (blur)="onBlur()"
+      (focusout)="onFocusOut()"
+      (input)="onInputChange($event)"
+      [attr.inputmode]="inputMode()"
+      [class]="inputClasses"
+      [disabled]="isInputDisabled"
+      [id]="id()"
+      [pattern]="pattern()"
+      [placeholder]="placeholder()"
+      [readonly]="readonly()"
+      [type]="type()"
+      [value]="value"
+      pInputText
+    />
+  }
+
+  @if (helpText() && !errorMessage() && !fieldRequiredError) {
+    <small class="help-text">{{ helpText() }}</small>
+  }
+
+  @if (errorMessage()) {
+    <small class="p-error error-message">{{ errorMessage() }}</small>
+  }
+  <!--  @if (!errorMessage() && fieldRequiredError) {-->
+  <!--    <small class="p-error error-message">This field is required</small>-->
+  <!--  }-->
+</div>

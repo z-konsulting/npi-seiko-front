@@ -1,0 +1,59 @@
+$main-color: #007fbe;
+@mixin fieldsetOutlineStyle($color) {
+  .p-fieldset {
+    border-color: $color;
+
+    .p-fieldset-legend {
+      color: $color;
+      font-weight: 500;
+    }
+  }
+}
+
+.p-fieldset {
+  margin-bottom: 1rem;
+
+  &.p-fieldset-toggleable .p-fieldset-legend a {
+    padding: 0.8rem;
+  }
+}
+
+.default-fieldset {
+  .p-fieldset {
+    height: 100%;
+
+    .p-fieldset-content {
+      padding: 0.5rem;
+    }
+
+    .p-fieldset-legend {
+      padding: 0;
+      background-color: white;
+      border: 0;
+    }
+  }
+
+  &.transaction-fieldset {
+    .p-fieldset {
+      width: 49rem;
+    }
+  }
+
+  &.transaction-mould-fieldset {
+    .p-fieldset {
+      width: 15rem;
+    }
+  }
+
+  &.info {
+    @include fieldsetOutlineStyle(var(--p-primary-color));
+  }
+
+  &.secondary {
+    @include fieldsetOutlineStyle(#74787f);
+  }
+
+  &.other {
+    @include fieldsetOutlineStyle(#585858);
+  }
+}

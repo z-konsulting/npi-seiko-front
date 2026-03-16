@@ -1,0 +1,129 @@
+.preview-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.preview-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.preview-btn {
+  color: var(--primary-color);
+}
+
+.preview-text {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid var(--secondary-color-light);
+  border-radius: var(--border-radius);
+
+  pre {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #495057;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+
+.preview-excel {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: #f8f9fa;
+  padding: 1rem;
+
+  ::ng-deep table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    td,
+    th {
+      border: 1px solid #d4d4d4;
+      padding: 8px 12px;
+      text-align: left;
+      white-space: nowrap;
+      min-width: 80px;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    // Première ligne (header)
+    tr:first-child {
+      td,
+      th {
+        background: linear-gradient(180deg, #4472c4 0%, #3a5fa0 100%);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+    }
+
+    // Lignes alternées
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+
+    // Hover sur les lignes (sauf header)
+    tr:not(:first-child):hover {
+      background-color: #e8f4fd;
+    }
+
+    // Première colonne
+    td:first-child,
+    th:first-child {
+      background-color: #e7e6e6;
+      font-weight: 500;
+      color: #333;
+      border-right: 2px solid #b4b4b4;
+    }
+
+    // Première cellule (intersection)
+    tr:first-child td:first-child,
+    tr:first-child th:first-child {
+      background: linear-gradient(135deg, #5a5a5a 0%, #3d3d3d 100%);
+      color: white;
+    }
+
+    // Cellules numériques alignées à droite
+    td[data-t="n"] {
+      text-align: right;
+    }
+  }
+}
