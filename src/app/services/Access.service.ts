@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { RouteId } from "../models/enums/routes-id";
-import { UserRole } from "../../client/costSeiko";
+import { UserRole } from "../../client/npiSeiko";
 
 /**
  * Single source of truth for role-based access control.
@@ -11,24 +11,13 @@ const ROUTE_ROLES: Partial<Record<RouteId, UserRole[]>> = {
   // ADMIN: list every role that can enter the section.
   // Sub-routes below further restrict access per page.
   // PROCUREMENT can only reach Manufacturing, Units, and Material Categories.
-  [RouteId.ADMIN]: [UserRole.ADMINISTRATOR, UserRole.PROCUREMENT],
+  [RouteId.ADMIN]: [UserRole.ADMINISTRATOR],
 
   // Admin sub-route guards (applied in admin.routes.ts via canActivate).
   // Omitting an entry = accessible to anyone who passed the parent guard.
   [RouteId.ADMIN_USERS]: [UserRole.ADMINISTRATOR],
-  [RouteId.DASHBOARD]: [
-    UserRole.PROJECT_MANAGER,
-    UserRole.ENGINEERING,
-    UserRole.MANAGEMENT,
-    UserRole.PROCUREMENT,
-  ],
-  [RouteId.NPI_ORDERS]: [
-    UserRole.PROJECT_MANAGER,
-    UserRole.ENGINEERING,
-    UserRole.PROCUREMENT,
-    UserRole.PLANNING,
-    UserRole.MANAGEMENT,
-  ],
+  [RouteId.DASHBOARD]: [],
+  [RouteId.NPI_ORDERS]: [],
 };
 
 @Injectable({
@@ -43,7 +32,7 @@ export class AccessService {
   public static canAccess(routeId: RouteId, role: UserRole): boolean {
     if (this.isSuperAdmin(role) || this.isAdministrator(role)) return true;
     const allowedRoles = ROUTE_ROLES[routeId];
-    if (allowedRoles == null) return true;
+    if (allowedRoles == null || allowedRoles.length === 0) return true;
     return allowedRoles.includes(role);
   }
 

@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { BehaviorSubject } from 'rxjs';
-import { UserRole } from '../../client/costSeiko';
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
+import { BehaviorSubject } from "rxjs";
+import { UserRole } from "../../client/npiSeiko";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthenticationService {
   // Allow to follow the authentication status
@@ -12,7 +12,7 @@ export class AuthenticationService {
   authStatus$ = this.authStatus.asObservable();
 
   constructor() {
-    window.addEventListener('storage', (e) => {
+    window.addEventListener("storage", (e) => {
       const allKeys = [
         environment.userLogged,
         environment.userTokenKey,
@@ -81,7 +81,7 @@ export class AuthenticationService {
 
   getUserLogged(): boolean {
     const value = localStorage.getItem(environment.userLogged);
-    return value === 'true';
+    return value === "true";
   }
 
   // Clear session storage (on logout for example)

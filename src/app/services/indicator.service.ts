@@ -1,7 +1,7 @@
 import { DestroyRef, inject, Injectable, signal } from "@angular/core";
 import { CustomerRepo } from "../repositories/customer.repo";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Customer } from "../../client/costSeiko";
+import { Customer } from "../../client/npiSeiko";
 
 @Injectable({
   providedIn: "root",

@@ -4,7 +4,7 @@ import { PrimeTemplate } from "primeng/api";
 import { BaseModal } from "../../models/classes/base-modal";
 import { Icons } from "../../models/enums/icons";
 import { LoaderService } from "../../services/components/loader.service";
-import { CustomErrorCode } from "../../../client/costSeiko";
+import { CustomErrorCode } from "../../../client/npiSeiko";
 
 @Component({
   selector: "app-only-import-file-dialog",

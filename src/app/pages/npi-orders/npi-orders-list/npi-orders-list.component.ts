@@ -15,7 +15,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { HandleToastMessageService } from "../../../services/handle-toast-message.service";
 import { ModalService } from "../../../services/components/modal.service";
 import { CustomTitleComponent } from "../../../components/custom-title/custom-title.component";
-import { NpiOrder, NpiOrdersPaginated, NpiOrderStatus } from "../../../../client/costSeiko";
+import { NpiOrder, NpiOrdersPaginated, NpiOrderStatus } from "../../../../client/npiSeiko";
 import { NoDoubleClickDirective } from "../../../directives/no-double-click.directive";
 import { BaseListComponent } from "../../../models/classes/base-list-component";
 import { NpiOrderRepo } from "../../../repositories/npi-order.repo";

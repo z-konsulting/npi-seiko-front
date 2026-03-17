@@ -12,7 +12,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { InputNumberModule } from "primeng/inputnumber";
 import { DatePickerModule } from "primeng/datepicker";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { NpiOrder, NpiOrderCreate, NpiOrderUpdate } from "../../../../client/costSeiko";
+import { NpiOrder, NpiOrderCreate, NpiOrderUpdate } from "../../../../client/npiSeiko";
 import { BaseModal } from "../../../models/classes/base-modal";
 import { InputContainerComponent } from "../../../components/input-container/input-container.component";
 import { NpiOrderRepo } from "../../../repositories/npi-order.repo";
@@ -96,6 +96,8 @@ export class NpiOrderCreateEditDialogComponent extends BaseModal implements OnIn
   private buildBody(): NpiOrderCreate | NpiOrderUpdate {
     const form = this.npiOrderForm;
     const orderDateValue: Date | null = form.get(NpiOrderFormField.ORDER_DATE)?.value ?? null;
+    const targetDeliveryDateValue: Date | null =
+      form.get(NpiOrderFormField.TARGET_DELIVERY_DATE)?.value ?? null;
     return {
       purchaseOrderNumber: form.get(NpiOrderFormField.PURCHASE_ORDER_NUMBER)?.value,
       workOrderId: form.get(NpiOrderFormField.WORK_ORDER_ID)?.value,
@@ -104,12 +106,15 @@ export class NpiOrderCreateEditDialogComponent extends BaseModal implements OnIn
       orderDate: orderDateValue
         ? orderDateValue.toISOString().split("T")[0]
         : undefined,
-      targetDeliveryDate:
-        form.get(NpiOrderFormField.TARGET_DELIVERY_DATE)?.value || undefined,
+      targetDeliveryDate: targetDeliveryDateValue
+        ? targetDeliveryDateValue.toISOString().split("T")[0]
+        : undefined,
       customerName:
         form.get(NpiOrderFormField.CUSTOMER_NAME)?.value || undefined,
       productName:
         form.get(NpiOrderFormField.PRODUCT_NAME)?.value || undefined,
+      productionPlanTime: form.get(NpiOrderFormField.PRODUCTION_PLAN_TIME)?.value,
+      testingPlanTime: form.get(NpiOrderFormField.TESTING_PLAN_TIME)?.value,
     } as NpiOrderCreate | NpiOrderUpdate;
   }
 }

@@ -7,4 +7,6 @@ export enum NpiOrderFormField {
   TARGET_DELIVERY_DATE = "targetDeliveryDate",
   CUSTOMER_NAME = "customerName",
   PRODUCT_NAME = "productName",
+  PRODUCTION_PLAN_TIME = "productionPlanTime",
+  TESTING_PLAN_TIME = "testingPlanTime",
 }

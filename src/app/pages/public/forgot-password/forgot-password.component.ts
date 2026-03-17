@@ -20,7 +20,7 @@ import { Icons } from "../../../models/enums/icons";
 import { environment } from "../../../../environments/environment";
 import { RoutingService } from "../../../services/Routing.service";
 import { RouteId } from "../../../models/enums/routes-id";
-import { UserForgotPassword } from "../../../../client/costSeiko";
+import { UserForgotPassword } from "../../../../client/npiSeiko";
 
 @Component({
   selector: "app-forgot-password",

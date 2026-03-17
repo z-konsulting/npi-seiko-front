@@ -1,7 +1,7 @@
-import { RouteEnv } from '../interfaces/env/RouteEnv';
-import { AccessService } from '../../services/Access.service';
-import { MenuItem } from 'primeng/api';
-import { UserRole } from '../../../client/costSeiko';
+import { RouteEnv } from "../interfaces/env/RouteEnv";
+import { AccessService } from "../../services/Access.service";
+import { MenuItem } from "primeng/api";
+import { UserRole } from "../../../client/npiSeiko";
 
 export interface NavBarItem extends MenuItem {
   items: NavBarItem[];
@@ -34,7 +34,7 @@ export class HandleNavBar {
     backPathRoute?: string,
   ): NavBarItem {
     const routerLink =
-      (backPathRoute ? backPathRoute : '') + '/' + routeEnv.path;
+      (backPathRoute ? backPathRoute : "") + "/" + routeEnv.path;
     const visible =
       routeEnv.enable &&
       this.isAuthenticated &&

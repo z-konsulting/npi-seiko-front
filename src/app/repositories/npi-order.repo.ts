@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import {
-  NpiOrder2 as NpiOrderSdk,
-  NpiOrder,
-  NpiOrderCreate,
-  NpiOrderUpdate,
-  NpiOrdersPaginated,
-  NpiOrderSearch,
   ArchivedFilter,
-} from "../../client/costSeiko";
+  NpiOrder,
+  NpiOrder2 as NpiOrderSdk,
+  NpiOrderCreate,
+  NpiOrderSearch,
+  NpiOrdersPaginated,
+  NpiOrderUpdate,
+} from "../../client/npiSeiko";
 import { Observable } from "rxjs";
 import { fromRequest } from "../services/utils/api-utils";
 

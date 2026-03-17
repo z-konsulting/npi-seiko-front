@@ -10,22 +10,13 @@
       <div class="p-field">
         <app-input-container
           [formControlName]="NpiOrderFormField.WORK_ORDER_ID"
-          label="Work Order ID"
+          label="Work Order #"
         ></app-input-container>
       </div>
-    </div>
-    <div class="p-fields-row">
       <div class="p-field">
         <app-input-container
           [formControlName]="NpiOrderFormField.PART_NUMBER"
-          label="Part Number"
-        ></app-input-container>
-      </div>
-      <div class="p-field">
-        <app-input-container
-          [formControlName]="NpiOrderFormField.QUANTITY"
-          label="Quantity"
-          type="number"
+          label="P/N"
         ></app-input-container>
       </div>
     </div>
@@ -42,22 +33,47 @@
           label="Product Name"
         ></app-input-container>
       </div>
+      <div class="p-field">
+        <app-input-container
+          [formControlName]="NpiOrderFormField.QUANTITY"
+          label="Quantity"
+          type="number"
+        ></app-input-container>
+      </div>
     </div>
     <div class="p-fields-row">
       <div class="p-field">
-        <label>Order Date</label>
-        <p-datepicker
+        <label>Order Date <span class="required-indicator">*</span></label>
+        <p-datePicker
           [formControlName]="NpiOrderFormField.ORDER_DATE"
           appendTo="body"
           dateFormat="yy-mm-dd"
           placeholder="Select order date"
-        ></p-datepicker>
+        ></p-datePicker>
+      </div>
+      <div class="p-field">
+        <label>Target Delivery Date</label>
+        <p-datePicker
+          [formControlName]="NpiOrderFormField.TARGET_DELIVERY_DATE"
+          appendTo="body"
+          dateFormat="yy-mm-dd"
+          placeholder="Select target delivery date"
+        ></p-datePicker>
+      </div>
+    </div>
+    <div class="p-fields-row">
+      <div class="p-field">
+        <app-input-container
+          [formControlName]="NpiOrderFormField.PRODUCTION_PLAN_TIME"
+          label="Production Plan Time"
+          type="number"
+        ></app-input-container>
       </div>
       <div class="p-field">
         <app-input-container
-          [formControlName]="NpiOrderFormField.TARGET_DELIVERY_DATE"
-          label="Target Delivery Date"
-          placeholder="e.g. 2025-12-31"
+          [formControlName]="NpiOrderFormField.TESTING_PLAN_TIME"
+          label="Testing Plan Time"
+          type="number"
         ></app-input-container>
       </div>
     </div>

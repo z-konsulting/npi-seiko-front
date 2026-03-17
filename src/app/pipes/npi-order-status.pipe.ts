@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { NpiOrderStatus } from "../../client/costSeiko";
+import { NpiOrderStatus } from "../../client/npiSeiko";
 
 @Pipe({
   name: "npiOrderStatus",

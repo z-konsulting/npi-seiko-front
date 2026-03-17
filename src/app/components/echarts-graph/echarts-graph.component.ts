@@ -3,7 +3,7 @@ import { NgxEchartsDirective } from "ngx-echarts";
 import { SeriesOption } from "echarts/types/dist/echarts";
 import { EChartsOption } from "echarts";
 import { ECharts } from "echarts/core";
-import { Graph, GraphWhisker } from "../../../client/costSeiko";
+import { Graph, GraphWhisker } from "../../../client/npiSeiko";
 import {
   ALL_INDICATORS_COLORS,
   ALL_INDICATORS_COLORS_BOXPLOT_FILLING,

@@ -79,7 +79,7 @@ export enum TableColsTitle {
   OUTSOURCING = "Outsourcing",
   PURCHASE_ORDER_NUMBER = "PO Number",
   WORK_ORDER_ID = "Work Order",
-  PART_NUMBER = "Part Number",
+  PART_NUMBER = "P/N",
   ORDER_DATE = "Order Date",
   TARGET_DELIVERY_DATE = "Target Delivery",
   CUSTOMER_NAME = "Customer",

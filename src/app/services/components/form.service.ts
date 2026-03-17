@@ -9,14 +9,8 @@ import {
 } from "@angular/forms";
 import { NpiOrderFormField } from "../../models/enums/form-field-names/npi-order-form-field";
 import { recordToMap } from "../../models/recordToMap";
-import {
-  NpiOrder,
-  FileInfo,
-  UserRole,
-  UserType,
-} from "../../../client/costSeiko";
+import { NpiOrder } from "../../../client/npiSeiko";
 import { DateFormField } from "../../models/enums/date-form-field";
-import { LeadTimeType } from "../../models/lead-time-type";
 
 @Injectable({
   providedIn: "root",
@@ -57,32 +51,43 @@ export class FormService {
   buildNpiOrderForm(npiOrder?: NpiOrder): FormGroup {
     return this.fb.group({
       [NpiOrderFormField.PURCHASE_ORDER_NUMBER]: new FormControl<string>(
-          npiOrder?.purchaseOrderNumber ?? "",
-          [Validators.required],
+        npiOrder?.purchaseOrderNumber ?? "",
+        [Validators.required],
       ),
       [NpiOrderFormField.WORK_ORDER_ID]: new FormControl<string>(
-          npiOrder?.workOrderId ?? "",
-          [Validators.required],
+        npiOrder?.workOrderId ?? "",
+        [Validators.required],
       ),
       [NpiOrderFormField.PART_NUMBER]: new FormControl<string>(
-          npiOrder?.partNumber ?? "",
-          [Validators.required],
+        npiOrder?.partNumber ?? "",
+        [Validators.required],
       ),
       [NpiOrderFormField.QUANTITY]: new FormControl<number | null>(
-          npiOrder?.quantity ?? null,
-          [Validators.required, Validators.min(1)],
+        npiOrder?.quantity ?? null,
+        [Validators.required, Validators.min(1)],
       ),
       [NpiOrderFormField.ORDER_DATE]: new FormControl<Date | null>(
-          npiOrder?.orderDate ? new Date(npiOrder.orderDate) : null,
+        npiOrder?.orderDate ? new Date(npiOrder.orderDate) : null,
+        [Validators.required],
       ),
-      [NpiOrderFormField.TARGET_DELIVERY_DATE]: new FormControl<string>(
-          npiOrder?.targetDeliveryDate ?? "",
+      [NpiOrderFormField.TARGET_DELIVERY_DATE]: new FormControl<Date | null>(
+        npiOrder?.targetDeliveryDate
+          ? new Date(npiOrder.targetDeliveryDate)
+          : null,
       ),
       [NpiOrderFormField.CUSTOMER_NAME]: new FormControl<string>(
-          npiOrder?.customerName ?? "",
+        npiOrder?.customerName ?? "",
       ),
       [NpiOrderFormField.PRODUCT_NAME]: new FormControl<string>(
-          npiOrder?.productName ?? "",
+        npiOrder?.productName ?? "",
+      ),
+      [NpiOrderFormField.PRODUCTION_PLAN_TIME]: new FormControl<number | null>(
+        null,
+        [Validators.required],
+      ),
+      [NpiOrderFormField.TESTING_PLAN_TIME]: new FormControl<number | null>(
+        null,
+        [Validators.required],
       ),
     });
   }
@@ -123,8 +128,6 @@ export class FormService {
     const moldId = formGroup.get(key)?.value;
     return moldId && moldId.trim() !== "";
   }
-
-
 
   private atLeastOneItemRequired(
     control: AbstractControl,

@@ -17,7 +17,7 @@ import {
   UserWithEmailUpdate,
   UserWithUsernameCreate,
   UserWithUsernameUpdate,
-} from "../../client/costSeiko";
+} from "../../client/npiSeiko";
 import { fromRequest } from "../services/utils/api-utils";
 
 @Injectable({

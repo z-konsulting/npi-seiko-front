@@ -20,7 +20,7 @@ import { Icons } from "../../../models/enums/icons";
 import { UserFormField } from "../../../models/enums/form-field-names/user-form-field";
 import { PasswordModule } from "primeng/password";
 import { RoutingService } from "../../../services/Routing.service";
-import { LoggedUser, LoginDetails } from "../../../../client/costSeiko";
+import { LoggedUser, LoginDetails } from "../../../../client/npiSeiko";
 import { StateParamKey } from "../../../models/enums/stateParamKey";
 import { AccessService } from "../../../services/Access.service";
 

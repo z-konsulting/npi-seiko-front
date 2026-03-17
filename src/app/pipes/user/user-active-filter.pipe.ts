@@ -1,20 +1,20 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { ActiveFilter } from '../../../client/costSeiko';
+import { Pipe, PipeTransform } from "@angular/core";
+import { ActiveFilter } from "../../../client/npiSeiko";
 
 @Pipe({
-  name: 'userActiveFilter',
+  name: "userActiveFilter",
 })
 export class UserActiveFilterPipe implements PipeTransform {
   transform(value: ActiveFilter): string {
     switch (value) {
       case ActiveFilter.ACTIVE_ONLY:
-        return 'Active';
+        return "Active";
       case ActiveFilter.INACTIVE_ONLY:
-        return 'Inactive';
+        return "Inactive";
       case ActiveFilter.ALL:
-        return 'All';
+        return "All";
       default:
-        return 'All';
+        return "All";
     }
   }
 }

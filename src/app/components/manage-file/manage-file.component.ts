@@ -32,7 +32,7 @@ import { FileService } from "../../services/file.service";
 import { Subject, takeUntil } from "rxjs";
 import { Button } from "primeng/button";
 import { ModalService } from "../../services/components/modal.service";
-import { FileInfo } from "../../../client/costSeiko";
+import { FileInfo } from "../../../client/npiSeiko";
 
 export interface FileSelected extends FileInfo {
   selected: boolean;

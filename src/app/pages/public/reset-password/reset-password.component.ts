@@ -19,7 +19,7 @@ import { HandleToastMessageService } from "../../../services/handle-toast-messag
 import { Icons } from "../../../models/enums/icons";
 import { RoutingService } from "../../../services/Routing.service";
 import { RouteId } from "../../../models/enums/routes-id";
-import { UserResetPassword } from "../../../../client/costSeiko";
+import { UserResetPassword } from "../../../../client/npiSeiko";
 import { QueryParamKey } from "../../../models/enums/queryParamKey";
 
 @Component({

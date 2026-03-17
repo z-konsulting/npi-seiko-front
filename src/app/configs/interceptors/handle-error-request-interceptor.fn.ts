@@ -1,16 +1,16 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { catchError, from, switchMap, throwError } from 'rxjs';
-import { inject } from '@angular/core';
-import { HandleToastMessageService } from '../../services/handle-toast-message.service';
-import { Router } from '@angular/router';
-import { AuthenticationService } from '../../security/authentication.service';
-import { CustomErrorCode } from '../../../client/costSeiko';
-import { RoutingService } from '../../services/Routing.service';
-import { RouteId } from '../../models/enums/routes-id';
-import { StateParamKey } from '../../models/enums/stateParamKey';
-import { DialogService } from 'primeng/dynamicdialog';
-import { LoaderService } from '../../services/components/loader.service';
-import { SKIP_ERROR_TOAST } from './http-context-tokens';
+import { HttpInterceptorFn } from "@angular/common/http";
+import { catchError, from, switchMap, throwError } from "rxjs";
+import { inject } from "@angular/core";
+import { HandleToastMessageService } from "../../services/handle-toast-message.service";
+import { Router } from "@angular/router";
+import { AuthenticationService } from "../../security/authentication.service";
+import { CustomErrorCode } from "../../../client/npiSeiko";
+import { RoutingService } from "../../services/Routing.service";
+import { RouteId } from "../../models/enums/routes-id";
+import { StateParamKey } from "../../models/enums/stateParamKey";
+import { DialogService } from "primeng/dynamicdialog";
+import { LoaderService } from "../../services/components/loader.service";
+import { SKIP_ERROR_TOAST } from "./http-context-tokens";
 
 interface ErrorResponse {
   code: string;
@@ -42,15 +42,15 @@ export const handleErrorRequestInterceptorFn: HttpInterceptorFn = (
     }
     toast.errorMessage(
       errorResponse?.message ??
-        'You do not have the necessary authorizations to access this resource.',
+        "You do not have the necessary authorizations to access this resource.",
     );
 
-    auth.storeUserLogged('false');
+    auth.storeUserLogged("false");
 
     router.navigate([RoutingService.fullPathRoute(RouteId.LOGIN)], {
       state: {
         [StateParamKey.DISCONNECTED]: true,
-        [StateParamKey.REASON]: 'session expired',
+        [StateParamKey.REASON]: "session expired",
       },
     });
 
@@ -104,13 +104,13 @@ export const handleErrorRequestInterceptorFn: HttpInterceptorFn = (
       const errorBody = error?.error;
       if (
         errorBody instanceof Blob &&
-        errorBody.type?.includes('application/json')
+        errorBody.type?.includes("application/json")
       ) {
         return transformBlobError(error);
       }
       const errorResponse: ErrorResponse = {
-        code: errorBody?.code ?? error?.code ?? '',
-        message: errorBody?.message ?? error?.message ?? '',
+        code: errorBody?.code ?? error?.code ?? "",
+        message: errorBody?.message ?? error?.message ?? "",
       };
       return handleAllError(errorResponse);
     }),

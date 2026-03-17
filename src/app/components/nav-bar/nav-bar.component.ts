@@ -22,7 +22,7 @@ import { environment } from "../../../environments/environment";
 import { UserRepo } from "../../repositories/user.repo";
 import { HandleToastMessageService } from "../../services/handle-toast-message.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { UserRole } from "../../../client/costSeiko";
+import { UserRole } from "../../../client/npiSeiko";
 import { NoDoubleClickDirective } from "../../directives/no-double-click.directive";
 
 @Component({

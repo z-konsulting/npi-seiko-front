@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { HttpErrorResponse } from '@angular/common/http';
-import { CustomErrorCode } from '../../client/costSeiko';
+import { Injectable } from "@angular/core";
+import { MessageService } from "primeng/api";
+import { HttpErrorResponse } from "@angular/common/http";
+import { CustomErrorCode } from "../../client/npiSeiko";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class HandleToastMessageService {
   constructor(private messageService: MessageService) {}
@@ -14,22 +14,22 @@ export class HandleToastMessageService {
       if (error.status === 0 || error.error instanceof ErrorEvent) {
         // A client-side or network error occurred. Handle it accordingly.
         this.errorMessage(
-          'A network error occurred, please retry again later.',
+          "A network error occurred, please retry again later.",
         );
       } else if (error.status === 400) {
-        this.errorMessage('Invalid request content.');
+        this.errorMessage("Invalid request content.");
       } else if (error.status === 401) {
-        this.errorMessage('Authentication information is invalid.');
+        this.errorMessage("Authentication information is invalid.");
       } else if (error.status === 403) {
         this.errorMessage(
-          'You do not have the necessary authorizations to access this resource.',
+          "You do not have the necessary authorizations to access this resource.",
         );
       } else if (error.status === 404) {
         this.errorMessage(
-          'Sorry, we cannot find the page you are looking for.',
+          "Sorry, we cannot find the page you are looking for.",
         );
       } else if (error.status === 500) {
-        this.errorMessage('Internal server error, please retry again later.');
+        this.errorMessage("Internal server error, please retry again later.");
       } else {
         this.handleErrorWithCodeV2(error);
       }
@@ -46,7 +46,7 @@ export class HandleToastMessageService {
     ) {
       switch (error.error.code) {
         case CustomErrorCode.INVALID_EMAIL_OR_PASSWORD:
-          this.errorMessage('Invalid credentials');
+          this.errorMessage("Invalid credentials");
           break;
         default:
           this.errorMessage(error.error.message);
@@ -63,7 +63,7 @@ export class HandleToastMessageService {
       if (message && code) {
         switch (code) {
           case CustomErrorCode.INVALID_EMAIL_OR_PASSWORD:
-            this.errorMessage('Invalid credentials');
+            this.errorMessage("Invalid credentials");
             break;
           default:
             this.errorMessage(message);
@@ -73,7 +73,7 @@ export class HandleToastMessageService {
         this.handleErrorWithCode(error);
       } else {
         this.errorMessage(
-          'A network error occurred, please retry again later.',
+          "A network error occurred, please retry again later.",
         );
       }
     }
@@ -83,8 +83,8 @@ export class HandleToastMessageService {
     this.messageService.clear();
     this.messageService.add({
       life: 5000,
-      severity: 'error',
-      summary: '',
+      severity: "error",
+      summary: "",
       detail: detail,
     });
   }
@@ -93,8 +93,8 @@ export class HandleToastMessageService {
     this.messageService.clear();
     this.messageService.add({
       life: 3500,
-      severity: 'warn',
-      summary: 'Warning',
+      severity: "warn",
+      summary: "Warning",
       detail: detail,
     });
   }
@@ -103,8 +103,8 @@ export class HandleToastMessageService {
     this.messageService.clear();
     this.messageService.add({
       life: 3500,
-      severity: 'success',
-      summary: 'Success',
+      severity: "success",
+      summary: "Success",
       detail: detail,
     });
   }
@@ -113,8 +113,8 @@ export class HandleToastMessageService {
     this.messageService.clear();
     this.messageService.add({
       life: 3500,
-      severity: 'info',
-      summary: 'Info',
+      severity: "info",
+      summary: "Info",
       detail: detail,
     });
   }

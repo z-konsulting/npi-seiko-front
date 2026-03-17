@@ -18,7 +18,7 @@ import {
   ChartPeriodType,
   Customer,
   IndicatorsBody,
-} from "../../../client/costSeiko";
+} from "../../../client/npiSeiko";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CustomerRepo } from "../../repositories/customer.repo";
 import { EnumTransformerService } from "../../services/components/enum-transformer.service";

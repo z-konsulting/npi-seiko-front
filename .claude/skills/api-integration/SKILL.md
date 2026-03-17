@@ -4,10 +4,10 @@
 
 - Config: `openapi-config/openapi-ts.npi-seiko.config.ts`
 - Swagger spec: `swagger-npi-seiko.yaml`
-- Generated client: `src/client/costSeiko/`
-    - `sdk.gen.ts` - Service classes
-    - `types.gen.ts` - TypeScript interfaces and enums
-    - `client.gen.ts` - Client provider
+- Generated client: `src/client/npiSeiko/`
+  - `sdk.gen.ts` - Service classes
+  - `types.gen.ts` - TypeScript interfaces and enums
+  - `client.gen.ts` - Client provider
 
 ## Client Setup
 
@@ -20,7 +20,7 @@ When backend API changes:
 
 1. Update `swagger-npi-seiko.yaml` with new OpenAPI spec
 2. Run `npm run openapi-ts`
-3. Generated client appears in `src/client/costSeiko/`
+3. Generated client appears in `src/client/npiSeiko/`
 4. Update repositories in `src/app/repositories/` as needed
 
 ```bash
@@ -30,7 +30,7 @@ npm run openapi-ts
 ## Usage in Repositories
 
 ```typescript
-import { fromRequest } from 'src/app/utils/from-request';
+import { fromRequest } from "src/app/utils/from-request";
 
 @Injectable({ providedIn: "root" })
 export class UserRepo {
@@ -40,7 +40,7 @@ export class UserRepo {
     return fromRequest(
       this.userService.searchUsers({
         query: { offset, limit },
-      })
+      }),
     );
   }
 }
@@ -81,7 +81,7 @@ For specific requests where you want to handle errors manually:
 import { SKIP_ERROR_TOAST } from "src/app/configs/interceptors/http-context-tokens";
 
 this.http.get(url, {
-  context: new HttpContext().set(SKIP_ERROR_TOAST, true)
+  context: new HttpContext().set(SKIP_ERROR_TOAST, true),
 });
 ```
 

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { UserRole } from "../../../client/costSeiko";
+import { UserRole } from "../../../client/npiSeiko";
 
 @Pipe({
   name: "userRole",

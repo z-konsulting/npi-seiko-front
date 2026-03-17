@@ -1,16 +1,10 @@
 import { Injectable } from "@angular/core";
 import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
-import {
-  FileInfo,
-  NpiOrder,
-  User,
-} from "../../../client/costSeiko";
+import { NpiOrder } from "../../../client/npiSeiko";
 import { Observable, race, take } from "rxjs";
 import { map } from "rxjs/operators";
-import { FormGroup } from "@angular/forms";
 import { FileSelected } from "../../components/manage-file/manage-file.component";
 import { ManagePreviewFileComponent } from "../../components/manage-preview-file/manage-preview-file.component";
-import { OnlyImportFileDialogComponent } from "../../components/only-import-file-dialog/only-import-file-dialog.component";
 import { NpiOrderCreateEditDialogComponent } from "../../modales/npi-orders/npi-order-create-edit-dialog/npi-order-create-edit-dialog.component";
 
 @Injectable({
@@ -48,7 +42,7 @@ export class ModalService {
       modal: true,
       closable: true,
       resizable: false,
-      width: "65%",
+      width: "75%",
       data: {
         editMode,
         npiOrder,
