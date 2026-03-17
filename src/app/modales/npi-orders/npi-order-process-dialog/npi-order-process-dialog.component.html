@@ -7,10 +7,8 @@
   <div class="process-lines">
     @for (line of proc.lines; track line.uid; let i = $index) {
       <div
-        [class.is-aborted]="line.status === ProcessLineStatus.ABORTED"
         [class.is-completed]="line.status === ProcessLineStatus.COMPLETED"
         [class.is-editable]="editableLineIndices().has(i)"
-        [class.is-editing]="editingLineIndex() === i"
         class="process-line"
       >
         <!-- Line header -->
@@ -24,24 +22,18 @@
               [severity]="line.status | processLineStatus: 'severity'"
               [value]="line.status | processLineStatus"
             />
-            @if (editableLineIndices().has(i) && editingLineIndex() !== i) {
-              <p-button
-                (click)="openEditPanel(i)"
-                [icon]="Icons.PENCIL"
-                [text]="true"
-                label="Change status"
-                size="small"
-              ></p-button>
-            }
-            @if (editingLineIndex() === i) {
-              <p-button
-                (click)="cancelEdit()"
-                [icon]="Icons.TIMES"
-                [text]="true"
-                severity="secondary"
-                size="small"
-              ></p-button>
-            }
+            <p-button
+              (click)="toggleHistory(line)"
+              [class.history-btn--active]="historyLineUid() === line.uid"
+              [icon]="Icons.HISTORY"
+              [pTooltip]="
+                historyLineUid() === line.uid ? 'Hide history' : 'Show history'
+              "
+              [text]="true"
+              severity="secondary"
+              size="small"
+              tooltipPosition="top"
+            ></p-button>
           </div>
         </div>
 
@@ -73,19 +65,68 @@
           </div>
         }
 
-        <!-- Status change panel -->
-        @if (editingLineIndex() === i) {
+        <!-- Status history panel -->
+        @if (historyLineUid() === line.uid) {
+          <div class="history-panel">
+            <p class="panel-instruction">Status history:</p>
+            @if (historyLoading()) {
+              <div class="history-loading">
+                <i [class]="Icons.SPINNER_SPIN"></i>
+                <span>Loading...</span>
+              </div>
+            } @else if (lineHistories().get(line.uid!) ?? []; as history) {
+              @if (history.length === 0) {
+                <p class="history-empty">No history recorded yet.</p>
+              } @else {
+                <div class="history-timeline">
+                  @for (entry of history; track $index) {
+                    <div class="history-entry">
+                      <div class="history-entry-dot"></div>
+                      <div class="history-entry-content">
+                        <p-tag
+                          [severity]="
+                            entry.status! | processLineStatus: 'severity'
+                          "
+                          [value]="entry.status! | processLineStatus"
+                        />
+                        <div class="history-entry-dates">
+                          @if (entry.startDate) {
+                            <span>
+                              <i [class]="Icons.PLAY"></i>
+                              {{ entry.startDate | date: "dd MMM yyyy, HH:mm" }}
+                            </span>
+                          }
+                          @if (entry.endDate) {
+                            <span>
+                              <i [class]="Icons.CHECK"></i>
+                              {{ entry.endDate | date: "dd MMM yyyy, HH:mm" }}
+                            </span>
+                          }
+                        </div>
+                        @if (entry.byUser) {
+                          <span class="history-entry-user">
+                            <i [class]="Icons.USERS"></i>
+                            {{ entry.byUser.login }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            }
+          </div>
+        }
+
+        <!-- Status change area — always visible for editable lines -->
+        @if (editableLineIndices().has(i)) {
           <div class="status-change-panel">
-            <!-- Step 1: available statuses -->
-            @if (!pendingTargetStatus()) {
-              <p class="panel-instruction">Select the new status:</p>
+            <!-- Status buttons (shown unless waiting for extra field confirmation) -->
+            @if (pendingLineIndex() !== i) {
               <div class="status-options">
                 @for (status of availableStatuses(line); track status) {
                   <button
-                    (click)="selectTargetStatus(line, status)"
-                    [class.status-option--aborted]="
-                      status === ProcessLineStatus.ABORTED
-                    "
+                    (click)="selectTargetStatus(line, status, i)"
                     [class.status-option--completed]="
                       status === ProcessLineStatus.COMPLETED
                     "
@@ -104,8 +145,8 @@
               </div>
             }
 
-            <!-- Step 2: extra fields required before confirming -->
-            @if (pendingTargetStatus()) {
+            <!-- Extra fields confirmation step -->
+            @if (pendingLineIndex() === i) {
               <div class="extra-fields">
                 <p class="panel-instruction">
                   Additional info required to set

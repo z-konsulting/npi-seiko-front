@@ -9,6 +9,7 @@ import {
   NpiOrderUpdate,
   OutputProcessLineUpdate,
   Process,
+  ProcessLineStatusesHistory,
   ProcessLineStatusUpdateBody,
 } from "../../client/npiSeiko";
 import { Observable } from "rxjs";
@@ -79,6 +80,17 @@ export class NpiOrderRepo {
         path: { uid },
       }),
     ) as Observable<Process>;
+  }
+
+  getNpiOrderProcessLineHistory(
+    uid: string,
+    lineUid: string,
+  ): Observable<ProcessLineStatusesHistory> {
+    return fromRequest(
+      this.npiOrderService.retrieveNpiOrderStatusesHistory({
+        path: { uid, lineUid },
+      }),
+    ) as Observable<ProcessLineStatusesHistory>;
   }
 
   updateNpiOrderProcessLineStatus(

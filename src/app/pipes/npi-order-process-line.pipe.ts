@@ -24,8 +24,6 @@ export class NpiOrderProcessLinePipe implements PipeTransform {
         return "IN PROGRESS";
       case ProcessLineStatus.COMPLETED:
         return "COMPLETED";
-      case ProcessLineStatus.ABORTED:
-        return "ABORTED";
       default:
         return "";
     }
@@ -41,8 +39,6 @@ export class NpiOrderProcessLinePipe implements PipeTransform {
         return "warn";
       case ProcessLineStatus.COMPLETED:
         return "success";
-      case ProcessLineStatus.ABORTED:
-        return "danger";
       default:
         return "secondary";
     }

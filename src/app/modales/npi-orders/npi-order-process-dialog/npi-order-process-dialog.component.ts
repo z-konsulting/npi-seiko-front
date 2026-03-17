@@ -11,12 +11,15 @@ import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { Button } from "primeng/button";
 import { Tag } from "primeng/tag";
+import { TooltipModule } from "primeng/tooltip";
+import { DatePipe } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   NpiOrder,
   Process,
   ProcessLine,
   ProcessLineStatus,
+  ProcessLineStatusHistory,
   ProcessLineStatusUpdateBody,
 } from "../../../../client/npiSeiko";
 import { BaseModal } from "../../../models/classes/base-modal";
@@ -32,6 +35,8 @@ import { Icons } from "../../../models/enums/icons";
     InputNumberModule,
     Button,
     Tag,
+    TooltipModule,
+    DatePipe,
     NpiOrderProcessLinePipe,
   ],
   templateUrl: "./npi-order-process-dialog.component.html",
@@ -45,22 +50,28 @@ export class NpiOrderProcessDialogComponent
   npiOrder = signal<NpiOrder | undefined>(undefined);
   process = signal<Process | undefined>(undefined);
   loading = signal<boolean>(true);
-  /** Index of the line currently in status-change mode */
-  editingLineIndex = signal<number | null>(null);
-  /** The target status the user selected (before confirming with extra fields) */
+
+  /** Index of the line currently in the extra-fields confirmation step */
+  pendingLineIndex = signal<number | null>(null);
+  /** Target status waiting for extra field confirmation */
   pendingTargetStatus = signal<ProcessLineStatus | null>(null);
   /** Extra field values */
   pendingLatestDeliveryDate: Date | null = null;
   pendingRemainingTime: number | null = null;
+
+  /** UID of the line whose history panel is currently open */
+  historyLineUid = signal<string | null>(null);
+  /** Cached histories per line UID */
+  lineHistories = signal<Map<string, ProcessLineStatusHistory[]>>(new Map());
+  /** Whether a history fetch is in progress */
+  historyLoading = signal<boolean>(false);
+
   /** Lines that can be edited: first line, or line whose predecessor is COMPLETED */
   editableLineIndices = computed<Set<number>>(() => {
     const lines = this.process()?.lines ?? [];
     const editable = new Set<number>();
     lines.forEach((line, i) => {
-      if (
-        line.status === ProcessLineStatus.COMPLETED ||
-        line.status === ProcessLineStatus.ABORTED
-      ) {
+      if (line.status === ProcessLineStatus.COMPLETED) {
         return;
       }
       if (i === 0 || lines[i - 1].status === ProcessLineStatus.COMPLETED) {
@@ -69,17 +80,28 @@ export class NpiOrderProcessDialogComponent
     });
     return editable;
   });
+
   protected readonly ProcessLineStatus = ProcessLineStatus;
   protected readonly Icons = Icons;
+
   private npiOrderRepo = inject(NpiOrderRepo);
 
   availableStatuses(line: ProcessLine): ProcessLineStatus[] {
-    return [
+    const all = [
       ProcessLineStatus.NOT_STARTED,
       ProcessLineStatus.IN_PROGRESS,
       ProcessLineStatus.COMPLETED,
-      ProcessLineStatus.ABORTED,
     ].filter((s) => s !== line.status);
+
+    // Lines requiring extra fields on IN_PROGRESS must go through IN_PROGRESS first
+    if (
+      line.status === ProcessLineStatus.NOT_STARTED &&
+      (line.isMaterialPurchase || line.isProduction || line.isTesting)
+    ) {
+      return all.filter((s) => s !== ProcessLineStatus.COMPLETED);
+    }
+
+    return all;
   }
 
   requiresExtraFields(
@@ -104,7 +126,10 @@ export class NpiOrderProcessDialogComponent
   canConfirmPending(line: ProcessLine): boolean {
     const target = this.pendingTargetStatus();
     if (!target) return false;
-    if (line.isMaterialPurchase && target === ProcessLineStatus.IN_PROGRESS) {
+    if (
+      line.isMaterialPurchase &&
+      target === ProcessLineStatus.IN_PROGRESS
+    ) {
       return this.pendingLatestDeliveryDate !== null;
     }
     if (
@@ -121,22 +146,16 @@ export class NpiOrderProcessDialogComponent
     this.loadProcess();
   }
 
-  openEditPanel(index: number): void {
-    if (this.editingLineIndex() === index) {
-      this.cancelEdit();
-      return;
-    }
-    this.editingLineIndex.set(index);
-    this.pendingTargetStatus.set(null);
-    this.pendingLatestDeliveryDate = null;
-    this.pendingRemainingTime = null;
-  }
-
-  selectTargetStatus(line: ProcessLine, status: ProcessLineStatus): void {
+  selectTargetStatus(
+    line: ProcessLine,
+    status: ProcessLineStatus,
+    lineIndex: number,
+  ): void {
     if (!this.requiresExtraFields(line, status)) {
       this.doUpdateStatus(line, status);
       return;
     }
+    this.pendingLineIndex.set(lineIndex);
     this.pendingTargetStatus.set(status);
     this.pendingLatestDeliveryDate = null;
     this.pendingRemainingTime = null;
@@ -149,13 +168,41 @@ export class NpiOrderProcessDialogComponent
   }
 
   backToStatusSelection(): void {
+    this.pendingLineIndex.set(null);
     this.pendingTargetStatus.set(null);
     this.pendingLatestDeliveryDate = null;
     this.pendingRemainingTime = null;
   }
 
-  cancelEdit(): void {
-    this.editingLineIndex.set(null);
+  toggleHistory(line: ProcessLine): void {
+    const lineUid = line.uid!;
+    if (this.historyLineUid() === lineUid) {
+      this.historyLineUid.set(null);
+      return;
+    }
+    this.historyLineUid.set(lineUid);
+    if (this.lineHistories().has(lineUid)) {
+      return;
+    }
+    this.historyLoading.set(true);
+    this.npiOrderRepo
+      .getNpiOrderProcessLineHistory(this.npiOrder()!.uid, lineUid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (history) => {
+          const updated = new Map(this.lineHistories());
+          updated.set(lineUid, history);
+          this.lineHistories.set(updated);
+          this.historyLoading.set(false);
+        },
+        error: () => {
+          this.historyLoading.set(false);
+        },
+      });
+  }
+
+  private clearPending(): void {
+    this.pendingLineIndex.set(null);
     this.pendingTargetStatus.set(null);
     this.pendingLatestDeliveryDate = null;
     this.pendingRemainingTime = null;
@@ -205,7 +252,7 @@ export class NpiOrderProcessDialogComponent
             );
             this.process.set({ ...current, lines: updatedLines });
           }
-          this.cancelEdit();
+          this.clearPending();
           if (result.processIsCompleted) {
             this.handleMessage.successMessage("NPI process completed!");
             this.closeDialog(true);
