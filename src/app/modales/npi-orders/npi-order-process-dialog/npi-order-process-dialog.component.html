@@ -26,7 +26,9 @@
         (click)="toggleHistory(line)"
         [class.history-btn--active]="historyLineUid() === line.uid"
         [icon]="Icons.HISTORY"
-        [pTooltip]="historyLineUid() === line.uid ? 'Hide history' : 'Show history'"
+        [pTooltip]="
+          historyLineUid() === line.uid ? 'Hide history' : 'Show history'
+        "
         [text]="true"
         severity="secondary"
         size="small"
@@ -36,6 +38,7 @@
         <p-button
           (click)="toggleEditMode(line)"
           [class.history-btn--active]="editingLineUid() === line.uid"
+          [disabled]="hasRemainingTimeEditorOpen()"
           [icon]="Icons.PENCIL"
           [text]="true"
           pTooltip="Edit"
@@ -44,13 +47,22 @@
           tooltipPosition="top"
         ></p-button>
       }
-      @if (!readonly() && line.status === ProcessLineStatus.IN_PROGRESS && (line.isProduction || line.isTesting)) {
+      @if (!readonly() && line.status === ProcessLineStatus.IN_PROGRESS) {
         <p-button
           (click)="toggleRemainingTime(line)"
           [class.history-btn--active]="remainingTimeLineUid() === line.uid"
           [icon]="Icons.CLOCK"
-          [pTooltip]="remainingTimeLineUid() === line.uid ? 'Cancel' : 'Update remaining time'"
-          [text]="true"
+          [label]="
+            remainingTimeLineUid() === line.uid
+              ? 'Close remaining time'
+              : 'Remaining time'
+          "
+          [outlined]="remainingTimeLineUid() !== line.uid"
+          [pTooltip]="
+            remainingTimeLineUid() === line.uid
+              ? 'Close remaining time editor'
+              : 'Add or update remaining time'
+          "
           severity="secondary"
           size="small"
           tooltipPosition="top"
@@ -64,30 +76,29 @@
      Line metadata row (plan time, remaining, latest delivery)
      ===================================================================== -->
 <ng-template #lineDetailsTpl let-line>
-  @if (
-    line.planTime || line.remainingDuration || line.materialLatestDeliveryDate
-  ) {
-    <div class="line-details">
-      @if (line.planTime) {
-        <span class="line-detail-item">
-          <i [class]="Icons.CALENDAR"></i>
-          Plan: {{ line.planTime }} day(s)
-        </span>
-      }
-      @if (line.remainingDuration) {
-        <span class="line-detail-item">
-          <i [class]="Icons.CLOCK"></i>
-          Remaining: {{ line.remainingDuration }} day(s)
-        </span>
-      }
-      @if (line.materialLatestDeliveryDate) {
-        <span class="line-detail-item">
-          <i [class]="Icons.TRUCK"></i>
-          Latest delivery: {{ line.materialLatestDeliveryDate }}
-        </span>
-      }
-    </div>
-  }
+  <div class="line-details">
+    <p-chip
+      [icon]="Icons.CALENDAR_CLOCK"
+      [label]="
+        line.planTime !== null && line.planTime !== undefined
+          ? 'Plan: ' + line.planTime + ' day(s)'
+          : 'Plan: -'
+      "
+      class="chip--primary small chip--square"
+    ></p-chip>
+    @if (line.remainingDuration) {
+      <span class="line-detail-item">
+        <i [class]="Icons.CLOCK"></i>
+        Remaining: {{ line.remainingDuration }} day(s)
+      </span>
+    }
+    @if (line.materialLatestDeliveryDate) {
+      <span class="line-detail-item">
+        <i [class]="Icons.TRUCK"></i>
+        Latest delivery: {{ line.materialLatestDeliveryDate }}
+      </span>
+    }
+  </div>
 </ng-template>
 
 <!-- =====================================================================
@@ -124,7 +135,7 @@
             <ng-template #opposite let-entry>
               @if (entry.startDate) {
                 <span class="history-date">
-                  {{ entry.startDate | date: "dd MMM yyyy" }}
+                  {{ entry.startDate | date: "dd MMM yyyy - HH:mm" }}
                 </span>
               }
             </ng-template>
@@ -328,11 +339,22 @@
     <div class="status-change-panel">
       <p class="panel-instruction">Reset to:</p>
       <div class="status-options">
-        @for (status of [ProcessLineStatus.NOT_STARTED, ProcessLineStatus.IN_PROGRESS]; track status) {
+        @for (
+          status of [
+            ProcessLineStatus.NOT_STARTED,
+            ProcessLineStatus.IN_PROGRESS,
+          ];
+          track status
+        ) {
           <button
             (click)="selectResetStatus(line, status)"
-            [class.status-option--in-progress]="status === ProcessLineStatus.IN_PROGRESS"
-            [class.status-option--not-started]="status === ProcessLineStatus.NOT_STARTED"
+            [class.status-option--in-progress]="
+              status === ProcessLineStatus.IN_PROGRESS
+            "
+            [class.status-option--not-started]="
+              status === ProcessLineStatus.NOT_STARTED
+            "
+            [disabled]="hasRemainingTimeEditorOpen()"
             class="status-option"
             type="button"
           >
@@ -345,7 +367,7 @@
 </ng-template>
 
 <!-- =====================================================================
-     Remaining time update panel — for IN_PROGRESS production/testing lines
+     Remaining time update panel — for IN_PROGRESS lines
      ===================================================================== -->
 <ng-template #remainingTimeTpl let-line>
   @if (remainingTimeLineUid() === line.uid) {
@@ -389,6 +411,7 @@
           [class.status-option--not-started]="
             status === ProcessLineStatus.NOT_STARTED
           "
+          [disabled]="hasRemainingTimeEditorOpen()"
           class="status-option"
           type="button"
         >

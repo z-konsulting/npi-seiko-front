@@ -59,7 +59,7 @@ export class ModalService {
       modal: true,
       closable: true,
       resizable: false,
-      width: "55%",
+      width: "50rem",
       data: { npiOrder },
     });
     return this.waitForDialogResult<boolean>(this.ref);

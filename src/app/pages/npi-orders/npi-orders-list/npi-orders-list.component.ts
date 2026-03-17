@@ -113,10 +113,8 @@ export class NpiOrdersListComponent
     this.modalService
       .showNpiOrderProcessModal(npiOrder)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((changed?: boolean) => {
-        if (changed) {
-          this.loadData(this.lastTableLazyLoadEvent);
-        }
+      .subscribe(() => {
+        this.loadData(this.lastTableLazyLoadEvent);
       });
   }
 

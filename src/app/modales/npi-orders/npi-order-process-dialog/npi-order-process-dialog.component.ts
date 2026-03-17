@@ -12,6 +12,7 @@ import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { Button } from "primeng/button";
 import { Tag } from "primeng/tag";
+import { Chip } from "primeng/chip";
 import { TooltipModule } from "primeng/tooltip";
 import { TimelineModule } from "primeng/timeline";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -44,6 +45,7 @@ import { environment } from "../../../../environments/environment";
     InputNumberModule,
     Button,
     Tag,
+    Chip,
     TooltipModule,
     TimelineModule,
     DatePipe,
@@ -53,6 +55,7 @@ import { environment } from "../../../../environments/environment";
   templateUrl: "./npi-order-process-dialog.component.html",
   styleUrl: "./npi-order-process-dialog.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [NpiOrderProcessLinePipe],
 })
 export class NpiOrderProcessDialogComponent
   extends BaseModal
@@ -76,6 +79,9 @@ export class NpiOrderProcessDialogComponent
   remainingTimeLineUid = signal<string | null>(null);
   remainingTimeInput: number | null = null;
   updatingRemainingTime = signal<boolean>(false);
+  hasRemainingTimeEditorOpen = computed(
+    () => this.remainingTimeLineUid() !== null,
+  );
 
   /** Import mode for material purchase delivery date */
   importMode = signal<boolean>(false);
@@ -120,6 +126,7 @@ export class NpiOrderProcessDialogComponent
   });
   protected excelUtils = inject(ExcelUtilsService);
   private npiOrderRepo = inject(NpiOrderRepo);
+  private processLineStatusPipe = inject(NpiOrderProcessLinePipe);
 
   availableStatuses(line: ProcessLine): ProcessLineStatus[] {
     const all = [
@@ -172,6 +179,12 @@ export class NpiOrderProcessDialogComponent
     status: ProcessLineStatus,
     lineIndex: number,
   ): void {
+    if (this.hasRemainingTimeEditorOpen()) {
+      this.handleMessage.infoMessage(
+        "Close remaining time editor before changing status",
+      );
+      return;
+    }
     if (!this.requiresExtraFields(line, status)) {
       this.doUpdateStatus(line, status);
       return;
@@ -197,11 +210,23 @@ export class NpiOrderProcessDialogComponent
   }
 
   toggleEditMode(line: ProcessLine): void {
+    if (this.hasRemainingTimeEditorOpen()) {
+      this.handleMessage.infoMessage(
+        "Close remaining time editor before changing status",
+      );
+      return;
+    }
     const uid = line.uid!;
     this.editingLineUid.set(this.editingLineUid() === uid ? null : uid);
   }
 
   selectResetStatus(line: ProcessLine, status: ProcessLineStatus): void {
+    if (this.hasRemainingTimeEditorOpen()) {
+      this.handleMessage.infoMessage(
+        "Close remaining time editor before changing status",
+      );
+      return;
+    }
     this.editingLineUid.set(null);
     this.doUpdateStatus(line, status);
   }
@@ -209,9 +234,10 @@ export class NpiOrderProcessDialogComponent
   toggleRemainingTime(line: ProcessLine): void {
     const uid = line.uid!;
     if (this.remainingTimeLineUid() === uid) {
-      this.remainingTimeLineUid.set(null);
-      this.remainingTimeInput = null;
+      this.closeRemainingTimeEditor();
     } else {
+      this.clearPending();
+      this.editingLineUid.set(null);
       this.remainingTimeLineUid.set(uid);
       this.remainingTimeInput = line.remainingTimeInHours ?? null;
     }
@@ -237,8 +263,7 @@ export class NpiOrderProcessDialogComponent
             );
             this.process.set({ ...current, lines: updatedLines });
           }
-          this.remainingTimeLineUid.set(null);
-          this.remainingTimeInput = null;
+          this.closeRemainingTimeEditor();
           this.updatingRemainingTime.set(false);
           this.handleMessage.successMessage("Remaining time updated");
         },
@@ -305,9 +330,6 @@ export class NpiOrderProcessDialogComponent
       return;
     }
     this.historyLineUid.set(lineUid);
-    if (this.lineHistories().has(lineUid)) {
-      return;
-    }
     this.historyLoading.set(true);
     this.npiOrderRepo
       .getNpiOrderProcessLineHistory(this.npiOrder()!.uid, lineUid)
@@ -338,13 +360,18 @@ export class NpiOrderProcessDialogComponent
     this.importRowDisplay = 1;
   }
 
+  private closeRemainingTimeEditor(): void {
+    this.remainingTimeLineUid.set(null);
+    this.remainingTimeInput = null;
+  }
+
   private handleStatusUpdateSuccess(
     line: ProcessLine,
     targetStatus: ProcessLineStatus,
     updatedLines: ProcessLine[],
   ): void {
     this.handleMessage.successMessage(
-      `${line.processName} updated to ${targetStatus}`,
+      `${line.processName} updated to ${this.processLineStatusPipe.transform(targetStatus)}`,
     );
     const current = this.process();
     if (current) {

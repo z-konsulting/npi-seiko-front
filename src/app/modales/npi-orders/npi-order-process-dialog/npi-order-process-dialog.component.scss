@@ -203,6 +203,8 @@
 
 .history-btn--active {
   color: var(--main-color) !important;
+  border-color: rgba(10, 132, 193, 0.35) !important;
+  background: rgba(10, 132, 193, 0.08) !important;
 }
 
 // --- History panel ---
@@ -436,4 +438,22 @@
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.remaining-time-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.625rem 0;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #92400e;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+
+  i {
+    font-size: 0.72rem;
+  }
 }
