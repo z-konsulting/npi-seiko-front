@@ -6,6 +6,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { DatePipe, NgTemplateOutlet } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -13,7 +14,6 @@ import { Button } from "primeng/button";
 import { Tag } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { TimelineModule } from "primeng/timeline";
-import { DatePipe } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   NpiOrder,
@@ -27,10 +27,12 @@ import { BaseModal } from "../../../models/classes/base-modal";
 import { NpiOrderRepo } from "../../../repositories/npi-order.repo";
 import { NpiOrderProcessLinePipe } from "../../../pipes/npi-order-process-line.pipe";
 import { Icons } from "../../../models/enums/icons";
+import { NpiService } from "../../../services/npi.service";
 
 @Component({
   selector: "app-npi-order-process-dialog",
   imports: [
+    NgTemplateOutlet,
     FormsModule,
     DatePickerModule,
     InputNumberModule,
@@ -52,7 +54,6 @@ export class NpiOrderProcessDialogComponent
   npiOrder = signal<NpiOrder | undefined>(undefined);
   process = signal<Process | undefined>(undefined);
   loading = signal<boolean>(true);
-
   /** Index of the line currently in the extra-fields confirmation step */
   pendingLineIndex = signal<number | null>(null);
   /** Target status waiting for extra field confirmation */
@@ -60,14 +61,12 @@ export class NpiOrderProcessDialogComponent
   /** Extra field values */
   pendingLatestDeliveryDate: Date | null = null;
   pendingRemainingTime: number | null = null;
-
   /** UID of the line whose history panel is currently open */
   historyLineUid = signal<string | null>(null);
   /** Cached histories per line UID */
   lineHistories = signal<Map<string, ProcessLineStatusHistory[]>>(new Map());
   /** Whether a history fetch is in progress */
   historyLoading = signal<boolean>(false);
-
   /** Lines that can be edited: first line, or line whose predecessor is COMPLETED */
   editableLineIndices = computed<Set<number>>(() => {
     const lines = this.process()?.lines ?? [];
@@ -82,10 +81,14 @@ export class NpiOrderProcessDialogComponent
     });
     return editable;
   });
-
   protected readonly ProcessLineStatus = ProcessLineStatus;
   protected readonly Icons = Icons;
-
+  protected npiService = inject(NpiService);
+  readonly = computed(() => {
+    const status = this.npiOrder()?.status;
+    if (!status) return true;
+    return this.npiService.isFinalOrder(status!);
+  });
   private npiOrderRepo = inject(NpiOrderRepo);
 
   availableStatuses(line: ProcessLine): ProcessLineStatus[] {
@@ -128,10 +131,7 @@ export class NpiOrderProcessDialogComponent
   canConfirmPending(line: ProcessLine): boolean {
     const target = this.pendingTargetStatus();
     if (!target) return false;
-    if (
-      line.isMaterialPurchase &&
-      target === ProcessLineStatus.IN_PROGRESS
-    ) {
+    if (line.isMaterialPurchase && target === ProcessLineStatus.IN_PROGRESS) {
       return this.pendingLatestDeliveryDate !== null;
     }
     if (

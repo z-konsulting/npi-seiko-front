@@ -1,8 +1,250 @@
-@if (loading()) {
+<!-- =====================================================================
+     Loading state
+     ===================================================================== -->
+<ng-template #loadingTpl>
   <div class="process-loading">
     <i [class]="Icons.SPINNER_SPIN"></i>
     <span>Loading process...</span>
   </div>
+</ng-template>
+
+<!-- =====================================================================
+     Line header (index badge + name + status tag + history button)
+     ===================================================================== -->
+<ng-template #lineHeaderTpl let-i="index" let-line>
+  <div class="line-header">
+    <div class="line-identity">
+      <span class="line-index">{{ i + 1 }}</span>
+      <span class="line-name">{{ line.processName }}</span>
+    </div>
+    <div class="line-meta">
+      <p-tag
+        [severity]="line.status | processLineStatus: 'severity'"
+        [value]="line.status | processLineStatus"
+      />
+      <p-button
+        (click)="toggleHistory(line)"
+        [class.history-btn--active]="historyLineUid() === line.uid"
+        [icon]="Icons.HISTORY"
+        [pTooltip]="
+          historyLineUid() === line.uid ? 'Hide history' : 'Show history'
+        "
+        [text]="true"
+        severity="secondary"
+        size="small"
+        tooltipPosition="top"
+      ></p-button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- =====================================================================
+     Line metadata row (plan time, remaining, latest delivery)
+     ===================================================================== -->
+<ng-template #lineDetailsTpl let-line>
+  @if (
+    line.planTime || line.remainingDuration || line.materialLatestDeliveryDate
+  ) {
+    <div class="line-details">
+      @if (line.planTime) {
+        <span class="line-detail-item">
+          <i [class]="Icons.CALENDAR"></i>
+          Plan: {{ line.planTime }} day(s)
+        </span>
+      }
+      @if (line.remainingDuration) {
+        <span class="line-detail-item">
+          <i [class]="Icons.CLOCK"></i>
+          Remaining: {{ line.remainingDuration }} day(s)
+        </span>
+      }
+      @if (line.materialLatestDeliveryDate) {
+        <span class="line-detail-item">
+          <i [class]="Icons.TRUCK"></i>
+          Latest delivery: {{ line.materialLatestDeliveryDate }}
+        </span>
+      }
+    </div>
+  }
+</ng-template>
+
+<!-- =====================================================================
+     Status history panel
+     ===================================================================== -->
+<ng-template #historyPanelTpl let-line>
+  @if (historyLineUid() === line.uid) {
+    <div class="history-panel">
+      <p class="panel-instruction">Status history:</p>
+      @if (historyLoading()) {
+        <div class="history-loading">
+          <i [class]="Icons.SPINNER_SPIN"></i>
+          <span>Loading...</span>
+        </div>
+      } @else if (lineHistories().get(line.uid!) ?? []; as history) {
+        @if (history.length === 0) {
+          <p class="history-empty">No history recorded yet.</p>
+        } @else {
+          <p-timeline [value]="history" align="right" class="history-timeline">
+            <ng-template #marker let-entry>
+              <span
+                [class.history-marker--completed]="
+                  entry.status === ProcessLineStatus.COMPLETED
+                "
+                [class.history-marker--in-progress]="
+                  entry.status === ProcessLineStatus.IN_PROGRESS
+                "
+                [class.history-marker--not-started]="
+                  entry.status === ProcessLineStatus.NOT_STARTED
+                "
+                class="history-marker"
+              ></span>
+            </ng-template>
+            <ng-template #opposite let-entry>
+              @if (entry.startDate) {
+                <span class="history-date">
+                  {{ entry.startDate | date: "dd MMM yyyy" }}
+                </span>
+              }
+            </ng-template>
+            <ng-template #content let-entry>
+              <div class="history-entry-content">
+                <p-tag
+                  [severity]="entry.status! | processLineStatus: 'severity'"
+                  [value]="entry.status! | processLineStatus"
+                />
+                <div class="history-entry-dates">
+                  @if (entry.startDate) {
+                    <span>
+                      <i [class]="Icons.PLAY"></i>
+                      {{ entry.startDate | date: "HH:mm" }}
+                    </span>
+                  }
+                  @if (entry.endDate) {
+                    <span>
+                      <i [class]="Icons.CHECK" class="success"></i>
+                      {{ entry.endDate | date: "dd MMM yyyy, HH:mm" }}
+                    </span>
+                  }
+                </div>
+                @if (entry.byUser) {
+                  <span class="history-entry-user">
+                    <i [class]="Icons.USERS"></i>
+                    {{ entry.byUser.login }}
+                  </span>
+                }
+              </div>
+            </ng-template>
+          </p-timeline>
+        }
+      }
+    </div>
+  }
+</ng-template>
+
+<!-- =====================================================================
+     Extra fields step (material delivery date / remaining time)
+     ===================================================================== -->
+<ng-template #extraFieldsTpl let-i="index" let-line>
+  @if (pendingLineIndex() === i) {
+    <div class="extra-fields">
+      <p class="panel-instruction">
+        Additional info required to set
+        <strong>{{ pendingTargetStatus()! | processLineStatus }}</strong
+        >:
+      </p>
+
+      @if (
+        line.isMaterialPurchase &&
+        pendingTargetStatus() === ProcessLineStatus.IN_PROGRESS
+      ) {
+        <div class="extra-field">
+          <label>
+            Latest Delivery Date
+            <span class="required-indicator">*</span>
+          </label>
+          <p-datePicker
+            (ngModelChange)="pendingLatestDeliveryDate = $event"
+            [ngModel]="pendingLatestDeliveryDate"
+            appendTo="body"
+            dateFormat="yy-mm-dd"
+            placeholder="Select latest delivery date"
+          ></p-datePicker>
+        </div>
+      }
+
+      @if (
+        (line.isProduction || line.isTesting) &&
+        pendingTargetStatus() === ProcessLineStatus.IN_PROGRESS
+      ) {
+        <div class="extra-field">
+          <label>
+            Remaining Time (days)
+            <span class="required-indicator">*</span>
+          </label>
+          <p-inputNumber
+            (ngModelChange)="pendingRemainingTime = $event"
+            [min]="0"
+            [ngModel]="pendingRemainingTime"
+            placeholder="Enter remaining days"
+          ></p-inputNumber>
+        </div>
+      }
+
+      <div class="extra-fields-actions">
+        <p-button
+          (click)="backToStatusSelection()"
+          [icon]="Icons.ARROW_LEFT"
+          [text]="true"
+          label="Back"
+          severity="secondary"
+          size="small"
+        ></p-button>
+        <p-button
+          (click)="confirmPendingUpdate(line)"
+          [disabled]="!canConfirmPending(line)"
+          [icon]="Icons.CHECK"
+          label="Confirm"
+          severity="success"
+          size="small"
+        ></p-button>
+      </div>
+    </div>
+  }
+</ng-template>
+
+<!-- =====================================================================
+     Status buttons row (shown unless extra fields step is active)
+     ===================================================================== -->
+<ng-template #statusOptionsTpl let-i="index" let-line>
+  @if (pendingLineIndex() !== i) {
+    <div class="status-options">
+      @for (status of availableStatuses(line); track status) {
+        <button
+          (click)="selectTargetStatus(line, status, i)"
+          [class.status-option--completed]="
+            status === ProcessLineStatus.COMPLETED
+          "
+          [class.status-option--in-progress]="
+            status === ProcessLineStatus.IN_PROGRESS
+          "
+          [class.status-option--not-started]="
+            status === ProcessLineStatus.NOT_STARTED
+          "
+          class="status-option"
+          type="button"
+        >
+          {{ status | processLineStatus }}
+        </button>
+      }
+    </div>
+  }
+</ng-template>
+
+<!-- =====================================================================
+     Root template
+     ===================================================================== -->
+@if (loading()) {
+  <ng-container *ngTemplateOutlet="loadingTpl"></ng-container>
 } @else if (process(); as proc) {
   <div class="process-lines">
     @for (line of proc.lines; track line.uid; let i = $index) {
@@ -11,226 +253,35 @@
         [class.is-editable]="editableLineIndices().has(i)"
         class="process-line"
       >
-        <!-- Line header -->
-        <div class="line-header">
-          <div class="line-identity">
-            <span class="line-index">{{ i + 1 }}</span>
-            <span class="line-name">{{ line.processName }}</span>
-          </div>
-          <div class="line-meta">
-            <p-tag
-              [severity]="line.status | processLineStatus: 'severity'"
-              [value]="line.status | processLineStatus"
-            />
-            <p-button
-              (click)="toggleHistory(line)"
-              [class.history-btn--active]="historyLineUid() === line.uid"
-              [icon]="Icons.HISTORY"
-              [pTooltip]="
-                historyLineUid() === line.uid ? 'Hide history' : 'Show history'
-              "
-              [text]="true"
-              severity="secondary"
-              size="small"
-              tooltipPosition="top"
-            ></p-button>
-          </div>
-        </div>
+        <ng-container
+          *ngTemplateOutlet="
+            lineHeaderTpl;
+            context: { $implicit: line, index: i }
+          "
+        ></ng-container>
 
-        <!-- Line metadata -->
-        @if (
-          line.planTime ||
-          line.remainingDuration ||
-          line.materialLatestDeliveryDate
-        ) {
-          <div class="line-details">
-            @if (line.planTime) {
-              <span class="line-detail-item">
-                <i [class]="Icons.CALENDAR"></i>
-                Plan: {{ line.planTime }} day(s)
-              </span>
-            }
-            @if (line.remainingDuration) {
-              <span class="line-detail-item">
-                <i [class]="Icons.CLOCK"></i>
-                Remaining: {{ line.remainingDuration }} day(s)
-              </span>
-            }
-            @if (line.materialLatestDeliveryDate) {
-              <span class="line-detail-item">
-                <i [class]="Icons.TRUCK"></i>
-                Latest delivery: {{ line.materialLatestDeliveryDate }}
-              </span>
-            }
-          </div>
-        }
+        <ng-container
+          *ngTemplateOutlet="lineDetailsTpl; context: { $implicit: line }"
+        ></ng-container>
 
-        <!-- Status history panel -->
-        @if (historyLineUid() === line.uid) {
-          <div class="history-panel">
-            <p class="panel-instruction">Status history:</p>
-            @if (historyLoading()) {
-              <div class="history-loading">
-                <i [class]="Icons.SPINNER_SPIN"></i>
-                <span>Loading...</span>
-              </div>
-            } @else if (lineHistories().get(line.uid!) ?? []; as history) {
-              @if (history.length === 0) {
-                <p class="history-empty">No history recorded yet.</p>
-              } @else {
-                <p-timeline [value]="history" align="right" class="history-timeline">
-                  <ng-template #marker let-entry>
-                    <span
-                      [class.history-marker--completed]="
-                        entry.status === ProcessLineStatus.COMPLETED
-                      "
-                      [class.history-marker--in-progress]="
-                        entry.status === ProcessLineStatus.IN_PROGRESS
-                      "
-                      [class.history-marker--not-started]="
-                        entry.status === ProcessLineStatus.NOT_STARTED
-                      "
-                      class="history-marker"
-                    ></span>
-                  </ng-template>
-                  <ng-template #opposite let-entry>
-                    @if (entry.startDate) {
-                      <span class="history-date">
-                        {{ entry.startDate | date: "dd MMM yyyy" }}
-                      </span>
-                    }
-                  </ng-template>
-                  <ng-template #content let-entry>
-                    <div class="history-entry-content">
-                      <p-tag
-                        [severity]="
-                          entry.status! | processLineStatus: 'severity'
-                        "
-                        [value]="entry.status! | processLineStatus"
-                      />
-                      <div class="history-entry-dates">
-                        @if (entry.startDate) {
-                          <span>
-                            <i [class]="Icons.PLAY"></i>
-                            {{ entry.startDate | date: "HH:mm" }}
-                          </span>
-                        }
-                        @if (entry.endDate) {
-                          <span>
-                            <i [class]="Icons.CHECK" class="success"></i>
-                            {{ entry.endDate | date: "dd MMM yyyy, HH:mm" }}
-                          </span>
-                        }
-                      </div>
-                      @if (entry.byUser) {
-                        <span class="history-entry-user">
-                          <i [class]="Icons.USERS"></i>
-                          {{ entry.byUser.login }}
-                        </span>
-                      }
-                    </div>
-                  </ng-template>
-                </p-timeline>
-              }
-            }
-          </div>
-        }
+        <ng-container
+          *ngTemplateOutlet="historyPanelTpl; context: { $implicit: line }"
+        ></ng-container>
 
-        <!-- Status change area — always visible for editable lines -->
-        @if (editableLineIndices().has(i)) {
+        @if (editableLineIndices().has(i) && !readonly()) {
           <div class="status-change-panel">
-            <!-- Status buttons (shown unless waiting for extra field confirmation) -->
-            @if (pendingLineIndex() !== i) {
-              <div class="status-options">
-                @for (status of availableStatuses(line); track status) {
-                  <button
-                    (click)="selectTargetStatus(line, status, i)"
-                    [class.status-option--completed]="
-                      status === ProcessLineStatus.COMPLETED
-                    "
-                    [class.status-option--in-progress]="
-                      status === ProcessLineStatus.IN_PROGRESS
-                    "
-                    [class.status-option--not-started]="
-                      status === ProcessLineStatus.NOT_STARTED
-                    "
-                    class="status-option"
-                    type="button"
-                  >
-                    {{ status | processLineStatus }}
-                  </button>
-                }
-              </div>
-            }
-
-            <!-- Extra fields confirmation step -->
-            @if (pendingLineIndex() === i) {
-              <div class="extra-fields">
-                <p class="panel-instruction">
-                  Additional info required to set
-                  <strong>{{
-                    pendingTargetStatus()! | processLineStatus
-                  }}</strong
-                  >:
-                </p>
-
-                @if (
-                  line.isMaterialPurchase &&
-                  pendingTargetStatus() === ProcessLineStatus.IN_PROGRESS
-                ) {
-                  <div class="extra-field">
-                    <label>
-                      Latest Delivery Date
-                      <span class="required-indicator">*</span>
-                    </label>
-                    <p-datePicker
-                      (ngModelChange)="pendingLatestDeliveryDate = $event"
-                      [ngModel]="pendingLatestDeliveryDate"
-                      appendTo="body"
-                      dateFormat="yy-mm-dd"
-                      placeholder="Select latest delivery date"
-                    ></p-datePicker>
-                  </div>
-                }
-
-                @if (
-                  (line.isProduction || line.isTesting) &&
-                  pendingTargetStatus() === ProcessLineStatus.IN_PROGRESS
-                ) {
-                  <div class="extra-field">
-                    <label>
-                      Remaining Time (days)
-                      <span class="required-indicator">*</span>
-                    </label>
-                    <p-inputNumber
-                      (ngModelChange)="pendingRemainingTime = $event"
-                      [min]="0"
-                      [ngModel]="pendingRemainingTime"
-                      placeholder="Enter remaining days"
-                    ></p-inputNumber>
-                  </div>
-                }
-
-                <div class="extra-fields-actions">
-                  <p-button
-                    (click)="backToStatusSelection()"
-                    [icon]="Icons.ARROW_LEFT"
-                    [text]="true"
-                    label="Back"
-                    severity="secondary"
-                    size="small"
-                  ></p-button>
-                  <p-button
-                    (click)="confirmPendingUpdate(line)"
-                    [disabled]="!canConfirmPending(line)"
-                    [icon]="Icons.CHECK"
-                    label="Confirm"
-                    severity="success"
-                    size="small"
-                  ></p-button>
-                </div>
-              </div>
-            }
+            <ng-container
+              *ngTemplateOutlet="
+                statusOptionsTpl;
+                context: { $implicit: line, index: i }
+              "
+            ></ng-container>
+            <ng-container
+              *ngTemplateOutlet="
+                extraFieldsTpl;
+                context: { $implicit: line, index: i }
+              "
+            ></ng-container>
           </div>
         }
       </div>

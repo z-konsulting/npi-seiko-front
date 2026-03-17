@@ -84,4 +84,6 @@ export enum TableColsTitle {
   TARGET_DELIVERY_DATE = "Target Delivery",
   CUSTOMER_NAME = "Customer",
   CURRENT_PROCESS_STEP = "Current Step",
+  PLANNED_DELIVERY_DATE = "Planned",
+  FORECAST_DELIVERY_DATE = "Forecast",
 }

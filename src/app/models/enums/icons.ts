@@ -86,4 +86,5 @@ export enum Icons {
   LOCK = "pi pi-lock",
   LIST_CHECK = "pi pi-list-check",
   ARROW_LEFT = "pi pi-arrow-left",
+  CHART_LINE = "pi pi-chart-line",
 }

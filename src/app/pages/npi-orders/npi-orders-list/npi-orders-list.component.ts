@@ -15,11 +15,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { HandleToastMessageService } from "../../../services/handle-toast-message.service";
 import { ModalService } from "../../../services/components/modal.service";
 import { CustomTitleComponent } from "../../../components/custom-title/custom-title.component";
-import {
-  NpiOrder,
-  NpiOrdersPaginated,
-  NpiOrderStatus,
-} from "../../../../client/npiSeiko";
+import { NpiOrder, NpiOrdersPaginated } from "../../../../client/npiSeiko";
 import { NoDoubleClickDirective } from "../../../directives/no-double-click.directive";
 import { BaseListComponent } from "../../../models/classes/base-list-component";
 import { NpiOrderRepo } from "../../../repositories/npi-order.repo";
@@ -31,6 +27,7 @@ import { NpiOrderStatusPipe } from "../../../pipes/npi-order-status.pipe";
 import { Tag } from "primeng/tag";
 import { switchMap } from "rxjs";
 import { Chip } from "primeng/chip";
+import { NpiService } from "../../../services/npi.service";
 
 @Component({
   selector: "app-npi-orders-list",
@@ -59,8 +56,7 @@ export class NpiOrdersListComponent
 
   protected readonly TableColsTitle = TableColsTitle;
   protected readonly Icons = Icons;
-  protected readonly NpiOrderStatus = NpiOrderStatus;
-
+  protected npiService = inject(NpiService);
   private npiOrderRepo = inject(NpiOrderRepo);
   private handleMessage = inject(HandleToastMessageService);
   private modalService = inject(ModalService);
@@ -136,12 +132,5 @@ export class NpiOrdersListComponent
           this.loadData(this.lastTableLazyLoadEvent);
         },
       });
-  }
-
-  canAbort(npiOrder: NpiOrder): boolean {
-    return (
-      npiOrder.status === NpiOrderStatus.READY_TO_PRODUCTION ||
-      npiOrder.status === NpiOrderStatus.STARTED
-    );
   }
 }

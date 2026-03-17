@@ -44,6 +44,8 @@
         <th>{{ TableColsTitle.CUSTOMER_NAME }}</th>
         <th>{{ TableColsTitle.TARGET_DELIVERY_DATE }}</th>
         <th>{{ TableColsTitle.CURRENT_PROCESS_STEP }}</th>
+        <th>{{ TableColsTitle.PLANNED_DELIVERY_DATE }}</th>
+        <th>{{ TableColsTitle.FORECAST_DELIVERY_DATE }}</th>
         <th class="col-actions">{{ TableColsTitle.ACTIONS }}</th>
       </tr>
     </ng-template>
@@ -71,12 +73,50 @@
           ></p-chip>
         </td>
 
+        <td>
+          @if (npiOrder.plannedDeliveryDate) {
+            <p-chip
+              [icon]="Icons.CALENDAR_CLOCK"
+              [label]="npiOrder.plannedDeliveryDate"
+              class="chip--primary small chip--square"
+            ></p-chip>
+          } @else {
+            <span class="text-secondary">—</span>
+          }
+        </td>
+
+        <td>
+          @if (npiOrder.forecastDeliveryDate) {
+            <p-chip
+              [class]="
+                npiOrder.targetDeliveryDate &&
+                npiOrder.forecastDeliveryDate > npiOrder.targetDeliveryDate
+                  ? 'chip--warn small chip--square'
+                  : 'chip--success small chip--square'
+              "
+              [icon]="Icons.CHART_LINE"
+              [label]="npiOrder.forecastDeliveryDate"
+            ></p-chip>
+          } @else {
+            <span class="text-secondary">—</span>
+          }
+        </td>
+
         <td class="col-actions">
           <p-button
             (click)="editNpiOrder(npiOrder)"
-            [icon]="Icons.PENCIL"
+            [icon]="
+              npiService.isFinalOrder(npiOrder.status)
+                ? Icons.EYE
+                : Icons.PENCIL
+            "
+            [pTooltip]="
+              npiService.isFinalOrder(npiOrder.status) ? 'View' : 'Edit'
+            "
+            [severity]="
+              npiService.isFinalOrder(npiOrder.status) ? 'success' : 'primary'
+            "
             [text]="true"
-            pTooltip="Edit"
             tooltipPosition="top"
           ></p-button>
           <p-button
@@ -86,7 +126,7 @@
             pTooltip="Manage Process"
             tooltipPosition="top"
           ></p-button>
-          @if (canAbort(npiOrder)) {
+          @if (npiService.canAbort(npiOrder.status)) {
             <p-button
               (onClick)="abortNpiOrder(npiOrder)"
               [delay]="2000"
@@ -103,7 +143,7 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr class="p-datatable-emptymessage">
-        <td colspan="9">No data</td>
+        <td colspan="11">No data</td>
       </tr>
     </ng-template>
   </p-table>

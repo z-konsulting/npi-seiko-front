@@ -1,0 +1,20 @@
+import { Injectable } from "@angular/core";
+import { NpiOrderStatus } from "../../client/npiSeiko";
+
+@Injectable({
+  providedIn: "root",
+})
+export class NpiService {
+  canAbort(status: NpiOrderStatus): boolean {
+    return (
+      status === NpiOrderStatus.READY_TO_PRODUCTION ||
+      status === NpiOrderStatus.STARTED
+    );
+  }
+
+  isFinalOrder(status: NpiOrderStatus): boolean {
+    return (
+      status === NpiOrderStatus.COMPLETED || status === NpiOrderStatus.ABORTED
+    );
+  }
+}
