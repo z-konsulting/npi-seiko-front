@@ -81,36 +81,41 @@ export class FormService {
       [NpiOrderFormField.PRODUCT_NAME]: new FormControl<string>(
         npiOrder?.productName ?? "",
       ),
-      [NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_HOURS]:
-        new FormControl<number | null>(null, [
-          Validators.required,
-          Validators.min(0),
-        ]),
+      [NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_HOURS]: new FormControl<
+        number | null
+      >(npiOrder?.materialPurchasePlanTimeInHours ?? null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
       [NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_HOURS]:
-        new FormControl<number | null>(null, [
-          Validators.required,
-          Validators.min(0),
-        ]),
-      [NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_HOURS]:
-        new FormControl<number | null>(null, [
-          Validators.required,
-          Validators.min(0),
-        ]),
-      [NpiOrderFormField.TESTING_PLAN_TIME_IN_HOURS]:
-        new FormControl<number | null>(null, [
-          Validators.required,
-          Validators.min(0),
-        ]),
-      [NpiOrderFormField.SHIPPING_PLAN_TIME_IN_HOURS]:
-        new FormControl<number | null>(null, [
-          Validators.required,
-          Validators.min(0),
-        ]),
-      [NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_HOURS]:
-        new FormControl<number | null>(null, [
-          Validators.required,
-          Validators.min(0),
-        ]),
+        new FormControl<number | null>(
+          npiOrder?.materialReceivingPlanTimeInHours ?? null,
+          [Validators.required, Validators.min(0)],
+        ),
+      [NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_HOURS]: new FormControl<
+        number | null
+      >(npiOrder?.productionPlanTimeInHours ?? null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
+      [NpiOrderFormField.TESTING_PLAN_TIME_IN_HOURS]: new FormControl<
+        number | null
+      >(npiOrder?.testingPlanTimeInHours ?? null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
+      [NpiOrderFormField.SHIPPING_PLAN_TIME_IN_HOURS]: new FormControl<
+        number | null
+      >(npiOrder?.shippingPlanTimeInHours ?? null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
+      [NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_HOURS]: new FormControl<
+        number | null
+      >(npiOrder?.customerApprovalPlanTimeInHours ?? null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
     });
   }
 

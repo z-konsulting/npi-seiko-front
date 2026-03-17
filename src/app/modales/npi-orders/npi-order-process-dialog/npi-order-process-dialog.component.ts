@@ -37,6 +37,7 @@ import { ManageFileComponent } from "../../../components/manage-file/manage-file
 import { ExcelUtilsService } from "../../../services/utils/excel-utils.service";
 import { environment } from "../../../../environments/environment";
 import { RegexPatterns } from "../../../services/utils/regex-patterns";
+import { NoDoubleClickDirective } from "../../../directives/no-double-click.directive";
 
 @Component({
   selector: "app-npi-order-process-dialog",
@@ -53,6 +54,7 @@ import { RegexPatterns } from "../../../services/utils/regex-patterns";
     DatePipe,
     NpiOrderProcessLinePipe,
     ManageFileComponent,
+    NoDoubleClickDirective,
   ],
   templateUrl: "./npi-order-process-dialog.component.html",
   styleUrl: "./npi-order-process-dialog.component.scss",
@@ -434,6 +436,11 @@ export class NpiOrderProcessDialogComponent
       });
   }
 
+  public closeRemainingTimeEditor(): void {
+    this.remainingTimeLineUid.set(null);
+    this.remainingTimeInput = null;
+  }
+
   private clearPending(): void {
     this.pendingLineIndex.set(null);
     this.pendingTargetStatus.set(null);
@@ -450,11 +457,6 @@ export class NpiOrderProcessDialogComponent
     this.importSheetDisplay = 1;
     this.importColumnDisplay = 1;
     this.importRowDisplay = 1;
-  }
-
-  private closeRemainingTimeEditor(): void {
-    this.remainingTimeLineUid.set(null);
-    this.remainingTimeInput = null;
   }
 
   private handleStatusUpdateSuccess(

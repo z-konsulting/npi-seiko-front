@@ -86,6 +86,16 @@
       "
       class="chip--primary small chip--square"
     ></p-chip>
+    @if (
+      line.remainingTimeInHours !== null &&
+      line.remainingTimeInHours !== undefined
+    ) {
+      <p-chip
+        [icon]="Icons.CLOCK"
+        [label]="'Remaining: ' + line.remainingTimeInHours + ' h'"
+        class="chip--warn small chip--square"
+      ></p-chip>
+    }
     @if (line.remainingDuration) {
       <span class="line-detail-item">
         <i [class]="Icons.CLOCK"></i>
@@ -526,16 +536,24 @@
       <div class="remaining-time-row">
         <p-inputNumber
           [(ngModel)]="remainingTimeInput"
-          [min]="0"
           placeholder="Hours"
         ></p-inputNumber>
         <p-button
-          (click)="confirmRemainingTimeUpdate(line)"
+          (onClick)="confirmRemainingTimeUpdate(line)"
           [disabled]="remainingTimeInput === null"
           [icon]="Icons.CHECK"
           [loading]="updatingRemainingTime()"
+          appNoDoubleClick
           label="Update"
           severity="success"
+          size="small"
+        ></p-button>
+        <p-button
+          (onClick)="closeRemainingTimeEditor()"
+          [icon]="Icons.TIMES"
+          [loading]="updatingRemainingTime()"
+          label="Close"
+          severity="secondary"
           size="small"
         ></p-button>
       </div>
