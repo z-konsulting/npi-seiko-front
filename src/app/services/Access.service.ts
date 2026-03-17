@@ -50,7 +50,7 @@ export class AccessService {
    */
   public static getHomeRouteId(role: UserRole): RouteId {
     if (this.isSuperAdmin(role) || this.isAdministrator(role))
-      return RouteId.NPI_ORDERS;
-    return RouteId.NPI_ORDERS;
+      return RouteId.DASHBOARD;
+    return RouteId.DASHBOARD;
   }
 }
