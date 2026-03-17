@@ -16,6 +16,7 @@ import { Chip } from "primeng/chip";
 import { TooltipModule } from "primeng/tooltip";
 import { TimelineModule } from "primeng/timeline";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { firstValueFrom } from "rxjs";
 import {
   FileInfo,
   NpiOrder,
@@ -73,6 +74,17 @@ export class NpiOrderProcessDialogComponent
   pendingLatestDeliveryDate: Date | null = null;
   /** Manual date for shipment completion */
   pendingShippingDate: Date | null = null;
+  /** Customer approval start date (when moving to IN_PROGRESS) */
+  pendingStartingCustomerApprovalDate: Date | null = null;
+  /** Customer approval final date (when decision is YES) */
+  pendingApprovalCustomerDate: Date | null = null;
+  /** Decision when customer approval is completed */
+  pendingCustomerApprovalDecision: "YES" | "NO" | null = null;
+  /** Action chosen when customer approval decision is NO */
+  pendingCustomerApprovalNoAction:
+    | "RETURN_TO_MATERIAL_PURCHASE"
+    | "ABORT_NPI"
+    | null = null;
 
   /** UID of the line currently in edit (reset) mode */
   editingLineUid = signal<string | null>(null);
@@ -140,7 +152,7 @@ export class NpiOrderProcessDialogComponent
     // Lines requiring extra fields on IN_PROGRESS must go through IN_PROGRESS first
     if (
       line.status === ProcessLineStatus.NOT_STARTED &&
-      line.isMaterialPurchase
+      (line.isMaterialPurchase || line.isCustomerApproval)
     ) {
       return all.filter((s) => s !== ProcessLineStatus.COMPLETED);
     }
@@ -156,7 +168,11 @@ export class NpiOrderProcessDialogComponent
     return (
       (!!line.isMaterialPurchase &&
         targetStatus === ProcessLineStatus.IN_PROGRESS) ||
-      (!!line.isShipment && targetStatus === ProcessLineStatus.COMPLETED)
+      (!!line.isCustomerApproval &&
+        targetStatus === ProcessLineStatus.IN_PROGRESS) ||
+      (!!line.isShipment && targetStatus === ProcessLineStatus.COMPLETED) ||
+      (!!line.isCustomerApproval &&
+        targetStatus === ProcessLineStatus.COMPLETED)
     );
   }
 
@@ -171,6 +187,21 @@ export class NpiOrderProcessDialogComponent
     }
     if (line.isShipment && target === ProcessLineStatus.COMPLETED) {
       return this.pendingShippingDate !== null;
+    }
+    if (line.isCustomerApproval && target === ProcessLineStatus.IN_PROGRESS) {
+      return this.pendingStartingCustomerApprovalDate !== null;
+    }
+    if (line.isCustomerApproval && target === ProcessLineStatus.COMPLETED) {
+      if (this.pendingCustomerApprovalDecision === null) {
+        return false;
+      }
+      if (this.pendingCustomerApprovalDecision === "YES") {
+        return this.pendingApprovalCustomerDate !== null;
+      }
+      if (this.pendingCustomerApprovalDecision === "NO") {
+        return this.pendingCustomerApprovalNoAction !== null;
+      }
+      return true;
     }
     return true;
   }
@@ -199,6 +230,10 @@ export class NpiOrderProcessDialogComponent
     this.pendingTargetStatus.set(status);
     this.pendingLatestDeliveryDate = null;
     this.pendingShippingDate = null;
+    this.pendingStartingCustomerApprovalDate = null;
+    this.pendingApprovalCustomerDate = null;
+    this.pendingCustomerApprovalDecision = null;
+    this.pendingCustomerApprovalNoAction = null;
     this.importMode.set(false);
     this.importedFileUid.set(null);
     this.importSheetDisplay = 1;
@@ -206,9 +241,13 @@ export class NpiOrderProcessDialogComponent
     this.importRowDisplay = 1;
   }
 
-  confirmPendingUpdate(line: ProcessLine): void {
+  async confirmPendingUpdate(line: ProcessLine): Promise<void> {
     const target = this.pendingTargetStatus();
     if (!target || !this.canConfirmPending(line)) return;
+    if (line.isCustomerApproval && target === ProcessLineStatus.COMPLETED) {
+      await this.handleCustomerApprovalCompletion(line);
+      return;
+    }
     this.doUpdateStatus(line, target);
   }
 
@@ -286,9 +325,20 @@ export class NpiOrderProcessDialogComponent
     this.importedDeliveryDate.set(null);
     this.pendingLatestDeliveryDate = null;
     this.pendingShippingDate = null;
+    this.pendingStartingCustomerApprovalDate = null;
+    this.pendingApprovalCustomerDate = null;
+    this.pendingCustomerApprovalDecision = null;
+    this.pendingCustomerApprovalNoAction = null;
     this.importSheetDisplay = 1;
     this.importColumnDisplay = 1;
     this.importRowDisplay = 1;
+  }
+
+  selectCustomerApprovalDecision(value: "YES" | "NO"): void {
+    this.pendingCustomerApprovalDecision = value;
+    if (value === "YES") {
+      this.pendingCustomerApprovalNoAction = null;
+    }
   }
 
   onTemporaryFileUploaded(event: any): void {
@@ -360,6 +410,10 @@ export class NpiOrderProcessDialogComponent
     this.pendingTargetStatus.set(null);
     this.pendingLatestDeliveryDate = null;
     this.pendingShippingDate = null;
+    this.pendingStartingCustomerApprovalDate = null;
+    this.pendingApprovalCustomerDate = null;
+    this.pendingCustomerApprovalDecision = null;
+    this.pendingCustomerApprovalNoAction = null;
     this.importMode.set(false);
     this.importedFileUid.set(null);
     this.importedDeliveryDate.set(null);
@@ -443,6 +497,26 @@ export class NpiOrderProcessDialogComponent
       body.shippingDate = this.pendingShippingDate.toISOString().split("T")[0];
     }
 
+    if (
+      line.isCustomerApproval &&
+      targetStatus === ProcessLineStatus.IN_PROGRESS &&
+      this.pendingStartingCustomerApprovalDate
+    ) {
+      body.startingCustomerApprovalDate = this.pendingStartingCustomerApprovalDate
+        .toISOString()
+        .split("T")[0];
+    }
+
+    if (
+      line.isCustomerApproval &&
+      targetStatus === ProcessLineStatus.COMPLETED &&
+      this.pendingApprovalCustomerDate
+    ) {
+      body.approvalCustomerDate = this.pendingApprovalCustomerDate
+        .toISOString()
+        .split("T")[0];
+    }
+
     this.npiOrderRepo
       .updateNpiOrderProcessLineStatus(uid, lineUid, body)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -464,5 +538,85 @@ export class NpiOrderProcessDialogComponent
           this.loading.set(false);
         },
       });
+  }
+
+  private async handleCustomerApprovalCompletion(
+    line: ProcessLine,
+  ): Promise<void> {
+    if (this.pendingCustomerApprovalDecision === "YES") {
+      this.doUpdateStatus(line, ProcessLineStatus.COMPLETED);
+      return;
+    }
+
+    if (this.pendingCustomerApprovalNoAction === "ABORT_NPI") {
+      try {
+        this.loading.set(true);
+        await firstValueFrom(this.npiOrderRepo.abortNpiOrder(this.npiOrder()!.uid));
+        this.handleMessage.successMessage("NPI order aborted");
+        this.closeDialog(true);
+      } catch {
+        this.handleMessage.errorMessage("Unable to abort NPI order");
+      } finally {
+        this.loading.set(false);
+      }
+      return;
+    }
+
+    await this.returnToMaterialPurchaseStep();
+  }
+
+  private async returnToMaterialPurchaseStep(): Promise<void> {
+    const currentProcess = this.process();
+    const uid = this.npiOrder()?.uid;
+    if (!currentProcess || !uid) return;
+
+    const materialIndex = currentProcess.lines.findIndex((l) => l.isMaterialPurchase);
+    if (materialIndex < 0) {
+      this.handleMessage.errorMessage("Material purchase step not found");
+      return;
+    }
+
+    try {
+      this.loading.set(true);
+      let updatedLines = currentProcess.lines;
+
+      // Reset all downstream steps to NOT_STARTED from the end to keep transitions consistent.
+      const downstream = [...currentProcess.lines.slice(materialIndex + 1)].reverse();
+      for (const line of downstream) {
+        if (!line.uid || line.status === ProcessLineStatus.NOT_STARTED) continue;
+        updatedLines = await firstValueFrom(
+          this.npiOrderRepo.updateNpiOrderProcessLineStatus(uid, line.uid, {
+            status: ProcessLineStatus.NOT_STARTED,
+          }),
+        );
+      }
+
+      const materialLine = currentProcess.lines[materialIndex];
+      if (materialLine?.uid) {
+        const body: ProcessLineStatusUpdateBody = {
+          status: ProcessLineStatus.IN_PROGRESS,
+        };
+        if (materialLine.materialLatestDeliveryDate) {
+          body.materialLatestDeliveryDate = materialLine.materialLatestDeliveryDate;
+        }
+        updatedLines = await firstValueFrom(
+          this.npiOrderRepo.updateNpiOrderProcessLineStatus(
+            uid,
+            materialLine.uid,
+            body,
+          ),
+        );
+      }
+
+      this.process.set({ ...currentProcess, lines: updatedLines });
+      this.clearPending();
+      this.handleMessage.successMessage("Returned to material purchase step");
+    } catch {
+      this.handleMessage.errorMessage(
+        "Unable to return to material purchase step",
+      );
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

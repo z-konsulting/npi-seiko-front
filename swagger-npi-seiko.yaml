@@ -1269,7 +1269,10 @@ components:
         shippingDate:
           type: string
           format: date
-        customerApprovalDate:
+        startingCustomerApprovalDate:
+          type: string
+          format: date
+        approvalCustomerDate:
           type: string
           format: date
         remainingTimeInHours:
@@ -1306,6 +1309,15 @@ components:
           type: number
           format: double
         materialLatestDeliveryDate:
+          type: string
+          format: date
+        shippingDate:
+          type: string
+          format: date
+        startingCustomerApprovalDate:
+          type: string
+          format: date
+        approvalCustomerDate:
           type: string
           format: date
         planTimeInHours:

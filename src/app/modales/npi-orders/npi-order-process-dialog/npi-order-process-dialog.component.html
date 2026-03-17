@@ -98,6 +98,24 @@
         Latest delivery: {{ line.materialLatestDeliveryDate }}
       </span>
     }
+    @if (line.shippingDate) {
+      <span class="line-detail-item">
+        <i [class]="Icons.TRUCK"></i>
+        Shipping date: {{ line.shippingDate }}
+      </span>
+    }
+    @if (line.startingCustomerApprovalDate) {
+      <span class="line-detail-item">
+        <i [class]="Icons.PLAY"></i>
+        Customer approval start: {{ line.startingCustomerApprovalDate }}
+      </span>
+    }
+    @if (line.approvalCustomerDate) {
+      <span class="line-detail-item">
+        <i [class]="Icons.CHECK"></i>
+        Customer approval date: {{ line.approvalCustomerDate }}
+      </span>
+    }
   </div>
 </ng-template>
 
@@ -326,6 +344,113 @@
             placeholder="Select shipping date"
           ></p-datePicker>
         </div>
+      }
+
+      <!-- Customer approval start -->
+      @if (
+        line.isCustomerApproval &&
+        pendingTargetStatus() === ProcessLineStatus.IN_PROGRESS
+      ) {
+        <div class="extra-field">
+          <label>
+            Starting Customer Approval Date
+            <span class="required-indicator">*</span>
+          </label>
+          <p-datePicker
+            (ngModelChange)="pendingStartingCustomerApprovalDate = $event"
+            [ngModel]="pendingStartingCustomerApprovalDate"
+            appendTo="body"
+            dateFormat="yy-mm-dd"
+            placeholder="Select customer approval start date"
+          ></p-datePicker>
+        </div>
+      }
+
+      <!-- Customer approval completion decision -->
+      @if (
+        line.isCustomerApproval &&
+        pendingTargetStatus() === ProcessLineStatus.COMPLETED
+      ) {
+        <div class="extra-field">
+          <label>
+            Customer decision
+            <span class="required-indicator">*</span>
+          </label>
+          <div class="status-options">
+            <button
+              (click)="selectCustomerApprovalDecision('YES')"
+              [class.status-option--completed]="true"
+              [class.status-option--selected]="
+                pendingCustomerApprovalDecision === 'YES'
+              "
+              class="status-option"
+              type="button"
+            >
+              YES
+            </button>
+            <button
+              (click)="selectCustomerApprovalDecision('NO')"
+              [class.status-option--aborted]="true"
+              [class.status-option--selected]="
+                pendingCustomerApprovalDecision === 'NO'
+              "
+              class="status-option"
+              type="button"
+            >
+              NO
+            </button>
+          </div>
+        </div>
+
+        @if (pendingCustomerApprovalDecision === "YES") {
+          <div class="extra-field">
+            <label>
+              Approval Customer Date
+              <span class="required-indicator">*</span>
+            </label>
+            <p-datePicker
+              (ngModelChange)="pendingApprovalCustomerDate = $event"
+              [ngModel]="pendingApprovalCustomerDate"
+              appendTo="body"
+              dateFormat="yy-mm-dd"
+              placeholder="Select approval customer date"
+            ></p-datePicker>
+          </div>
+        }
+
+        @if (pendingCustomerApprovalDecision === "NO") {
+          <div class="extra-field">
+            <label>
+              Action on NO
+              <span class="required-indicator">*</span>
+            </label>
+            <div class="status-options">
+              <button
+                (click)="pendingCustomerApprovalNoAction = 'RETURN_TO_MATERIAL_PURCHASE'"
+                [class.status-option--not-started]="true"
+                [class.status-option--selected]="
+                  pendingCustomerApprovalNoAction ===
+                  'RETURN_TO_MATERIAL_PURCHASE'
+                "
+                class="status-option"
+                type="button"
+              >
+                Return to material purchase
+              </button>
+              <button
+                (click)="pendingCustomerApprovalNoAction = 'ABORT_NPI'"
+                [class.status-option--aborted]="true"
+                [class.status-option--selected]="
+                  pendingCustomerApprovalNoAction === 'ABORT_NPI'
+                "
+                class="status-option"
+                type="button"
+              >
+                Abort NPI
+              </button>
+            </div>
+          </div>
+        }
       }
 
       <div class="extra-fields-actions">
