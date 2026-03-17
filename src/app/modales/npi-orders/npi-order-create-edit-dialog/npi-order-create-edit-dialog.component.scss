@@ -1,0 +1,69 @@
+// ==========================================================================
+// NPI Order Create/Edit Dialog — Section Styling
+// ==========================================================================
+
+.container.dialog {
+  box-shadow: none;
+}
+
+// --- Section headers ---
+
+.form-section {
+  margin-bottom: 1.125rem;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0.75rem;
+
+  .section-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-color-secondary);
+    white-space: nowrap;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--surface-border);
+  }
+}
+
+// --- Plan time hint ---
+
+.plan-time-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: rgba(10, 132, 193, 0.06);
+  border: 1px solid rgba(10, 132, 193, 0.15);
+  border-radius: 8px;
+  margin-bottom: 0.875rem;
+
+  i {
+    color: var(--main-color);
+    font-size: 0.875rem;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  span {
+    font-size: 0.8125rem;
+    color: var(--text-color-secondary);
+    line-height: 1.5;
+  }
+}
+
+// --- Submit button alignment ---
+
+.modal-btn {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
