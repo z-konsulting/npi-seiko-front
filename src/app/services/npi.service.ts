@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { NpiOrderStatus } from "../../client/npiSeiko";
+import { NpiOrder, NpiOrderStatus } from "../../client/npiSeiko";
 
 @Injectable({
   providedIn: "root",
@@ -16,5 +16,9 @@ export class NpiService {
     return (
       status === NpiOrderStatus.COMPLETED || status === NpiOrderStatus.ABORTED
     );
+  }
+
+  isArchived(npiOrder: NpiOrder) {
+    return npiOrder.archived ?? false;
   }
 }

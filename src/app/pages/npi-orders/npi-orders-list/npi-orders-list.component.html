@@ -23,7 +23,17 @@
           <app-search-input
             (eventSearchValidate)="activateSearch($event)"
           ></app-search-input>
+          <p-selectButton
+            (onChange)="onArchivedFilterChange($event.value)"
+            [allowEmpty]="false"
+            [ngModel]="archivedFilter()"
+            [options]="archivedFilterOptions"
+            class="status-filter"
+            optionLabel="label"
+            optionValue="value"
+          ></p-selectButton>
         </div>
+
         <div class="caption-action-button">
           <p-button
             (click)="createNpiOrder()"
@@ -137,6 +147,21 @@
               [text]="true"
               appNoDoubleClick
               pTooltip="Abort"
+              severity="danger"
+              tooltipPosition="top"
+            ></p-button>
+          }
+          @if (
+            npiService.isFinalOrder(npiOrder.status) &&
+            !npiService.isArchived(npiOrder)
+          ) {
+            <p-button
+              (onClick)="archiveNpiOrder(npiOrder)"
+              [delay]="2000"
+              [icon]="Icons.ARCHIVE"
+              [text]="true"
+              appNoDoubleClick
+              pTooltip="Archive"
               severity="danger"
               tooltipPosition="top"
             ></p-button>

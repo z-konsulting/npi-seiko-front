@@ -15,7 +15,11 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { HandleToastMessageService } from "../../../services/handle-toast-message.service";
 import { ModalService } from "../../../services/components/modal.service";
 import { CustomTitleComponent } from "../../../components/custom-title/custom-title.component";
-import { NpiOrder, NpiOrdersPaginated } from "../../../../client/npiSeiko";
+import {
+  ArchivedFilter,
+  NpiOrder,
+  NpiOrdersPaginated,
+} from "../../../../client/npiSeiko";
 import { NoDoubleClickDirective } from "../../../directives/no-double-click.directive";
 import { BaseListComponent } from "../../../models/classes/base-list-component";
 import { NpiOrderRepo } from "../../../repositories/npi-order.repo";
@@ -28,6 +32,8 @@ import { Tag } from "primeng/tag";
 import { switchMap } from "rxjs";
 import { Chip } from "primeng/chip";
 import { NpiService } from "../../../services/npi.service";
+import { SelectButton } from "primeng/selectbutton";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-npi-orders-list",
@@ -43,6 +49,8 @@ import { NpiService } from "../../../services/npi.service";
     NpiOrderStatusPipe,
     Tag,
     Chip,
+    SelectButton,
+    FormsModule,
   ],
   templateUrl: "./npi-orders-list.component.html",
   styleUrl: "./npi-orders-list.component.scss",
@@ -53,7 +61,11 @@ export class NpiOrdersListComponent
   implements OnInit
 {
   npiOrders = signal<NpiOrder[]>([]);
-
+  archivedFilter = signal<ArchivedFilter>(ArchivedFilter.NON_ARCHIVED_ONLY);
+  archivedFilterOptions = [
+    { label: "Active", value: ArchivedFilter.NON_ARCHIVED_ONLY },
+    { label: "Archived", value: ArchivedFilter.ARCHIVED_ONLY },
+  ];
   protected readonly TableColsTitle = TableColsTitle;
   protected readonly Icons = Icons;
   protected npiService = inject(NpiService);
@@ -73,13 +85,23 @@ export class NpiOrdersListComponent
   override loadData(event: TableLazyLoadEvent): void {
     super.loadData(event);
     this.npiOrderRepo
-      .searchNpiOrders(event.first, event.rows, this.searchText)
+      .searchNpiOrders(
+        event.first,
+        event.rows,
+        this.searchText,
+        this.archivedFilter(),
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((results: NpiOrdersPaginated) => {
         this.npiOrders.set(results.results);
         this.totalRecords = results.total;
         this.loading = false;
       });
+  }
+
+  onArchivedFilterChange(newFilter: ArchivedFilter) {
+    this.archivedFilter.set(newFilter);
+    this.loadData(this.lastTableLazyLoadEvent);
   }
 
   createNpiOrder(): void {
@@ -126,6 +148,20 @@ export class NpiOrdersListComponent
         next: () => {
           this.handleMessage.successMessage(
             `NPI Order ${npiOrder.purchaseOrderNumber} aborted`,
+          );
+          this.loadData(this.lastTableLazyLoadEvent);
+        },
+      });
+  }
+
+  archiveNpiOrder(npiOrder: NpiOrder): void {
+    this.npiOrderRepo
+      .archiveNpiOrder(npiOrder.uid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.handleMessage.successMessage(
+            `NPI Order ${npiOrder.purchaseOrderNumber} archived`,
           );
           this.loadData(this.lastTableLazyLoadEvent);
         },

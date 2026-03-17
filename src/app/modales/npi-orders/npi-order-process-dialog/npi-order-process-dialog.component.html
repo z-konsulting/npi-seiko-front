@@ -138,6 +138,9 @@
           <p-timeline [value]="history" align="right" class="history-timeline">
             <ng-template #marker let-entry>
               <span
+                [class.history-marker--aborted]="
+                  entry.status === ProcessLineStatus.ABORTED
+                "
                 [class.history-marker--completed]="
                   entry.status === ProcessLineStatus.COMPLETED
                 "
@@ -426,7 +429,10 @@
             </label>
             <div class="status-options">
               <button
-                (click)="pendingCustomerApprovalNoAction = 'RETURN_TO_MATERIAL_PURCHASE'"
+                (click)="
+                  pendingCustomerApprovalNoAction =
+                    'RETURN_TO_MATERIAL_PURCHASE'
+                "
                 [class.status-option--not-started]="true"
                 [class.status-option--selected]="
                   pendingCustomerApprovalNoAction ===
@@ -478,7 +484,7 @@
 <!-- =====================================================================
      Edit (reset) panel — for completed lines
      ===================================================================== -->
-<ng-template #editPanelTpl let-line>
+<ng-template #editPanelTpl let-i="index" let-line>
   @if (editingLineUid() === line.uid) {
     <div class="status-change-panel">
       <p class="panel-instruction">Reset to:</p>
@@ -491,7 +497,7 @@
           track status
         ) {
           <button
-            (click)="selectResetStatus(line, status)"
+            (click)="selectResetStatus(line, status, i)"
             [class.status-option--in-progress]="
               status === ProcessLineStatus.IN_PROGRESS
             "
@@ -595,14 +601,20 @@
         ></ng-container>
 
         <ng-container
-          *ngTemplateOutlet="editPanelTpl; context: { $implicit: line }"
+          *ngTemplateOutlet="
+            editPanelTpl;
+            context: { $implicit: line, index: i }
+          "
         ></ng-container>
 
         <ng-container
           *ngTemplateOutlet="remainingTimeTpl; context: { $implicit: line }"
         ></ng-container>
 
-        @if (editableLineIndices().has(i) && !readonly()) {
+        @if (
+          (!readonly() && editableLineIndices().has(i)) ||
+          pendingLineIndex() === i
+        ) {
           <div class="status-change-panel">
             <ng-container
               *ngTemplateOutlet="

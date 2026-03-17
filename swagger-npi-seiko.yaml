@@ -1507,6 +1507,8 @@ components:
         statusDate:
           type: string
           format: date-time
+        archived:
+          type: boolean
     NpiOrderStatus:
       type: string
       enum:
@@ -1520,6 +1522,7 @@ components:
         - NOT_STARTED
         - IN_PROGRESS
         - COMPLETED
+        - ABORTED
     CustomError:
       type: object
       required:

@@ -76,6 +76,14 @@ export class NpiOrderRepo {
     ) as Observable<NpiOrder>;
   }
 
+  archiveNpiOrder(uid: string): Observable<NpiOrder> {
+    return fromRequest(
+      this.npiOrderService.archiveNpiOrder({
+        path: { uid },
+      }),
+    ) as Observable<NpiOrder>;
+  }
+
   getNpiOrderProcess(uid: string): Observable<Process> {
     return fromRequest(
       this.npiOrderService.retriveNpiOrderProcess({
