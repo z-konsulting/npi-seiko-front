@@ -27,7 +27,7 @@ The NPI workflow covers the full journey from order creation to customer approva
 
 ### NPI Order Statuses
 
-`READY_TO_PRODUCTION` → `STARTED` → `COMPLETED` | `ABORTED`
+`READY_TO_START` → `STARTED` → `COMPLETED` | `ABORTED`
 
 ### Roles
 

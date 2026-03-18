@@ -13,14 +13,14 @@ import {
 import { Icons } from "../../../../models/enums/icons";
 
 const STATUS_COLORS: Record<string, string> = {
-  [NpiOrderStatus.READY_TO_PRODUCTION]: "#3b82f6",
+  [NpiOrderStatus.READY_TO_START]: "#3b82f6",
   [NpiOrderStatus.STARTED]: "#f97316",
   [NpiOrderStatus.COMPLETED]: "#48b461",
   [NpiOrderStatus.ABORTED]: "#dc3545",
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  [NpiOrderStatus.READY_TO_PRODUCTION]: "Ready to Production",
+  [NpiOrderStatus.READY_TO_START]: "Ready to Production",
   [NpiOrderStatus.STARTED]: "Started",
   [NpiOrderStatus.COMPLETED]: "Completed",
   [NpiOrderStatus.ABORTED]: "Aborted",

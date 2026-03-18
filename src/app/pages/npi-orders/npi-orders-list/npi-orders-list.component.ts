@@ -6,7 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { CardModule } from "primeng/card";
-import { PrimeTemplate } from "primeng/api";
+import { ConfirmationService, PrimeTemplate } from "primeng/api";
 import { Button } from "primeng/button";
 import { SearchInputComponent } from "../../../components/search-input/search-input.component";
 import { TableLazyLoadEvent, TableModule } from "primeng/table";
@@ -72,6 +72,7 @@ export class NpiOrdersListComponent
   private npiOrderRepo = inject(NpiOrderRepo);
   private handleMessage = inject(HandleToastMessageService);
   private modalService = inject(ModalService);
+  private confirmationService = inject(ConfirmationService);
 
   constructor() {
     super();
@@ -140,18 +141,29 @@ export class NpiOrdersListComponent
       });
   }
 
-  abortNpiOrder(npiOrder: NpiOrder): void {
-    this.npiOrderRepo
-      .abortNpiOrder(npiOrder.uid)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.handleMessage.successMessage(
-            `NPI Order ${npiOrder.purchaseOrderNumber} aborted`,
-          );
-          this.loadData(this.lastTableLazyLoadEvent);
-        },
-      });
+  abortNpiOrder(event: any, npiOrder: NpiOrder): void {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Are you sure you want to abort this npi order PO: ${npiOrder.purchaseOrderNumber} - WO #: ${npiOrder.workOrderId})?`,
+      header: "Abort order",
+      icon: "pi pi-exclamation-triangle warning",
+      key: "confirmPopKey",
+      rejectButtonProps: { label: "No", outlined: true },
+      accept: () => {
+        this.npiOrderRepo
+          .abortNpiOrder(npiOrder.uid)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.handleMessage.successMessage(
+                `NPI Order ${npiOrder.purchaseOrderNumber} aborted`,
+              );
+              this.loadData(this.lastTableLazyLoadEvent);
+            },
+          });
+      },
+      reject: () => {},
+    });
   }
 
   archiveNpiOrder(npiOrder: NpiOrder): void {

@@ -16,7 +16,7 @@ import { Chip } from "primeng/chip";
 import { TooltipModule } from "primeng/tooltip";
 import { TimelineModule } from "primeng/timeline";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { finalize, switchMap } from "rxjs";
+import { finalize, switchMap, tap } from "rxjs";
 import {
   FileInfo,
   NpiOrder,
@@ -135,6 +135,11 @@ export class NpiOrderProcessDialogComponent
   readonly temporaryFilesUrl = `${environment.backendUrl}/temporary-files`;
   protected readonly ProcessLineStatus = ProcessLineStatus;
   protected readonly Icons = Icons;
+  protected readonly orderedProcessLineStatuses = [
+    ProcessLineStatus.NOT_STARTED,
+    ProcessLineStatus.IN_PROGRESS,
+    ProcessLineStatus.COMPLETED,
+  ];
   protected npiService = inject(NpiService);
   readonly = computed(() => {
     const status = this.npiOrder()?.status;
@@ -487,7 +492,6 @@ export class NpiOrderProcessDialogComponent
   ): void {
     const uid = this.npiOrder()!.uid;
     const lineUid = line.uid!;
-
     // Import mode: date already extracted — send it with the status update
     if (
       line.isMaterialPurchase &&
@@ -552,7 +556,14 @@ export class NpiOrderProcessDialogComponent
 
     this.npiOrderRepo
       .updateNpiOrderProcessLineStatus(uid, lineUid, body)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        tap(() => {
+          if (targetStatus === ProcessLineStatus.COMPLETED) {
+            this.historyLineUid.set(null);
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: (result) =>
           this.handleStatusUpdateSuccess(line, targetStatus, result),

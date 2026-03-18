@@ -18,10 +18,12 @@
       <span class="line-name">{{ line.processName }}</span>
     </div>
     <div class="line-meta">
-      <p-tag
-        [severity]="line.status | processLineStatus: 'severity'"
-        [value]="line.status | processLineStatus"
-      />
+      @if (!editableLineIndices().has(i)) {
+        <p-tag
+          [severity]="line.status | processLineStatus: 'severity'"
+          [value]="line.status | processLineStatus"
+        />
+      }
       <p-button
         (click)="toggleHistory(line)"
         [class.history-btn--active]="historyLineUid() === line.uid"
@@ -176,20 +178,6 @@
                   [severity]="entry.status! | processLineStatus: 'severity'"
                   [value]="entry.status! | processLineStatus"
                 />
-                <div class="history-entry-dates">
-                  @if (entry.startDate) {
-                    <span>
-                      <i [class]="Icons.PLAY"></i>
-                      {{ entry.startDate | date: "HH:mm" }}
-                    </span>
-                  }
-                  @if (entry.endDate) {
-                    <span>
-                      <i [class]="Icons.CHECK" class="success"></i>
-                      {{ entry.endDate | date: "dd MMM yyyy, HH:mm" }}
-                    </span>
-                  }
-                </div>
                 @if (entry.byUser) {
                   <span class="history-entry-user">
                     <i [class]="Icons.USERS"></i>
@@ -521,6 +509,11 @@
             {{ status | processLineStatus }}
           </button>
         }
+        <span
+          class="status-option status-option--completed status-option--current"
+        >
+          {{ ProcessLineStatus.COMPLETED | processLineStatus }}
+        </span>
       </div>
     </div>
   }
@@ -566,25 +559,42 @@
      ===================================================================== -->
 <ng-template #statusOptionsTpl let-i="index" let-line>
   @if (pendingLineIndex() !== i) {
-    <div class="status-options">
-      @for (status of availableStatuses(line); track status) {
-        <button
-          (click)="selectTargetStatus(line, status, i)"
-          [class.status-option--completed]="
-            status === ProcessLineStatus.COMPLETED
-          "
-          [class.status-option--in-progress]="
-            status === ProcessLineStatus.IN_PROGRESS
-          "
-          [class.status-option--not-started]="
-            status === ProcessLineStatus.NOT_STARTED
-          "
-          [disabled]="hasRemainingTimeEditorOpen()"
-          class="status-option"
-          type="button"
-        >
-          {{ status | processLineStatus }}
-        </button>
+    <div class="status-options status-options--with-current">
+      @for (status of orderedProcessLineStatuses; track status) {
+        @if (status === line.status) {
+          <span
+            [class.status-option--completed]="
+              status === ProcessLineStatus.COMPLETED
+            "
+            [class.status-option--in-progress]="
+              status === ProcessLineStatus.IN_PROGRESS
+            "
+            [class.status-option--not-started]="
+              status === ProcessLineStatus.NOT_STARTED
+            "
+            class="status-option status-option--current"
+          >
+            {{ status | processLineStatus }}
+          </span>
+        } @else if (availableStatuses(line).includes(status)) {
+          <button
+            (click)="selectTargetStatus(line, status, i)"
+            [class.status-option--completed]="
+              status === ProcessLineStatus.COMPLETED
+            "
+            [class.status-option--in-progress]="
+              status === ProcessLineStatus.IN_PROGRESS
+            "
+            [class.status-option--not-started]="
+              status === ProcessLineStatus.NOT_STARTED
+            "
+            [disabled]="hasRemainingTimeEditorOpen()"
+            class="status-option"
+            type="button"
+          >
+            {{ status | processLineStatus }}
+          </button>
+        }
       }
     </div>
   }

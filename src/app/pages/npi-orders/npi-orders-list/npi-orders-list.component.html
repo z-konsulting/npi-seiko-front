@@ -141,7 +141,7 @@
           ></p-button>
           @if (npiService.canAbort(npiOrder.status)) {
             <p-button
-              (onClick)="abortNpiOrder(npiOrder)"
+              (onClick)="abortNpiOrder($event, npiOrder)"
               [delay]="2000"
               [icon]="Icons.BAN"
               [text]="true"
