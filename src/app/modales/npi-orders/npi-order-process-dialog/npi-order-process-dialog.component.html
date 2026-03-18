@@ -24,6 +24,23 @@
           [value]="line.status | processLineStatus"
         />
       }
+      @if (line.isTesting && line.status === ProcessLineStatus.COMPLETED) {
+        <p-overlay-badge
+          [value]="(line.nbFiles ?? 0).toString()"
+          class="icon-badge-without-bg"
+          severity="info"
+        >
+          <p-button
+            (click)="viewTestingFiles(line)"
+            [icon]="Icons.FOLDER"
+            [pTooltip]="'View testing files'"
+            [text]="true"
+            severity="secondary"
+            size="small"
+            tooltipPosition="top"
+          ></p-button>
+        </p-overlay-badge>
+      }
       <p-button
         (click)="toggleHistory(line)"
         [class.history-btn--active]="historyLineUid() === line.uid"
@@ -332,6 +349,34 @@
             }
           </div>
         }
+      }
+      <!-- Testing: upload report file -->
+      @if (
+        line.isTesting && pendingTargetStatus() === ProcessLineStatus.COMPLETED
+      ) {
+        <div class="extra-field">
+          <p class="panel-instruction">
+            Upload the testing report file
+            <span class="required-indicator">*</span>
+          </p>
+          <app-manage-file
+            (deletionFileUidsEventEmitter)="
+              deletionTestingFilesUploaded($event)
+            "
+            (downloadableFileUidsEventEmitter)="
+              downloadTestingFilesUploaded($event)
+            "
+            (uploadedEventEmitter)="onTestingFileUploaded($event)"
+            [canDeletion]="true"
+            [defaultUrl]="temporaryFilesUrl"
+            [filesPresent]="
+              testingFileSelected() ? [testingFileSelected()!] : []
+            "
+            [multiple]="false"
+            [showDownloadButton]="true"
+            [showGlobalDownloadBtn]="false"
+          ></app-manage-file>
+        </div>
       }
 
       <!-- Shipment: manual shipping date -->

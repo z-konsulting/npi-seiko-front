@@ -14,6 +14,7 @@ import { Button } from "primeng/button";
 import { Tag } from "primeng/tag";
 import { Chip } from "primeng/chip";
 import { TooltipModule } from "primeng/tooltip";
+import { OverlayBadge } from "primeng/overlaybadge";
 import { TimelineModule } from "primeng/timeline";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { finalize, Observable, switchMap, tap } from "rxjs";
@@ -33,12 +34,16 @@ import { NpiOrderRepo } from "../../../repositories/npi-order.repo";
 import { NpiOrderProcessLinePipe } from "../../../pipes/npi-order-process-line.pipe";
 import { Icons } from "../../../models/enums/icons";
 import { NpiService } from "../../../services/npi.service";
-import { ManageFileComponent } from "../../../components/manage-file/manage-file.component";
+import {
+  FileSelected,
+  ManageFileComponent,
+} from "../../../components/manage-file/manage-file.component";
 import { ExcelUtilsService } from "../../../services/utils/excel-utils.service";
 import { environment } from "../../../../environments/environment";
 import { RegexPatterns } from "../../../services/utils/regex-patterns";
 import { NoDoubleClickDirective } from "../../../directives/no-double-click.directive";
 import { ModalService } from "../../../services/components/modal.service";
+import { FileManageRepo } from "../../../repositories/file-manage-repo";
 
 @Component({
   selector: "app-npi-order-process-dialog",
@@ -56,6 +61,7 @@ import { ModalService } from "../../../services/components/modal.service";
     NpiOrderProcessLinePipe,
     ManageFileComponent,
     NoDoubleClickDirective,
+    OverlayBadge,
   ],
   templateUrl: "./npi-order-process-dialog.component.html",
   styleUrl: "./npi-order-process-dialog.component.scss",
@@ -101,6 +107,9 @@ export class NpiOrderProcessDialogComponent
     () => this.remainingTimeLineUid() !== null,
   );
 
+  /** Number of files uploaded for the testing completion step */
+  testingFileSelected = signal<FileSelected | null>(null);
+
   /** Import mode for material purchase delivery date */
   importMode = signal<boolean>(false);
   importedFileUid = signal<string | null>(null);
@@ -143,6 +152,7 @@ export class NpiOrderProcessDialogComponent
   ];
   protected excelUtils = inject(ExcelUtilsService);
   private npiOrderRepo = inject(NpiOrderRepo);
+  private fileManageRepo = inject(FileManageRepo);
   private modalService = inject(ModalService);
   private npiService = inject(NpiService);
   readonly = computed(() => {
@@ -181,6 +191,7 @@ export class NpiOrderProcessDialogComponent
       (!!line.isCustomerApproval &&
         targetStatus === ProcessLineStatus.IN_PROGRESS) ||
       (!!line.isShipment && targetStatus === ProcessLineStatus.COMPLETED) ||
+      (!!line.isTesting && targetStatus === ProcessLineStatus.COMPLETED) ||
       (!!line.isCustomerApproval &&
         targetStatus === ProcessLineStatus.COMPLETED)
     );
@@ -197,6 +208,9 @@ export class NpiOrderProcessDialogComponent
     }
     if (line.isShipment && target === ProcessLineStatus.COMPLETED) {
       return this.pendingShippingDate !== null;
+    }
+    if (line.isTesting && target === ProcessLineStatus.COMPLETED) {
+      return this.testingFileSelected() !== null;
     }
     if (line.isCustomerApproval && target === ProcessLineStatus.IN_PROGRESS) {
       return this.pendingStartingCustomerApprovalDate !== null;
@@ -463,6 +477,38 @@ export class NpiOrderProcessDialogComponent
       );
   }
 
+  downloadTestingFilesUploaded(filesUids: string[]) {
+    const url = `${this.temporaryFilesUrl}/download`;
+    this.fileManageRepo.downloadFile(url, filesUids);
+  }
+
+  deletionTestingFilesUploaded(filesUids: string[]) {
+    const url = `${this.temporaryFilesUrl}/delete`;
+    this.fileManageRepo
+      .deleteFile(url, filesUids)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.testingFileSelected.set(null);
+          this.handleMessage.successMessage("File(s) deleted");
+        },
+      });
+  }
+
+  onTestingFileUploaded(event: any): void {
+    if (!event || event.length === 0) return;
+    const body: FileSelected = {
+      ...event[0],
+    };
+    this.testingFileSelected.set(body ?? null);
+  }
+
+  viewTestingFiles(line: ProcessLine): void {
+    this.manageFilesForNpiProcessLine(this.npiOrder()!, line)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+  }
+
   private clearPending(): void {
     this.pendingLineIndex.set(null);
     this.pendingTargetStatus.set(null);
@@ -479,6 +525,7 @@ export class NpiOrderProcessDialogComponent
     this.importSheetDisplay = 1;
     this.importColumnDisplay = 1;
     this.importRowDisplay = 1;
+    this.testingFileSelected.set(null);
   }
 
   private handleStatusUpdateSuccess(
@@ -571,7 +618,9 @@ export class NpiOrderProcessDialogComponent
         this.pendingApprovalCustomerDate!,
       )!;
     }
-
+    if (line.isTesting && targetStatus == ProcessLineStatus.COMPLETED) {
+      body.fileUid = this.testingFileSelected()?.uid;
+    }
     this.npiOrderRepo
       .updateNpiOrderProcessLineStatus(uid, lineUid, body)
       .pipe(

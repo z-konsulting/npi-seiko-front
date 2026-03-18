@@ -1,21 +1,21 @@
 import { Component, OnInit, signal, WritableSignal } from "@angular/core";
-import {
-  FileSelected,
-  ManageFileComponent,
-} from "../../../components/manage-file/manage-file.component";
-import { BaseModal } from "../../../models/classes/base-modal";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FileManageRepo } from "../../../repositories/file-manage-repo";
 import {
   Accordion,
   AccordionContent,
   AccordionHeader,
   AccordionPanel,
 } from "primeng/accordion";
-import { Icons } from "../../../models/enums/icons";
 import { Button } from "primeng/button";
-import { FileInfo, FileType } from "../../../../client/costSeiko";
 import { BadgeDirective } from "primeng/badge";
+import { BaseModal } from "../../models/classes/base-modal";
+import {
+  FileSelected,
+  ManageFileComponent,
+} from "../manage-file/manage-file.component";
+import { Icons } from "../../models/enums/icons";
+import { FileInfo, FileType } from "../../../client/npiSeiko";
+import { FileManageRepo } from "../../repositories/file-manage-repo";
 
 @Component({
   selector: "app-request-manage-file-dialog",
