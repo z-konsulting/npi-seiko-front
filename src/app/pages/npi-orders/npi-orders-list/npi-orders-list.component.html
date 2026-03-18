@@ -119,15 +119,13 @@
           <p-button
             (click)="editNpiOrder(npiOrder)"
             [icon]="
-              npiService.isFinalOrder(npiOrder.status)
-                ? Icons.EYE
-                : Icons.PENCIL
+              npiService.isUpdatable(npiOrder.status) ? Icons.PENCIL : Icons.EYE
             "
             [pTooltip]="
-              npiService.isFinalOrder(npiOrder.status) ? 'View' : 'Edit'
+              npiService.isUpdatable(npiOrder.status) ? 'Edit' : 'View'
             "
             [severity]="
-              npiService.isFinalOrder(npiOrder.status) ? 'success' : 'primary'
+              npiService.isUpdatable(npiOrder.status) ? 'primary' : 'success'
             "
             [text]="true"
             tooltipPosition="top"

@@ -18,6 +18,10 @@ export class NpiService {
     );
   }
 
+  isUpdatable(status: NpiOrderStatus): boolean {
+    return status !== NpiOrderStatus.STARTED && !this.isFinalOrder(status);
+  }
+
   isArchived(npiOrder: NpiOrder) {
     return npiOrder.archived ?? false;
   }

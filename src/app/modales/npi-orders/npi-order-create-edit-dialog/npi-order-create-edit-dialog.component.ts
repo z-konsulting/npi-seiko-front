@@ -56,7 +56,7 @@ export class NpiOrderCreateEditDialogComponent
   readonly = computed(() => {
     const status = this.npiOrderSelected()?.status;
     if (!status) return false;
-    return this.npiService.isFinalOrder(status!);
+    return !this.npiService.isUpdatable(status!);
   });
 
   ngOnInit(): void {
@@ -67,10 +67,7 @@ export class NpiOrderCreateEditDialogComponent
         this.npiOrderForm = this.formService.buildNpiOrderForm(
           this.npiOrderSelected()!,
         );
-        if (
-          this.npiOrderSelected()!.status &&
-          this.npiService.isFinalOrder(this.npiOrderSelected()!.status)
-        ) {
+        if (this.npiOrderSelected()!.status && this.readonly()) {
           this.npiOrderForm.disable();
         }
       }
