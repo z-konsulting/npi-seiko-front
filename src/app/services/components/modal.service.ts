@@ -40,6 +40,7 @@ export class ModalService {
     onlyDownloadable: boolean = false,
     showDownloadBtn: boolean = true,
     showGlobalDownloadBtn: boolean = true,
+    multiple: boolean = false,
   ) {
     this.ref = this.dialogService.open(ManageFileDialogComponent, {
       header: "Manage Files",
@@ -54,6 +55,7 @@ export class ModalService {
         onlyDownloadable: onlyDownloadable,
         showDownloadBtn: showDownloadBtn,
         showGlobalDownloadBtn: showGlobalDownloadBtn,
+        multiple: multiple,
       },
     });
     return this.waitForDialogResult<FileInfo[] | undefined>(this.ref);

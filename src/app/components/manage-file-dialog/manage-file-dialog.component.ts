@@ -37,6 +37,7 @@ export class ManageFileDialogComponent extends BaseModal implements OnInit {
   onlyDownloadable!: boolean;
   showDownloadBtn!: boolean;
   showGlobalDownloadBtn!: boolean;
+  multiple!: boolean;
   protected readonly Icons = Icons;
   protected readonly FileType = FileType;
 
@@ -49,6 +50,7 @@ export class ManageFileDialogComponent extends BaseModal implements OnInit {
     this.onlyDownloadable = this.dataConfig.onlyDownloadable;
     this.showDownloadBtn = this.dataConfig.showDownloadBtn;
     this.showGlobalDownloadBtn = this.dataConfig.showGlobalDownloadBtn;
+    this.multiple = this.dataConfig.multiple;
     this.initFiles();
   }
 
