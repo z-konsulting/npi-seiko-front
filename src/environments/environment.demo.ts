@@ -1,14 +1,14 @@
-import { routeEnvironment } from './routes.environment';
+import { routeEnvironment } from "./routes.environment";
 
 export const environment = {
-  backendUrl: '',
-  userLogged: 'demoCostUserLogged',
-  userTokenKey: 'demoCostUserTokenKey',
-  userRole: 'demoCostUserRole',
-  userAllowedCapacities: 'demoCostUserAllowedCapacities',
-  userLoginKey: 'demoCostUserLoginKey',
-  userId: 'demoCostUserId',
+  backendUrl: "",
+  userLogged: "demoNpiUserLogged",
+  userTokenKey: "demoNpiUserTokenKey",
+  userRole: "demoNpiUserRole",
+  userAllowedCapacities: "demoNpiUserAllowedCapacities",
+  userLoginKey: "demoNpiUserLoginKey",
+  userId: "demoNpiUserId",
   routes: routeEnvironment,
-  configUrlPath: '/cost/assets/config.json',
-  email: '',
+  configUrlPath: "/npi/assets/config.json",
+  email: "",
 };

@@ -2,12 +2,12 @@ import { routeEnvironment } from "./routes.environment";
 
 export const environment = {
   backendUrl: "",
-  userLogged: "sdjbCostUserLogged",
-  userTokenKey: "sdjbCostUserTokenKey",
-  userRole: "sdjbCostUserRole",
-  userAllowedCapacities: "sdjbCostUserAllowedCapacities",
-  userLoginKey: "sdjbCostUserLoginKey",
-  userId: "sdjbCostUserId",
+  userLogged: "sdjbNpiUserLogged",
+  userTokenKey: "sdjbNpiUserTokenKey",
+  userRole: "sdjbNpiUserRole",
+  userAllowedCapacities: "sdjbNpiUserAllowedCapacities",
+  userLoginKey: "sdjbNpiUserLoginKey",
+  userId: "sdjbNpiUserId",
   routes: routeEnvironment,
   configUrlPath: "/assets/config.json",
   email: "",
