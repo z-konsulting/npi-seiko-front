@@ -37,14 +37,20 @@
           <label for="methodType"
             >Customer <span class="required-indicator">*</span></label
           >
-          <p-select
-            [filter]="true"
-            [formControlName]="NpiOrderFormField.CUSTOMER"
-            [options]="customers()"
-            filterBy="code"
-            optionLabel="code"
-            placeholder="Select customer"
-          ></p-select>
+          @if (isFinalized()) {
+            <div class="readonly-field">
+              {{ npiOrderSelected()?.customer?.name }}
+            </div>
+          } @else {
+            <p-select
+              [filter]="true"
+              [formControlName]="NpiOrderFormField.CUSTOMER"
+              [options]="customers()"
+              filterBy="code"
+              optionLabel="code"
+              placeholder="Select customer"
+            ></p-select>
+          }
         </div>
         <div class="p-field">
           <app-input-container

@@ -15,9 +15,8 @@ const ROUTE_ROLES: Partial<Record<RouteId, UserRole[]>> = {
 
   // Admin sub-route guards (applied in admin.routes.ts via canActivate).
   // Omitting an entry = accessible to anyone who passed the parent guard.
-  [RouteId.ADMIN_USERS]: [UserRole.ADMINISTRATOR],
-  [RouteId.DASHBOARD]: [],
-  [RouteId.NPI_ORDERS]: [],
+  [RouteId.DASHBOARD]: [UserRole.ENGINEERING, UserRole.PROCUREMENT],
+  [RouteId.NPI_ORDERS]: [UserRole.ENGINEERING, UserRole.PROCUREMENT],
 };
 
 @Injectable({

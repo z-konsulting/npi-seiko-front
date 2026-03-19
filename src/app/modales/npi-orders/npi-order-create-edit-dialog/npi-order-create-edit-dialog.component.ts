@@ -60,12 +60,15 @@ export class NpiOrderCreateEditDialogComponent
   npiOrderForm = this.formService.buildNpiOrderForm();
   customers = signal<Customer[]>([]);
   filesInfo = signal<FileInfo[]>([]);
-
   protected readonly Icons = Icons;
   protected readonly NpiOrderFormField = NpiOrderFormField;
   private npiOrderRepo = inject(NpiOrderRepo);
   private customerRepo = inject(CustomerRepo);
   private npiService = inject(NpiService);
+  isFinalized = computed(() => {
+    if (!this.npiOrderSelected() || !this.editMode()) return false;
+    return this.npiService.isFinalOrder(this.npiOrderSelected()?.status!);
+  });
   readonly = computed(() => {
     const status = this.npiOrderSelected()?.status;
     if (!status) return false;
