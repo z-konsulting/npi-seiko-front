@@ -46,6 +46,49 @@
     opacity: 0.55;
     background: #fef8f8;
   }
+
+  &.is-role-locked {
+    border-color: var(--surface-border);
+    border-style: dashed;
+    background: var(--surface-ground);
+    opacity: 0.82;
+  }
+}
+
+// --- Role badge ---
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: default;
+
+  i {
+    font-size: 0.65rem;
+  }
+
+  &--engineering {
+    color: #1d4ed8;
+    background: rgba(29, 78, 216, 0.08);
+    border-color: rgba(29, 78, 216, 0.2);
+  }
+
+  &--procurement {
+    color: #7c3aed;
+    background: rgba(124, 58, 237, 0.08);
+    border-color: rgba(124, 58, 237, 0.2);
+  }
+
+  &--locked {
+    color: #64748b;
+    background: rgba(100, 116, 139, 0.08);
+    border-color: rgba(100, 116, 139, 0.2);
+  }
 }
 
 // --- Line header ---

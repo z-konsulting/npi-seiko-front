@@ -16,6 +16,25 @@
     <div class="line-identity">
       <span class="line-index">{{ i + 1 }}</span>
       <span class="line-name">{{ line.processName }}</span>
+      <span
+        [class.role-badge--locked]="!canEditLine(line)"
+        [class.role-badge--procurement]="
+          line.isMaterialPurchase || line.isMaterialReceiving
+        "
+        [class.role-badge--engineering]="
+          !line.isMaterialPurchase && !line.isMaterialReceiving
+        "
+        [pTooltip]="
+          canEditLine(line)
+            ? requiredRoleLabel(line) + ' — you can edit this step'
+            : 'Only ' + requiredRoleLabel(line) + ' can edit this step'
+        "
+        class="role-badge"
+        tooltipPosition="top"
+      >
+        <i [class]="canEditLine(line) ? Icons.USERS : Icons.LOCK"></i>
+        {{ requiredRoleLabel(line) }}
+      </span>
     </div>
     <div class="line-meta">
       @if (!editableLineIndices().has(i)) {
@@ -53,7 +72,11 @@
         size="small"
         tooltipPosition="top"
       ></p-button>
-      @if (!readonly() && line.status === ProcessLineStatus.COMPLETED) {
+      @if (
+        !readonly() &&
+        canEditLine(line) &&
+        line.status === ProcessLineStatus.COMPLETED
+      ) {
         <p-button
           (click)="toggleEditMode(line)"
           [class.history-btn--active]="editingLineUid() === line.uid"
@@ -66,7 +89,11 @@
           tooltipPosition="top"
         ></p-button>
       }
-      @if (!readonly() && line.status === ProcessLineStatus.IN_PROGRESS) {
+      @if (
+        !readonly() &&
+        canEditLine(line) &&
+        line.status === ProcessLineStatus.IN_PROGRESS
+      ) {
         <p-button
           (click)="toggleRemainingTime(line)"
           [class.history-btn--active]="remainingTimeLineUid() === line.uid"
@@ -666,6 +693,7 @@
       <div
         [class.is-completed]="line.status === ProcessLineStatus.COMPLETED"
         [class.is-editable]="editableLineIndices().has(i)"
+        [class.is-role-locked]="!canEditLine(line)"
         class="process-line"
       >
         <ng-container
@@ -695,7 +723,7 @@
         ></ng-container>
 
         @if (
-          (!readonly() && editableLineIndices().has(i)) ||
+          (!readonly() && editableLineIndices().has(i) && canEditLine(line)) ||
           pendingLineIndex() === i
         ) {
           <div class="status-change-panel">

@@ -28,8 +28,10 @@ import {
   ProcessLineStatus,
   ProcessLineStatusHistory,
   ProcessLineStatusUpdateBody,
+  UserRole,
 } from "../../../../client/npiSeiko";
 import { BaseModal } from "../../../models/classes/base-modal";
+import { AuthenticationService } from "../../../security/authentication.service";
 import { NpiOrderRepo } from "../../../repositories/npi-order.repo";
 import { NpiOrderProcessLinePipe } from "../../../pipes/npi-order-process-line.pipe";
 import { Icons } from "../../../models/enums/icons";
@@ -167,12 +169,33 @@ export class NpiOrderProcessDialogComponent
   private fileManageRepo = inject(FileManageRepo);
   private modalService = inject(ModalService);
   private npiService = inject(NpiService);
+  private authService = inject(AuthenticationService);
   readonly = computed(() => {
     const status = this.npiOrder()?.status;
     if (!status) return true;
     return this.npiService.isFinalOrder(status!);
   });
   private processLineStatusPipe = inject(NpiOrderProcessLinePipe);
+  protected readonly UserRole = UserRole;
+
+  canEditLine(line: ProcessLine): boolean {
+    const role = this.authService.getRole();
+    if (!role) return false;
+    if (role === UserRole.ADMINISTRATOR || role === UserRole.SUPER_ADMINISTRATOR)
+      return true;
+    const isProcurementLine = !!(
+      line.isMaterialPurchase || line.isMaterialReceiving
+    );
+    if (role === UserRole.PROCUREMENT) return isProcurementLine;
+    if (role === UserRole.ENGINEERING) return !isProcurementLine;
+    return false;
+  }
+
+  requiredRoleLabel(line: ProcessLine): string {
+    return line.isMaterialPurchase || line.isMaterialReceiving
+      ? "Procurement"
+      : "Engineering";
+  }
 
   availableStatuses(line: ProcessLine): ProcessLineStatus[] {
     const all = [
