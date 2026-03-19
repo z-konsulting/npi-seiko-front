@@ -335,7 +335,7 @@ export class NpiOrderProcessDialogComponent
       this.editingLineUid.set(null);
       this.remainingTimeLineUid.set(uid);
       this.remainingTimeInput =
-        line.remainingTimeInHours ?? line.planTimeInHours ?? null;
+        line.remainingTimeInDays ?? line.planTimeInDays ?? null;
     }
   }
 
@@ -344,7 +344,7 @@ export class NpiOrderProcessDialogComponent
     const uid = this.npiOrder()!.uid;
     const lineUid = line.uid!;
     const body: ProcessLineRemainingTimeUpdate = {
-      remainingTimeInHours: this.remainingTimeInput,
+      remainingTimeInDays: this.remainingTimeInput,
     };
     this.updatingRemainingTime.set(true);
     this.npiOrderRepo

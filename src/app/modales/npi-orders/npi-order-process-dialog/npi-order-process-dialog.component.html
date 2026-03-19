@@ -99,24 +99,24 @@
     <p-chip
       [icon]="Icons.CALENDAR_CLOCK"
       [label]="
-        line.planTimeInHours !== null && line.planTimeInHours !== undefined
-          ? 'Plan: ' + line.planTimeInHours + ' h'
+        line.planTimeInDays !== null && line.planTimeInDays !== undefined
+          ? 'Plan: ' + line.planTimeInDays + ' d'
           : 'Plan: -'
       "
       class="chip--primary small chip--square"
     ></p-chip>
     @if (
       line.status === ProcessLineStatus.IN_PROGRESS &&
-      ((line.remainingTimeInHours !== null &&
-        line.remainingTimeInHours !== undefined) ||
-        (line.planTimeInHours !== null && line.planTimeInHours !== undefined))
+      ((line.remainingTimeInDays !== null &&
+        line.remainingTimeInDays !== undefined) ||
+        (line.planTimeInDays !== null && line.planTimeInDays !== undefined))
     ) {
       <p-chip
         [icon]="Icons.CLOCK"
         [label]="
           'Remaining: ' +
-          (line.remainingTimeInHours ?? line.planTimeInHours) +
-          ' h'
+          (line.remainingTimeInDays ?? line.planTimeInDays) +
+          ' d'
         "
         class="chip--warn small chip--square"
       ></p-chip>

@@ -110,38 +110,39 @@ export class FormService {
       [NpiOrderFormField.PRODUCT_NAME]: new FormControl<string>(
         npiOrder?.productName ?? "",
       ),
-      [NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_HOURS]: new FormControl<
+      [NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.materialPurchasePlanTimeInHours ?? null, [
+      >(npiOrder?.materialPurchasePlanTimeInDays ?? null, [
         Validators.required,
         Validators.min(0),
       ]),
-      [NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_HOURS]:
-        new FormControl<number | null>(
-          npiOrder?.materialReceivingPlanTimeInHours ?? null,
-          [Validators.required, Validators.min(0)],
-        ),
-      [NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_HOURS]: new FormControl<
+      [NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.productionPlanTimeInHours ?? null, [
+      >(npiOrder?.materialReceivingPlanTimeInDays ?? null, [
         Validators.required,
         Validators.min(0),
       ]),
-      [NpiOrderFormField.TESTING_PLAN_TIME_IN_HOURS]: new FormControl<
+      [NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.testingPlanTimeInHours ?? null, [
+      >(npiOrder?.productionPlanTimeInDays ?? null, [
         Validators.required,
         Validators.min(0),
       ]),
-      [NpiOrderFormField.SHIPPING_PLAN_TIME_IN_HOURS]: new FormControl<
+      [NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.shippingPlanTimeInHours ?? null, [
+      >(npiOrder?.testingPlanTimeInDays ?? null, [
         Validators.required,
         Validators.min(0),
       ]),
-      [NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_HOURS]: new FormControl<
+      [NpiOrderFormField.SHIPPING_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.customerApprovalPlanTimeInHours ?? null, [
+      >(npiOrder?.shippingPlanTimeInDays ?? null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
+      [NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_DAYS]: new FormControl<
+        number | null
+      >(npiOrder?.customerApprovalPlanTimeInDays ?? null, [
         Validators.required,
         Validators.min(0),
       ]),

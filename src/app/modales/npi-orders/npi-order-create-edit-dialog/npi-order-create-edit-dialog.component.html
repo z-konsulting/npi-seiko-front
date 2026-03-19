@@ -92,27 +92,34 @@
       </div>
       <div class="plan-time-hint" role="note">
         <i class="pi pi-info-circle"></i>
-        <span>Estimated time (in hours) allocated for each stage in the NPI pipeline.</span>
+        <span
+          >Estimated time (in hours) allocated for each stage in the NPI
+          pipeline.</span
+        >
       </div>
       <div class="p-fields-row">
         <div class="p-field">
           <app-input-container
-            [formControlName]="NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_HOURS"
-            label="Material Purchase (h)"
+            [formControlName]="
+              NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_DAYS
+            "
+            label="Material Purchase (days)"
             type="number"
           ></app-input-container>
         </div>
         <div class="p-field">
           <app-input-container
-            [formControlName]="NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_HOURS"
-            label="Material Receiving (h)"
+            [formControlName]="
+              NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS
+            "
+            label="Material Receiving (days)"
             type="number"
           ></app-input-container>
         </div>
         <div class="p-field">
           <app-input-container
-            [formControlName]="NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_HOURS"
-            label="Production (h)"
+            [formControlName]="NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS"
+            label="Production (days)"
             type="number"
           ></app-input-container>
         </div>
@@ -120,22 +127,24 @@
       <div class="p-fields-row">
         <div class="p-field">
           <app-input-container
-            [formControlName]="NpiOrderFormField.TESTING_PLAN_TIME_IN_HOURS"
-            label="Testing (h)"
+            [formControlName]="NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS"
+            label="Testing (days)"
             type="number"
           ></app-input-container>
         </div>
         <div class="p-field">
           <app-input-container
-            [formControlName]="NpiOrderFormField.SHIPPING_PLAN_TIME_IN_HOURS"
-            label="Shipping (h)"
+            [formControlName]="NpiOrderFormField.SHIPPING_PLAN_TIME_IN_DAYS"
+            label="Shipping (days)"
             type="number"
           ></app-input-container>
         </div>
         <div class="p-field">
           <app-input-container
-            [formControlName]="NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_HOURS"
-            label="Customer Approval (h)"
+            [formControlName]="
+              NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_DAYS
+            "
+            label="Customer Approval (days)"
             type="number"
           ></app-input-container>
         </div>

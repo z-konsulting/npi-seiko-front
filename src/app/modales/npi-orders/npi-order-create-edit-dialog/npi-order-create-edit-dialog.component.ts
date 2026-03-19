@@ -132,23 +132,23 @@ export class NpiOrderCreateEditDialogComponent
       customerName:
         form.get(NpiOrderFormField.CUSTOMER_NAME)?.value || undefined,
       productName: form.get(NpiOrderFormField.PRODUCT_NAME)?.value || undefined,
-      materialPurchasePlanTimeInHours: form.get(
-        NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_HOURS,
+      materialPurchasePlanTimeInDays: form.get(
+        NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_DAYS,
       )?.value,
-      materialReceivingPlanTimeInHours: form.get(
-        NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_HOURS,
+      materialReceivingPlanTimeInDays: form.get(
+        NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS,
       )?.value,
-      productionPlanTimeInHours: form.get(
-        NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_HOURS,
+      productionPlanTimeInDays: form.get(
+        NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS,
       )?.value,
-      testingPlanTimeInHours: form.get(
-        NpiOrderFormField.TESTING_PLAN_TIME_IN_HOURS,
+      testingPlanTimeInDays: form.get(
+        NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS,
       )?.value,
-      shippingPlanTimeInHours: form.get(
-        NpiOrderFormField.SHIPPING_PLAN_TIME_IN_HOURS,
+      shippingPlanTimeInDays: form.get(
+        NpiOrderFormField.SHIPPING_PLAN_TIME_IN_DAYS,
       )?.value,
-      customerApprovalPlanTimeInHours: form.get(
-        NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_HOURS,
+      customerApprovalPlanTimeInDays: form.get(
+        NpiOrderFormField.CUSTOMER_APPROVAL_PLAN_TIME_IN_DAYS,
       )?.value,
     } as NpiOrderCreate | NpiOrderUpdate;
   }
