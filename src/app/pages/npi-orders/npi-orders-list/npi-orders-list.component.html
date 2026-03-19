@@ -73,7 +73,14 @@
             />
           }
         </td>
-        <td>{{ npiOrder.customerName }}</td>
+        <td>
+          @if (npiOrder?.customer) {
+            {{ npiOrder.customer?.code }}
+          } @else {
+            -
+          }
+        </td>
+
         <td>
           <p-chip
             [label]="npiOrder.currentProcessName"
@@ -130,6 +137,19 @@
             [text]="true"
             tooltipPosition="top"
           ></p-button>
+          <p-overlay-badge
+            [value]="(npiOrder.nbFiles ?? 0).toString()"
+            class="icon-badge-without-bg"
+            severity="info"
+          >
+            <p-button
+              (click)="manageNpiOrderFiles(npiOrder)"
+              [icon]="Icons.FOLDER"
+              [text]="true"
+              pTooltip="Manage Files"
+              tooltipPosition="top"
+            ></p-button>
+          </p-overlay-badge>
           <p-button
             (click)="openProcessDialog(npiOrder)"
             [icon]="Icons.LIST_CHECK"

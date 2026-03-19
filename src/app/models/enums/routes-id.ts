@@ -5,6 +5,7 @@ export enum RouteId {
   SET_FIRST_PASSWORD,
   ADMIN,
   ADMIN_USERS,
+  ADMIN_CUSTOMERS,
   DASHBOARD,
   NPI_ORDERS,
 }

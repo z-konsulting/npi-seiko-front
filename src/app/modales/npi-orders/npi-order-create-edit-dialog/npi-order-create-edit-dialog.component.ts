@@ -14,6 +14,7 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { DatePickerModule } from "primeng/datepicker";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
+  Customer,
   NpiOrder,
   NpiOrderCreate,
   NpiOrderUpdate,
@@ -25,6 +26,8 @@ import { NpiOrderFormField } from "../../../models/enums/form-field-names/npi-or
 import { Icons } from "../../../models/enums/icons";
 import { NpiService } from "../../../services/npi.service";
 import { RegexPatterns } from "../../../services/utils/regex-patterns";
+import { Select } from "primeng/select";
+import { CustomerRepo } from "../../../repositories/customer.repo";
 
 @Component({
   selector: "app-npi-order-create-edit-dialog",
@@ -37,6 +40,7 @@ import { RegexPatterns } from "../../../services/utils/regex-patterns";
     InputNumberModule,
     DatePickerModule,
     InputContainerComponent,
+    Select,
   ],
   templateUrl: "./npi-order-create-edit-dialog.component.html",
   styleUrl: "./npi-order-create-edit-dialog.component.scss",
@@ -49,9 +53,12 @@ export class NpiOrderCreateEditDialogComponent
   editMode = signal<boolean>(false);
   npiOrderSelected = signal<NpiOrder | null>(null);
   npiOrderForm = this.formService.buildNpiOrderForm();
+  customers = signal<Customer[]>([]);
+
   protected readonly Icons = Icons;
   protected readonly NpiOrderFormField = NpiOrderFormField;
   private npiOrderRepo = inject(NpiOrderRepo);
+  private customerRepo = inject(CustomerRepo);
   private npiService = inject(NpiService);
   readonly = computed(() => {
     const status = this.npiOrderSelected()?.status;
@@ -72,6 +79,17 @@ export class NpiOrderCreateEditDialogComponent
         }
       }
     }
+    this.loadCustomers();
+  }
+
+  loadCustomers() {
+    this.customerRepo
+      .listAllCustomers()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((customers) => {
+        this.customers.set(customers);
+        this.setSelectedCustomer();
+      });
   }
 
   submit(): void {
@@ -85,6 +103,16 @@ export class NpiOrderCreateEditDialogComponent
     } else {
       this.createNpiOrder();
     }
+  }
+
+  private setSelectedCustomer() {
+    if (!this.npiOrderSelected()?.customer) return;
+    const defaultCustomer = this.customers().find(
+      (customer) => customer.uid === this.npiOrderSelected()?.customer.uid,
+    );
+    this.npiOrderForm
+      .get(NpiOrderFormField.CUSTOMER)
+      ?.setValue(defaultCustomer);
   }
 
   private createNpiOrder(): void {
@@ -117,6 +145,8 @@ export class NpiOrderCreateEditDialogComponent
       form.get(NpiOrderFormField.ORDER_DATE)?.value ?? null;
     const targetDeliveryDateValue: Date | null =
       form.get(NpiOrderFormField.TARGET_DELIVERY_DATE)?.value ?? null;
+    const customerId: Customer | null =
+      form.get(NpiOrderFormField.CUSTOMER)?.value?.uid ?? null;
     return {
       purchaseOrderNumber: form.get(NpiOrderFormField.PURCHASE_ORDER_NUMBER)
         ?.value,
@@ -129,8 +159,7 @@ export class NpiOrderCreateEditDialogComponent
       targetDeliveryDate: targetDeliveryDateValue
         ? RegexPatterns.enDateFormatToString(targetDeliveryDateValue)
         : new Date().toISOString().split("T")[0],
-      customerName:
-        form.get(NpiOrderFormField.CUSTOMER_NAME)?.value || undefined,
+      customerId: customerId || undefined,
       productName: form.get(NpiOrderFormField.PRODUCT_NAME)?.value || undefined,
       materialPurchasePlanTimeInDays: form.get(
         NpiOrderFormField.MATERIAL_PURCHASE_PLAN_TIME_IN_DAYS,

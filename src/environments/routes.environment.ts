@@ -54,6 +54,13 @@ export const routeEnvironment: RouteEnv[] = [
         detailBackLink: RouteId.ADMIN,
         enable: true,
       },
+      {
+        id: RouteId.ADMIN_CUSTOMERS,
+        path: "customers",
+        title: "Customers",
+        detailBackLink: RouteId.ADMIN,
+        enable: true,
+      },
     ],
   },
 ];

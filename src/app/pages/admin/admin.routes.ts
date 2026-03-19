@@ -5,6 +5,7 @@ import { RouteId } from "../../models/enums/routes-id";
 import { RoutingService } from "../../services/Routing.service";
 import { RoleGuard } from "../../security/role.guard";
 import { AdminUsersComponent } from "./admin-users/admin-users.component";
+import { AdminCustomersComponent } from "./admin-customers/admin-customers.component";
 
 export const adminRoutes: Routes = [
   {
@@ -15,6 +16,11 @@ export const adminRoutes: Routes = [
   {
     path: RoutingService.getRouteEnv(RouteId.ADMIN_USERS).path,
     component: AdminUsersComponent,
+    canActivate: [() => inject(RoleGuard).canActivate(RouteId.ADMIN_USERS)],
+  },
+  {
+    path: RoutingService.getRouteEnv(RouteId.ADMIN_CUSTOMERS).path,
+    component: AdminCustomersComponent,
     canActivate: [() => inject(RoleGuard).canActivate(RouteId.ADMIN_USERS)],
   },
 ];

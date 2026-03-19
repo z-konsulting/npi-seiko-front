@@ -34,10 +34,17 @@
       </div>
       <div class="p-fields-row">
         <div class="p-field">
-          <app-input-container
-            [formControlName]="NpiOrderFormField.CUSTOMER_NAME"
-            label="Customer Name"
-          ></app-input-container>
+          <label for="methodType"
+            >Customer <span class="required-indicator">*</span></label
+          >
+          <p-select
+            [filter]="true"
+            [formControlName]="NpiOrderFormField.CUSTOMER"
+            [options]="customers()"
+            filterBy="code"
+            optionLabel="code"
+            placeholder="Select customer"
+          ></p-select>
         </div>
         <div class="p-field">
           <app-input-container

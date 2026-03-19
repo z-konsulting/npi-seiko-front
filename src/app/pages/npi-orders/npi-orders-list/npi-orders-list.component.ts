@@ -34,6 +34,8 @@ import { Chip } from "primeng/chip";
 import { NpiService } from "../../../services/npi.service";
 import { SelectButton } from "primeng/selectbutton";
 import { FormsModule } from "@angular/forms";
+import { OverlayBadge } from "primeng/overlaybadge";
+import { environment } from "../../../../environments/environment";
 
 @Component({
   selector: "app-npi-orders-list",
@@ -51,6 +53,7 @@ import { FormsModule } from "@angular/forms";
     Chip,
     SelectButton,
     FormsModule,
+    OverlayBadge,
   ],
   templateUrl: "./npi-orders-list.component.html",
   styleUrl: "./npi-orders-list.component.scss",
@@ -164,6 +167,16 @@ export class NpiOrdersListComponent
       },
       reject: () => {},
     });
+  }
+
+  manageNpiOrderFiles(npiOrder: NpiOrder): void {
+    const url = `${environment.backendUrl}/npi-orders/${npiOrder.uid}/files`;
+    this.modalService
+      .showManageFileModal(url, undefined, false, true, true)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadData(this.lastTableLazyLoadEvent);
+      });
   }
 
   archiveNpiOrder(npiOrder: NpiOrder): void {

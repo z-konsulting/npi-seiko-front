@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
-import { FileInfo, NpiOrder, User } from "../../../client/npiSeiko";
+import { Customer, FileInfo, NpiOrder, User } from "../../../client/npiSeiko";
 import { Observable, race, take } from "rxjs";
 import { map } from "rxjs/operators";
 import { FileSelected } from "../../components/manage-file/manage-file.component";
@@ -9,6 +9,8 @@ import { NpiOrderCreateEditDialogComponent } from "../../modales/npi-orders/npi-
 import { NpiOrderProcessDialogComponent } from "../../modales/npi-orders/npi-order-process-dialog/npi-order-process-dialog.component";
 import { ManageFileDialogComponent } from "../../components/manage-file-dialog/manage-file-dialog.component";
 import { UserCreateEditDialogComponent } from "../../modales/admin/user-create-edit-dialog/user-create-edit-dialog.component";
+import { CustomerCreateEditDialogComponent } from "../../modales/admin/customer-create-edit-dialog/customer-create-edit-dialog.component";
+import { CustomerContactsDialogComponent } from "../../modales/admin/customer-contacts-dialog/customer-contacts-dialog.component";
 
 @Injectable({
   providedIn: "root",
@@ -17,6 +19,37 @@ export class ModalService {
   ref: DynamicDialogRef | undefined | null;
 
   constructor(private dialogService: DialogService) {}
+
+  showCustomerContactsModal(customer: Customer) {
+    this.ref = this.dialogService.open(CustomerContactsDialogComponent, {
+      header: `Contacts - ${customer.name}`,
+      draggable: false,
+      modal: true,
+      closable: true,
+      resizable: false,
+      width: "60%",
+      data: {
+        customer: customer,
+      },
+    });
+    return this.waitForDialogResult<void>(this.ref);
+  }
+
+  showCustomerCreateEditModal(editMode: boolean, customer?: Customer) {
+    this.ref = this.dialogService.open(CustomerCreateEditDialogComponent, {
+      header: `${editMode ? "Edit" : "Create"} customer`,
+      draggable: false,
+      modal: true,
+      closable: true,
+      resizable: false,
+      width: "65%",
+      data: {
+        editMode: editMode,
+        customer: customer,
+      },
+    });
+    return this.waitForDialogResult<boolean>(this.ref);
+  }
 
   showUserCreateEditModal(editMode: boolean, user?: User) {
     this.ref = this.dialogService.open(UserCreateEditDialogComponent, {

@@ -9,9 +9,15 @@ import {
 } from "@angular/forms";
 import { NpiOrderFormField } from "../../models/enums/form-field-names/npi-order-form-field";
 import { recordToMap } from "../../models/recordToMap";
-import { NpiOrder, UserRole, UserType } from "../../../client/npiSeiko";
+import {
+  Customer,
+  NpiOrder,
+  UserRole,
+  UserType,
+} from "../../../client/npiSeiko";
 import { DateFormField } from "../../models/enums/date-form-field";
 import { UserFormField } from "../../models/enums/form-field-names/user-form-field";
+import { CustomerFormField } from "../../models/enums/form-field-names/customer-form-field";
 
 @Injectable({
   providedIn: "root",
@@ -32,6 +38,17 @@ export class FormService {
           });
         }
       }
+    });
+  }
+
+  buildCustomerForm(customer?: Customer): FormGroup {
+    return this.fb.group({
+      [CustomerFormField.NAME]: new FormControl<string>(customer?.name ?? "", [
+        Validators.required,
+      ]),
+      [CustomerFormField.CODE]: new FormControl<string>(customer?.code ?? "", [
+        Validators.required,
+      ]),
     });
   }
 
@@ -104,9 +121,7 @@ export class FormService {
           ? new Date(npiOrder.targetDeliveryDate)
           : null,
       ),
-      [NpiOrderFormField.CUSTOMER_NAME]: new FormControl<string>(
-        npiOrder?.customerName ?? "",
-      ),
+      [NpiOrderFormField.CUSTOMER]: new FormControl<Customer | null>(null),
       [NpiOrderFormField.PRODUCT_NAME]: new FormControl<string>(
         npiOrder?.productName ?? "",
       ),
