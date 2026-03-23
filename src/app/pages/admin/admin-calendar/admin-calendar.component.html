@@ -6,7 +6,6 @@
   </ng-template>
 
   <div class="cal-page">
-
     <!-- ── Navigation bar ───────────────────────────────────────────── -->
     <div class="cal-nav">
       <div class="cal-nav__center">
@@ -14,13 +13,13 @@
           (click)="loadAllCalendarEvents()"
           [(viewDate)]="viewDate"
           [icon]="Icons.CHEVRON_LEFT"
-          [text]="true"
           [rounded]="true"
+          [text]="true"
           [view]="view"
           mwlCalendarPreviousView
+          pTooltip="Previous month"
           severity="secondary"
           size="small"
-          pTooltip="Previous month"
           tooltipPosition="top"
         />
         <span class="cal-nav__month">
@@ -30,13 +29,13 @@
           (click)="loadAllCalendarEvents()"
           [(viewDate)]="viewDate"
           [icon]="Icons.CHEVRON_RIGHT"
-          [text]="true"
           [rounded]="true"
+          [text]="true"
           [view]="view"
           mwlCalendarNextView
+          pTooltip="Next month"
           severity="secondary"
           size="small"
-          pTooltip="Next month"
           tooltipPosition="top"
         />
       </div>
@@ -45,8 +44,8 @@
         <p-button
           (click)="loadAllCalendarEvents()"
           [(viewDate)]="viewDate"
-          [outlined]="true"
           [icon]="Icons.CALENDAR"
+          [outlined]="true"
           label="Today"
           mwlCalendarToday
           severity="secondary"
@@ -59,17 +58,10 @@
     <div class="cal-legend">
       @for (item of legendItems; track item.type) {
         <div class="cal-legend__item">
-          <span
-            class="cal-legend__dot"
-            [style.background]="item.color"
-          ></span>
+          <span [style.background]="item.color" class="cal-legend__dot"></span>
           <span class="cal-legend__label">{{ item.label }}</span>
         </div>
       }
-      <div class="cal-legend__item cal-legend__item--default">
-        <span class="cal-legend__dot cal-legend__dot--default"></span>
-        <span class="cal-legend__label">Default</span>
-      </div>
     </div>
 
     <!-- ── Calendar grid ────────────────────────────────────────────── -->
@@ -88,12 +80,14 @@
       <ng-template #cellTemplate let-day="day" let-locale="locale">
         <div class="cal-cell-top">
           <span class="cal-day-number">
-            {{ day.date | calendarDate: 'monthViewDayNumber' : locale }}
+            {{ day.date | calendarDate: "monthViewDayNumber" : locale }}
           </span>
         </div>
         @if (day.events.length > 0) {
           <div class="cal-cell-body">
-            <span class="cal-cell-type-label">{{ day.events[0].title | calendarDayType }}</span>
+            <span class="cal-cell-type-label">{{
+              day.events[0].title | calendarDayType
+            }}</span>
             @if (day.events[0].meta) {
               <span class="cal-cell-remark">{{ day.events[0].meta }}</span>
             }
@@ -103,13 +97,14 @@
 
       <ng-template #tooltipTemplate let-event="event">
         <div class="cal-tooltip">
-          <span class="cal-tooltip__type">{{ event.title | calendarDayType }}</span>
+          <span class="cal-tooltip__type">{{
+            event.title | calendarDayType
+          }}</span>
           @if (event.meta) {
             <span class="cal-tooltip__remark">{{ event.meta }}</span>
           }
         </div>
       </ng-template>
     </div>
-
   </div>
 </p-card>
