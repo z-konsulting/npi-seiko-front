@@ -182,6 +182,11 @@ export class NpiOrdersListComponent
       });
   }
 
+  isDateLate(date: string | undefined): boolean {
+    if (!date) return false;
+    return new Date(date) < new Date(new Date().toDateString());
+  }
+
   archiveNpiOrder(npiOrder: NpiOrder): void {
     this.npiOrderRepo
       .archiveNpiOrder(npiOrder.uid)

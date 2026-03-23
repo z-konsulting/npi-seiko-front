@@ -90,9 +90,11 @@
         <td>
           @if (npiOrder.targetDeliveryDate) {
             <p-chip
-              [icon]="Icons.ARROW_UP_RIGHT"
+              [icon]="isDateLate(npiOrder.targetDeliveryDate) ? Icons.EXCLAMATION_TRIANGLE : Icons.ARROW_UP_RIGHT"
               [label]="npiOrder.targetDeliveryDate"
-              class="chip--success medium chip--square"
+              [class]="isDateLate(npiOrder.targetDeliveryDate) ? 'chip--danger medium chip--square' : 'chip--success medium chip--square'"
+              [pTooltip]="isDateLate(npiOrder.targetDeliveryDate) ? 'Target date exceeded' : ''"
+              tooltipPosition="top"
             ></p-chip>
           } @else {
             <span class="text-secondary">—</span>
@@ -101,9 +103,11 @@
         <td>
           @if (npiOrder.plannedDeliveryDate) {
             <p-chip
-              [icon]="Icons.CALENDAR_CLOCK"
+              [icon]="isDateLate(npiOrder.plannedDeliveryDate) ? Icons.EXCLAMATION_TRIANGLE : Icons.CALENDAR_CLOCK"
               [label]="npiOrder.plannedDeliveryDate"
-              class="chip--primary medium chip--square"
+              [class]="isDateLate(npiOrder.plannedDeliveryDate) ? 'chip--danger medium chip--square' : 'chip--primary medium chip--square'"
+              [pTooltip]="isDateLate(npiOrder.plannedDeliveryDate) ? 'Planned date exceeded' : ''"
+              tooltipPosition="top"
             ></p-chip>
           } @else {
             <span class="text-secondary">—</span>
