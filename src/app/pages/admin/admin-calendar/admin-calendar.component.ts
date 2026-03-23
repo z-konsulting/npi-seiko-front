@@ -8,9 +8,13 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
+  CalendarDatePipe,
   CalendarEvent,
-  CalendarModule,
+  CalendarMonthViewComponent,
   CalendarMonthViewDay,
+  CalendarNextViewDirective,
+  CalendarPreviousViewDirective,
+  CalendarTodayDirective,
   CalendarView,
 } from "angular-calendar";
 import { Icons } from "../../../models/enums/icons";
@@ -38,7 +42,11 @@ import { CalendarItem, DayType } from "../../../../client/npiSeiko";
 @Component({
   selector: "app-admin-calendar",
   imports: [
-    CalendarModule,
+    CalendarMonthViewComponent,
+    CalendarPreviousViewDirective,
+    CalendarNextViewDirective,
+    CalendarTodayDirective,
+    CalendarDatePipe,
     CardModule,
     Button,
     ConfirmDialogModule,
