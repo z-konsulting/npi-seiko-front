@@ -5,6 +5,8 @@ import {
   inject,
   OnInit,
   signal,
+  TemplateRef,
+  ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -73,6 +75,8 @@ export class AdminCalendarComponent implements OnInit {
   endDate!: string;
   view: CalendarView = CalendarView.Month;
   events = signal<CalendarEvent[]>([]);
+
+  @ViewChild("cellTemplate") cellTemplate!: TemplateRef<unknown>;
 
   protected readonly Icons = Icons;
   protected readonly DayType = DayType;

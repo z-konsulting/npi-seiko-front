@@ -77,11 +77,29 @@
       <mwl-calendar-month-view
         (beforeViewRender)="beforeMonthViewRender($event)"
         (dayClicked)="clickedDay($event)"
+        [cellTemplate]="cellTemplate"
         [events]="events()"
         [tooltipTemplate]="tooltipTemplate"
         [viewDate]="viewDate"
         tooltipPlacement="top"
       />
+
+      <!-- ── Custom cell template ──────────────────────────────────── -->
+      <ng-template #cellTemplate let-day="day" let-locale="locale">
+        <div class="cal-cell-top">
+          <span class="cal-day-number">
+            {{ day.date | calendarDate: 'monthViewDayNumber' : locale }}
+          </span>
+        </div>
+        @if (day.events.length > 0) {
+          <div class="cal-cell-body">
+            <span class="cal-cell-type-label">{{ day.events[0].title | calendarDayType }}</span>
+            @if (day.events[0].meta) {
+              <span class="cal-cell-remark">{{ day.events[0].meta }}</span>
+            }
+          </div>
+        }
+      </ng-template>
 
       <ng-template #tooltipTemplate let-event="event">
         <div class="cal-tooltip">

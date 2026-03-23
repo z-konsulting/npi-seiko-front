@@ -186,6 +186,7 @@ $color-holiday: #dc9435;
       color: #ffffff !important;
       font-weight: 700;
       opacity: 1 !important;
+      font-size: 1.6rem;
     }
 
     // ── Weekend ─────────────────────────────────────────────────────
@@ -203,10 +204,43 @@ $color-holiday: #dc9435;
       }
     }
 
-    // ── Event dots — hide (cell background communicates the type) ───
+    // ── Event dots & badge — hidden (cell bg communicates type) ────
     .cal-events {
       display: none;
     }
+
+    .cal-day-badge {
+      display: none !important;
+    }
+  }
+
+  // ── Custom cell content ───────────────────────────────────────────
+  .cal-cell-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0 0.5rem 0.5rem;
+  }
+
+  .cal-cell-type-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-color-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cal-cell-remark {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: var(--text-color-secondary);
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   // ── Day type color classes (set via beforeViewRender) ────────────
