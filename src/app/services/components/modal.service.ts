@@ -34,7 +34,7 @@ export class ModalService {
       modal: true,
       resizable: false,
       style: {
-        width: "400px",
+        width: "40rem",
       },
       data: {
         calendarItem: calendarItem,

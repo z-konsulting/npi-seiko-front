@@ -1,37 +1,58 @@
-<form [formGroup]="calendarEventForm">
-  <div class="p-fields-row">
-    <div class="p-field">
-      <label [for]="CalendarEventFormFieldName.TITLE">
-        Title <span class="required-indicator">*</span>
-      </label>
-      <p-selectButton
-        (onChange)="change($event)"
-        [class]="dayTypeSelected"
-        [formControlName]="CalendarEventFormFieldName.TITLE"
-        [id]="CalendarEventFormFieldName.TITLE"
-        [options]="daysType"
-        allowEmpty="false"
-        optionLabel="label"
-        optionValue="value"
+<div class="cal-dialog">
+  <!-- ── Date header ──────────────────────────────────────────────── -->
+  <div class="cal-dialog__date-header">
+    <i [class]="Icons.CALENDAR"></i>
+    <span>{{ displayDate }}</span>
+  </div>
+
+  <form [formGroup]="calendarEventForm">
+    <!-- ── Day type cards ──────────────────────────────────────────── -->
+    <div class="cal-dialog__section-label">Day type</div>
+    <div class="day-type-grid">
+      @for (item of dayTypeConfig; track item.type) {
+        <button
+          (click)="selectDayType(item.type)"
+          [class.day-type-card--selected]="dayTypeSelected === item.type"
+          [style.--card-color]="item.color"
+          class="day-type-card"
+          type="button"
+        >
+          <span class="day-type-card__color-bar"></span>
+          <i [class]="item.icon" class="day-type-card__icon"></i>
+          <span class="day-type-card__label">{{ item.label }}</span>
+          @if (dayTypeSelected === item.type) {
+            <i [class]="Icons.CHECK_CIRCLE" class="day-type-card__check"></i>
+          }
+        </button>
+      }
+    </div>
+
+    <!-- ── Remark ───────────────────────────────────────────────────── -->
+    <app-input-container
+      [formControlName]="CalendarEventFormFieldName.REMARK"
+      [textAreaRows]="3"
+      label="Remark"
+      placeholder="Add a note for this day…"
+      type="textarea"
+    />
+
+    <!-- ── Actions ──────────────────────────────────────────────────── -->
+    <div class="modal-actions-footer-end">
+      <p-button
+        (click)="sendCalendarEvent()"
+        [icon]="Icons.CHECK"
+        label="Save"
+        severity="success"
+        size="small"
+      />
+      <p-button
+        (click)="closeDialog(false)"
+        [icon]="Icons.TIMES"
+        [outlined]="true"
+        label="Cancel"
+        severity="secondary"
+        size="small"
       />
     </div>
-  </div>
-  <div class="p-field">
-    <label [for]="CalendarEventFormFieldName.REMARK">Remark:</label>
-    <textarea
-      [autoResize]="true"
-      [formControlName]="CalendarEventFormFieldName.REMARK"
-      [id]="'non'"
-      [name]="CalendarEventFormFieldName.REMARK"
-      pInputTextarea
-      rows="3"
-    ></textarea>
-  </div>
-  <p-button
-    (click)="sendCalendarEvent()"
-    class="modal-btn"
-    label="Update"
-    severity="success"
-    type="submit"
-  ></p-button>
-</form>
+  </form>
+</div>

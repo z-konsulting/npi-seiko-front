@@ -7,11 +7,8 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectButtonModule } from "primeng/selectbutton";
 import { Button } from "primeng/button";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { SelectButtonChangeEvent } from "primeng/selectbutton";
 import { CalendarItem, DayType } from "../../../../client/npiSeiko";
 import {
   CalendarCustomService,
@@ -20,18 +17,18 @@ import {
 import { CalendarEventFormField } from "../../../models/enums/calendar-event-form-field";
 import { CalendarRepo } from "../../../repositories/calendar-repo";
 import { BaseModal } from "../../../models/classes/base-modal";
-import { Textarea } from "primeng/textarea";
+import { InputContainerComponent } from "../../../components/input-container/input-container.component";
+import { Icons } from "../../../models/enums/icons";
+import { CalendarEventColor } from "../../../models/enums/calendar-event-color";
 
 @Component({
   selector: "app-calendar-create-edit-dialog",
   imports: [
     CardModule,
     FormsModule,
-    InputTextModule,
     ReactiveFormsModule,
-    SelectButtonModule,
     Button,
-    Textarea,
+    InputContainerComponent,
   ],
   templateUrl: "./calendar-create-edit-dialog.component.html",
   styleUrl: "./calendar-create-edit-dialog.component.scss",
@@ -48,6 +45,7 @@ export class CalendarCreateEditDialogComponent
   calendarEvent!: CalendarItem;
   daysType: DayTypeOptions[] = [];
   dayTypeSelected!: DayType;
+  displayDate: string = "";
 
   calendarEventForm: FormGroup = this.fb.group({
     [CalendarEventFormField.TITLE]: new FormControl<DayType>(DayType.WORKING),
@@ -55,11 +53,55 @@ export class CalendarCreateEditDialogComponent
   });
 
   protected readonly CalendarEventFormFieldName = CalendarEventFormField;
+  protected readonly DayType = DayType;
+  protected readonly Icons = Icons;
+  protected readonly CalendarEventColor = CalendarEventColor;
+
+  protected readonly dayTypeConfig: {
+    type: DayType;
+    label: string;
+    icon: string;
+    color: string;
+    cssKey: string;
+  }[] = [
+    {
+      type: DayType.WORKING,
+      label: "Working Day",
+      icon: Icons.BRIEFCASE,
+      color: CalendarEventColor.WORKING_COLOR,
+      cssKey: "working",
+    },
+    {
+      type: DayType.WORKING_HALF_DAY,
+      label: "Half Day",
+      icon: Icons.CLOCK,
+      color: CalendarEventColor.WORKING_HALF_DAY,
+      cssKey: "working-half-day",
+    },
+    {
+      type: DayType.NOT_WORKING,
+      label: "Non-Working",
+      icon: Icons.BAN,
+      color: CalendarEventColor.NOT_WORKING_COLOR,
+      cssKey: "not-working",
+    },
+    {
+      type: DayType.PUBLIC_HOLIDAY,
+      label: "Public Holiday",
+      icon: Icons.STAR,
+      color: CalendarEventColor.PUBLIC_HOLIDAY_COLOR,
+      cssKey: "public-holiday",
+    },
+  ];
 
   ngOnInit(): void {
     if (this.config.data) {
       this.calendarEvent = this.config.data.calendarItem;
       this.dayTypeSelected = this.calendarEvent.value;
+      this.displayDate = new Date(this.calendarEvent.date).toLocaleDateString(
+        "en-US",
+        { weekday: "long", year: "numeric", month: "long", day: "numeric" },
+      );
       this.calendarEventForm.patchValue({
         [CalendarEventFormField.TITLE]: this.calendarEvent.value,
         [CalendarEventFormField.REMARK]: this.calendarEvent.remark ?? "",
@@ -68,8 +110,11 @@ export class CalendarCreateEditDialogComponent
     this.daysType = this.calendarCustomService.initDaysTypeOption();
   }
 
-  change($event: SelectButtonChangeEvent): void {
-    this.dayTypeSelected = $event.value as DayType;
+  selectDayType(type: DayType): void {
+    this.dayTypeSelected = type;
+    this.calendarEventForm.patchValue({
+      [CalendarEventFormField.TITLE]: type,
+    });
   }
 
   sendCalendarEvent(): void {

@@ -1,66 +1,97 @@
 <p-card>
   <ng-template pTemplate="header">
     <div class="card-header">
-      <div class="card-header">
-        <app-custom-title [title]="title"></app-custom-title>
-      </div>
+      <app-custom-title [title]="title" />
     </div>
   </ng-template>
-  <div class="calendar-container">
-    <div class="cal-buttons">
-      <div class="cal-button-today">
-        <p-button
-          (click)="loadAllCalendarEvents()"
-          [(viewDate)]="viewDate"
-          [outlined]="true"
-          label="Today"
-          mwlCalendarToday
-          size="small"
-        ></p-button>
-      </div>
-      <div class="cal-date-nav-button">
+
+  <div class="cal-page">
+
+    <!-- ── Navigation bar ───────────────────────────────────────────── -->
+    <div class="cal-nav">
+      <div class="cal-nav__center">
         <p-button
           (click)="loadAllCalendarEvents()"
           [(viewDate)]="viewDate"
           [icon]="Icons.CHEVRON_LEFT"
-          [outlined]="true"
+          [text]="true"
           [rounded]="true"
           [view]="view"
           mwlCalendarPreviousView
+          severity="secondary"
           size="small"
-        ></p-button>
-        <div class="cal-date-field">
+          pTooltip="Previous month"
+          tooltipPosition="top"
+        />
+        <span class="cal-nav__month">
           {{ viewDate | calendarDate: view + "ViewTitle" : "en" }}
-        </div>
+        </span>
         <p-button
           (click)="loadAllCalendarEvents()"
           [(viewDate)]="viewDate"
           [icon]="Icons.CHEVRON_RIGHT"
-          [outlined]="true"
+          [text]="true"
           [rounded]="true"
           [view]="view"
           mwlCalendarNextView
+          severity="secondary"
           size="small"
-        ></p-button>
+          pTooltip="Next month"
+          tooltipPosition="top"
+        />
+      </div>
+
+      <div class="cal-nav__right">
+        <p-button
+          (click)="loadAllCalendarEvents()"
+          [(viewDate)]="viewDate"
+          [outlined]="true"
+          [icon]="Icons.CALENDAR"
+          label="Today"
+          mwlCalendarToday
+          severity="secondary"
+          size="small"
+        />
       </div>
     </div>
 
-    <span class="calendar-view">
+    <!-- ── Legend ───────────────────────────────────────────────────── -->
+    <div class="cal-legend">
+      @for (item of legendItems; track item.type) {
+        <div class="cal-legend__item">
+          <span
+            class="cal-legend__dot"
+            [style.background]="item.color"
+          ></span>
+          <span class="cal-legend__label">{{ item.label }}</span>
+        </div>
+      }
+      <div class="cal-legend__item cal-legend__item--default">
+        <span class="cal-legend__dot cal-legend__dot--default"></span>
+        <span class="cal-legend__label">Default</span>
+      </div>
+    </div>
+
+    <!-- ── Calendar grid ────────────────────────────────────────────── -->
+    <div class="cal-wrapper">
       <mwl-calendar-month-view
+        (beforeViewRender)="beforeMonthViewRender($event)"
         (dayClicked)="clickedDay($event)"
         [events]="events()"
         [tooltipTemplate]="tooltipTemplate"
         [viewDate]="viewDate"
         tooltipPlacement="top"
-      ></mwl-calendar-month-view>
+      />
+
       <ng-template #tooltipTemplate let-event="event">
-        <div class="custom-tooltip">
-          <strong>{{ event.title | calendarDayType }}</strong>
+        <div class="cal-tooltip">
+          <span class="cal-tooltip__type">{{ event.title | calendarDayType }}</span>
           @if (event.meta) {
-            <p>{{ event.meta }}</p>
+            <span class="cal-tooltip__remark">{{ event.meta }}</span>
           }
         </div>
       </ng-template>
-    </span>
+    </div>
+
   </div>
 </p-card>

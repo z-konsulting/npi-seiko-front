@@ -2,6 +2,83 @@
 
 Use this skill when working with Angular components, templates, and modern Angular 21+ syntax.
 
+## Input Fields (REQUIRED)
+
+**ALL `text`, `number`, and `textarea` inputs MUST use `<app-input-container>`** instead of raw `<input>`, `<textarea>`, or `<p-inputNumber>`.
+
+`app-input-container` is a `ControlValueAccessor` — it integrates directly with reactive forms via `formControlName`.
+
+```html
+<!-- ✅ GOOD: text input -->
+<app-input-container
+  [formControlName]="FormField.NAME"
+  label="Name"
+  placeholder="Enter name"
+  type="text"
+/>
+
+<!-- ✅ GOOD: number input -->
+<app-input-container
+  [formControlName]="FormField.QUANTITY"
+  label="Quantity"
+  type="number"
+  [min]="0"
+/>
+
+<!-- ✅ GOOD: textarea -->
+<app-input-container
+  [formControlName]="FormField.REMARK"
+  label="Remark"
+  placeholder="Add a note…"
+  type="textarea"
+  [textAreaRows]="3"
+/>
+
+<!-- ❌ BAD: raw input/textarea -->
+<input pInputText [formControlName]="FormField.NAME" />
+<textarea pTextarea [formControlName]="FormField.REMARK"></textarea>
+<p-inputNumber [formControlName]="FormField.QTY" />
+```
+
+**Available inputs on `app-input-container`:**
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `type` | `'text' \| 'number' \| 'textarea'` | `'text'` | Field type |
+| `label` | `string` | `''` | Label text (auto shows required `*`) |
+| `placeholder` | `string` | `''` | Placeholder |
+| `disabled` | `boolean` | `false` | Disable field |
+| `readonly` | `boolean` | `false` | Read-only mode |
+| `textAreaRows` | `number` | `2` | Rows for textarea |
+| `min` / `max` | `number \| null` | `null` | Min/max for number |
+| `errorMessage` | `string` | `''` | Validation error text |
+| `helpText` | `string` | `''` | Helper text below field |
+
+**Exception**: `<p-select>`, `<p-datePicker>`, `<p-selectButton>` and other PrimeNG compound components are NOT covered by `app-input-container` — use them directly.
+
+## Page Layout (REQUIRED)
+
+**All main page components MUST wrap their content in a `<p-card>`** with a header containing `<app-custom-title>`.
+
+```html
+<p-card>
+  <ng-template pTemplate="header">
+    <div class="card-header">
+      <app-custom-title [title]="title" />
+    </div>
+  </ng-template>
+
+  <!-- page content here -->
+</p-card>
+```
+
+```typescript
+// In the component class:
+protected readonly title: string = RoutingService.getRouteTitle(RouteId.MY_ROUTE);
+```
+
+This applies to every routed page component under `src/app/pages/`. Dialogs and sub-components are excluded.
+
 ## Component Structure (REQUIRED)
 
 **All components MUST follow this structure:**
