@@ -1,0 +1,121 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  CalendarEvent,
+  CalendarModule,
+  CalendarMonthViewDay,
+  CalendarView,
+} from "angular-calendar";
+import { Icons } from "../../../models/enums/icons";
+import { Button } from "primeng/button";
+import { CardModule } from "primeng/card";
+import {
+  endOfMonth,
+  format,
+  Interval,
+  isWithinInterval,
+  startOfMonth,
+} from "date-fns";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { ModalService } from "../../../services/components/modal.service";
+import { map } from "rxjs";
+import { CalendarRepo } from "../../../repositories/calendar-repo";
+import { HandleToastMessageService } from "../../../services/handle-toast-message.service";
+import { RoutingService } from "../../../services/Routing.service";
+import { RouteId } from "../../../models/enums/routes-id";
+import { CustomTitleComponent } from "../../../components/custom-title/custom-title.component";
+import { CalendarDayTypePipe } from "../../../pipes/calendar-day-type.pipe";
+import { CalendarCustomService } from "../../../services/calendar-custom.service";
+import { CalendarItem, DayType } from "../../../../client/npiSeiko";
+
+@Component({
+  selector: "app-admin-calendar",
+  imports: [
+    CalendarModule,
+    CardModule,
+    Button,
+    ConfirmDialogModule,
+    CalendarDayTypePipe,
+    CustomTitleComponent,
+  ],
+  templateUrl: "./admin-calendar.component.html",
+  styleUrl: "./admin-calendar.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AdminCalendarComponent implements OnInit {
+  viewDate: Date = new Date();
+  startDate!: string;
+  endDate!: string;
+  view: CalendarView = CalendarView.Month;
+  events = signal<CalendarEvent[]>([]);
+
+  protected readonly Icons = Icons;
+  protected readonly title: string = RoutingService.getRouteTitle(
+    RouteId.ADMIN_CALENDAR,
+  );
+
+  private readonly modalService = inject(ModalService);
+  private readonly calendarRepo = inject(CalendarRepo);
+  private readonly calendarCustomService = inject(CalendarCustomService);
+  private readonly handleMessage = inject(HandleToastMessageService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+    this.loadAllCalendarEvents();
+  }
+
+  clickedDay($event: {
+    day: CalendarMonthViewDay;
+    sourceEvent: MouseEvent | KeyboardEvent;
+  }): void {
+    const eventSelected = $event.day;
+    const calendarItem: CalendarItem = {
+      value: (eventSelected.events[0]?.title as DayType) ?? DayType.WORKING,
+      date: format(eventSelected.date, "yyyy-MM-dd"),
+      remark: eventSelected.events[0] ? eventSelected.events[0].meta : "",
+    };
+    const interval: Interval = {
+      start: this.startDate,
+      end: this.endDate,
+    };
+    if (isWithinInterval(calendarItem.date, interval)) {
+      this.modalService
+        .showEditCalendarEventModal(calendarItem)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.loadAllCalendarEvents();
+        });
+    } else {
+      this.handleMessage.warningMessage(
+        "This date is not in the current month",
+      );
+    }
+  }
+
+  loadAllCalendarEvents(): void {
+    this.startDate = format(startOfMonth(this.viewDate), "yyyy-MM-dd");
+    this.endDate = format(endOfMonth(this.viewDate), "yyyy-MM-dd");
+    this.calendarRepo
+      .getAllCalendarEvents(this.startDate, this.endDate)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map((event) =>
+          this.calendarCustomService.mappedToCalendarEvents(event),
+        ),
+      )
+      .subscribe({
+        next: (calendarEvents: CalendarEvent[]) =>
+          this.events.set(calendarEvents),
+        error: (error: unknown) => {
+          this.handleMessage.handleErrorWithCodeV2(error);
+        },
+      });
+  }
+}

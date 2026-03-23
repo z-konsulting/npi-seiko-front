@@ -1,6 +1,12 @@
 import { Injectable } from "@angular/core";
 import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
-import { Customer, FileInfo, NpiOrder, User } from "../../../client/npiSeiko";
+import {
+  CalendarItem,
+  Customer,
+  FileInfo,
+  NpiOrder,
+  User,
+} from "../../../client/npiSeiko";
 import { Observable, race, take } from "rxjs";
 import { map } from "rxjs/operators";
 import { FileSelected } from "../../components/manage-file/manage-file.component";
@@ -11,6 +17,7 @@ import { ManageFileDialogComponent } from "../../components/manage-file-dialog/m
 import { UserCreateEditDialogComponent } from "../../modales/admin/user-create-edit-dialog/user-create-edit-dialog.component";
 import { CustomerCreateEditDialogComponent } from "../../modales/admin/customer-create-edit-dialog/customer-create-edit-dialog.component";
 import { CustomerContactsDialogComponent } from "../../modales/admin/customer-contacts-dialog/customer-contacts-dialog.component";
+import { CalendarCreateEditDialogComponent } from "../../modales/admin/calendar-create-edit-dialog/calendar-create-edit-dialog.component";
 
 @Injectable({
   providedIn: "root",
@@ -19,6 +26,22 @@ export class ModalService {
   ref: DynamicDialogRef | undefined | null;
 
   constructor(private dialogService: DialogService) {}
+
+  showEditCalendarEventModal(calendarItem: CalendarItem) {
+    this.ref = this.dialogService.open(CalendarCreateEditDialogComponent, {
+      header: `Edit calendar for ${calendarItem.date}`,
+      draggable: true,
+      modal: true,
+      resizable: false,
+      style: {
+        width: "400px",
+      },
+      data: {
+        calendarItem: calendarItem,
+      },
+    });
+    return this.waitForDialogResult<void>(this.ref);
+  }
 
   showCustomerContactsModal(customer: Customer) {
     this.ref = this.dialogService.open(CustomerContactsDialogComponent, {

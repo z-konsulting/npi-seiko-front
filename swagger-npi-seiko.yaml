@@ -21,6 +21,8 @@ tags:
     description: Everything about Files APIs
   - name: customer
     description: Everything about Customer APIs
+  - name: calendar
+    description: Everything about Calendar APIs
 paths:
   /customers/search:
     post:
@@ -1080,6 +1082,39 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/FileInfo'
+  /calendar:
+    get:
+      tags:
+        - calendar
+      summary: Retrieve a calendar slice, between given start date (inclusive) and end date (inclusive)
+      operationId: getCalendarSlice
+      parameters:
+        - $ref: '#/components/parameters/startDateParam'
+        - $ref: '#/components/parameters/endDateParam'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarItem'
+    post:
+      tags:
+        - calendar
+      summary: upsert a calendar entry
+      operationId: upsertCalendarEntry
+      requestBody:
+        description: calendar entry to upsert
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalendarItem'
+        required: true
+      responses:
+        '200':
+          description: successful operation
 components:
   parameters:
     uidParam:
@@ -1153,6 +1188,19 @@ components:
   ##################################################################
   ##################################################################
   schemas:
+    CalendarItem:
+      type: object
+      required:
+        - date
+        - value
+      properties:
+        date:
+          type: string
+          format: date
+        value:
+          $ref: "#/components/schemas/DayType"
+        remark:
+          type: string
     CustomersPaginated:
       type: object
       allOf:
@@ -1833,6 +1881,13 @@ components:
         - STARTED
         - COMPLETED
         - ABORTED
+    DayType:
+      type: string
+      enum:
+        - WORKING
+        - WORKING_HALF_DAY
+        - NOT_WORKING
+        - PUBLIC_HOLIDAY
     ProcessLineStatus:
       type: string
       enum:

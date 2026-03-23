@@ -6,6 +6,7 @@ export enum RouteId {
   ADMIN,
   ADMIN_USERS,
   ADMIN_CUSTOMERS,
+  ADMIN_CALENDAR,
   DASHBOARD,
   NPI_ORDERS,
 }

@@ -61,6 +61,13 @@ export const routeEnvironment: RouteEnv[] = [
         detailBackLink: RouteId.ADMIN,
         enable: true,
       },
+      {
+        id: RouteId.ADMIN_CALENDAR,
+        path: "calendar",
+        title: "Calendar",
+        detailBackLink: RouteId.ADMIN,
+        enable: true,
+      },
     ],
   },
 ];

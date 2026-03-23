@@ -1,0 +1,37 @@
+<form [formGroup]="calendarEventForm">
+  <div class="p-fields-row">
+    <div class="p-field">
+      <label [for]="CalendarEventFormFieldName.TITLE">
+        Title <span class="required-indicator">*</span>
+      </label>
+      <p-selectButton
+        (onChange)="change($event)"
+        [class]="dayTypeSelected"
+        [formControlName]="CalendarEventFormFieldName.TITLE"
+        [id]="CalendarEventFormFieldName.TITLE"
+        [options]="daysType"
+        allowEmpty="false"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </div>
+  </div>
+  <div class="p-field">
+    <label [for]="CalendarEventFormFieldName.REMARK">Remark:</label>
+    <textarea
+      [autoResize]="true"
+      [formControlName]="CalendarEventFormFieldName.REMARK"
+      [id]="'non'"
+      [name]="CalendarEventFormFieldName.REMARK"
+      pInputTextarea
+      rows="3"
+    ></textarea>
+  </div>
+  <p-button
+    (click)="sendCalendarEvent()"
+    class="modal-btn"
+    label="Update"
+    severity="success"
+    type="submit"
+  ></p-button>
+</form>
