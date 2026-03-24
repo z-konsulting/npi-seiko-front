@@ -17,12 +17,12 @@
       <span class="line-index">{{ i + 1 }}</span>
       <span class="line-name">{{ line.processName }}</span>
       <span
+        [class.role-badge--engineering]="
+          !line.isMaterialPurchase && !line.isMaterialReceiving
+        "
         [class.role-badge--locked]="!canEditLine(line)"
         [class.role-badge--procurement]="
           line.isMaterialPurchase || line.isMaterialReceiving
-        "
-        [class.role-badge--engineering]="
-          !line.isMaterialPurchase && !line.isMaterialReceiving
         "
         [pTooltip]="
           canEditLine(line)
@@ -80,35 +80,9 @@
         <p-button
           (click)="toggleEditMode(line)"
           [class.history-btn--active]="editingLineUid() === line.uid"
-          [disabled]="hasRemainingTimeEditorOpen()"
           [icon]="Icons.PENCIL"
           [text]="true"
           pTooltip="Edit"
-          severity="secondary"
-          size="small"
-          tooltipPosition="top"
-        ></p-button>
-      }
-      @if (
-        !readonly() &&
-        canEditLine(line) &&
-        line.status === ProcessLineStatus.IN_PROGRESS
-      ) {
-        <p-button
-          (click)="toggleRemainingTime(line)"
-          [class.history-btn--active]="remainingTimeLineUid() === line.uid"
-          [icon]="Icons.CLOCK"
-          [label]="
-            remainingTimeLineUid() === line.uid
-              ? 'Close remaining time'
-              : 'Remaining time'
-          "
-          [outlined]="remainingTimeLineUid() !== line.uid"
-          [pTooltip]="
-            remainingTimeLineUid() === line.uid
-              ? 'Close remaining time editor'
-              : 'Add or update remaining time'
-          "
           severity="secondary"
           size="small"
           tooltipPosition="top"
@@ -584,7 +558,6 @@
             [class.status-option--not-started]="
               status === ProcessLineStatus.NOT_STARTED
             "
-            [disabled]="hasRemainingTimeEditorOpen()"
             class="status-option"
             type="button"
           >
@@ -602,81 +575,83 @@
 </ng-template>
 
 <!-- =====================================================================
-     Remaining time update panel — for IN_PROGRESS lines
-     ===================================================================== -->
-<ng-template #remainingTimeTpl let-line>
-  @if (remainingTimeLineUid() === line.uid) {
-    <div class="status-change-panel">
-      <p class="panel-instruction">Update remaining time (hours):</p>
-      <div class="remaining-time-row">
-        <p-inputNumber
-          [(ngModel)]="remainingTimeInput"
-          placeholder="Hours"
-        ></p-inputNumber>
-        <p-button
-          (onClick)="confirmRemainingTimeUpdate(line)"
-          [disabled]="remainingTimeInput === null"
-          [icon]="Icons.CHECK"
-          [loading]="updatingRemainingTime()"
-          appNoDoubleClick
-          label="Update"
-          severity="success"
-          size="small"
-        ></p-button>
-        <p-button
-          (onClick)="closeRemainingTimeEditor()"
-          [icon]="Icons.TIMES"
-          [loading]="updatingRemainingTime()"
-          label="Close"
-          severity="secondary"
-          size="small"
-        ></p-button>
-      </div>
-    </div>
-  }
-</ng-template>
-
-<!-- =====================================================================
      Status buttons row (shown unless extra fields step is active)
      ===================================================================== -->
 <ng-template #statusOptionsTpl let-i="index" let-line>
   @if (pendingLineIndex() !== i) {
-    <div class="status-options status-options--with-current">
-      @for (status of orderedProcessLineStatuses; track status) {
-        @if (status === line.status) {
-          <span
-            [class.status-option--completed]="
-              status === ProcessLineStatus.COMPLETED
-            "
-            [class.status-option--in-progress]="
-              status === ProcessLineStatus.IN_PROGRESS
-            "
-            [class.status-option--not-started]="
-              status === ProcessLineStatus.NOT_STARTED
-            "
-            class="status-option status-option--current"
-          >
-            {{ status | processLineStatus }}
-          </span>
-        } @else if (availableStatuses(line).includes(status)) {
-          <button
-            (click)="selectTargetStatus(line, status, i)"
-            [class.status-option--completed]="
-              status === ProcessLineStatus.COMPLETED
-            "
-            [class.status-option--in-progress]="
-              status === ProcessLineStatus.IN_PROGRESS
-            "
-            [class.status-option--not-started]="
-              status === ProcessLineStatus.NOT_STARTED
-            "
-            [disabled]="hasRemainingTimeEditorOpen()"
-            class="status-option"
-            type="button"
-          >
-            {{ status | processLineStatus }}
-          </button>
+    <div class="status-row">
+      <div class="status-options status-options--with-current">
+        @for (status of orderedProcessLineStatuses; track status) {
+          @if (status === line.status) {
+            <span
+              [class.status-option--completed]="
+                status === ProcessLineStatus.COMPLETED
+              "
+              [class.status-option--in-progress]="
+                status === ProcessLineStatus.IN_PROGRESS
+              "
+              [class.status-option--not-started]="
+                status === ProcessLineStatus.NOT_STARTED
+              "
+              class="status-option status-option--current"
+            >
+              {{ status | processLineStatus }}
+            </span>
+          } @else if (availableStatuses(line).includes(status)) {
+            <button
+              (click)="selectTargetStatus(line, status, i)"
+              [class.status-option--completed]="
+                status === ProcessLineStatus.COMPLETED
+              "
+              [class.status-option--in-progress]="
+                status === ProcessLineStatus.IN_PROGRESS
+              "
+              [class.status-option--not-started]="
+                status === ProcessLineStatus.NOT_STARTED
+              "
+              class="status-option"
+              type="button"
+            >
+              {{ status | processLineStatus }}
+            </button>
+          }
         }
+      </div>
+
+      @if (
+        !readonly() &&
+        canEditLine(line) &&
+        line.status === ProcessLineStatus.IN_PROGRESS
+      ) {
+        <div class="remaining-time-inline">
+          <i
+            [class]="Icons.CLOCK"
+            class="remaining-time-inline__icon"
+            pTooltip="Remaining time"
+          ></i>
+          <p-inputNumber
+            (ngModelChange)="remainingTimeInputs.set(line.uid!, $event)"
+            [min]="0"
+            [ngModel]="remainingTimeInputs.get(line.uid!)"
+            [showButtons]="false"
+            inputStyleClass="remaining-time-inline__input"
+            placeholder="Days"
+          ></p-inputNumber>
+          <p-button
+            (onClick)="confirmRemainingTimeUpdate(line)"
+            [disabled]="
+              remainingTimeInputs.get(line.uid!) === null ||
+              remainingTimeInputs.get(line.uid!) === undefined
+            "
+            [icon]="Icons.CHECK"
+            [loading]="updatingRemainingTime()"
+            appNoDoubleClick
+            pTooltip="Update remaining days"
+            severity="success"
+            size="small"
+            tooltipPosition="top"
+          ></p-button>
+        </div>
       }
     </div>
   }
@@ -716,10 +691,6 @@
             editPanelTpl;
             context: { $implicit: line, index: i }
           "
-        ></ng-container>
-
-        <ng-container
-          *ngTemplateOutlet="remainingTimeTpl; context: { $implicit: line }"
         ></ng-container>
 
         @if (

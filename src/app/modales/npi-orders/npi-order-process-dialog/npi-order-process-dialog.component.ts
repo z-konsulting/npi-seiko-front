@@ -113,13 +113,9 @@ export class NpiOrderProcessDialogComponent
   /** UID of the line currently in edit (reset) mode */
   editingLineUid = signal<string | null>(null);
 
-  /** Remaining time inline update */
-  remainingTimeLineUid = signal<string | null>(null);
-  remainingTimeInput: number | null = null;
+  /** Remaining time inline — one value per line uid */
+  remainingTimeInputs: Map<string, number | null> = new Map();
   updatingRemainingTime = signal<boolean>(false);
-  hasRemainingTimeEditorOpen = computed(
-    () => this.remainingTimeLineUid() !== null,
-  );
 
   /** Number of files uploaded for the testing completion step */
   testingFileSelected = signal<FileSelected | null>(null);
@@ -275,12 +271,6 @@ export class NpiOrderProcessDialogComponent
     status: ProcessLineStatus,
     lineIndex: number,
   ): void {
-    if (this.hasRemainingTimeEditorOpen()) {
-      this.handleMessage.infoMessage(
-        "Close remaining time editor before changing status",
-      );
-      return;
-    }
     if (!this.requiresExtraFields(line, status)) {
       this.doUpdateStatus(line, status);
       return;
@@ -316,12 +306,6 @@ export class NpiOrderProcessDialogComponent
   }
 
   toggleEditMode(line: ProcessLine): void {
-    if (this.hasRemainingTimeEditorOpen()) {
-      this.handleMessage.infoMessage(
-        "Close remaining time editor before changing status",
-      );
-      return;
-    }
     const uid = line.uid!;
     this.editingLineUid.set(this.editingLineUid() === uid ? null : uid);
   }
@@ -331,12 +315,6 @@ export class NpiOrderProcessDialogComponent
     status: ProcessLineStatus,
     lineIndex: number,
   ): void {
-    if (this.hasRemainingTimeEditorOpen()) {
-      this.handleMessage.infoMessage(
-        "Close remaining time editor before changing status",
-      );
-      return;
-    }
     if (this.requiresExtraFields(line, status)) {
       this.editingLineUid.set(null);
       this.pendingLineIndex.set(lineIndex);
@@ -363,25 +341,13 @@ export class NpiOrderProcessDialogComponent
     this.doUpdateStatus(line, status);
   }
 
-  toggleRemainingTime(line: ProcessLine): void {
-    const uid = line.uid!;
-    if (this.remainingTimeLineUid() === uid) {
-      this.closeRemainingTimeEditor();
-    } else {
-      this.clearPending();
-      this.editingLineUid.set(null);
-      this.remainingTimeLineUid.set(uid);
-      this.remainingTimeInput =
-        line.remainingTimeInDays ?? line.planTimeInDays ?? null;
-    }
-  }
-
   confirmRemainingTimeUpdate(line: ProcessLine): void {
-    if (this.remainingTimeInput === null) return;
+    const input = this.remainingTimeInputs.get(line.uid!);
+    if (input === null || input === undefined) return;
     const uid = this.npiOrder()!.uid;
     const lineUid = line.uid!;
     const body: ProcessLineRemainingTimeUpdate = {
-      remainingTimeInDays: this.remainingTimeInput,
+      remainingTimeInDays: input,
     };
     this.updatingRemainingTime.set(true);
     this.npiOrderRepo
@@ -395,8 +361,8 @@ export class NpiOrderProcessDialogComponent
               l.uid === updatedLine.uid ? updatedLine : l,
             );
             this.process.set({ ...current, lines: updatedLines });
+            this.initRemainingTimeInputs(updatedLines);
           }
-          this.closeRemainingTimeEditor();
           this.updatingRemainingTime.set(false);
           this.handleMessage.successMessage("Remaining time updated");
         },
@@ -493,11 +459,6 @@ export class NpiOrderProcessDialogComponent
           this.lineHistories.set(updated);
         },
       });
-  }
-
-  public closeRemainingTimeEditor(): void {
-    this.remainingTimeLineUid.set(null);
-    this.remainingTimeInput = null;
   }
 
   manageFilesForNpiProcessLine(
@@ -723,6 +684,17 @@ export class NpiOrderProcessDialogComponent
     );
   }
 
+  private initRemainingTimeInputs(lines: ProcessLine[]): void {
+    const map = new Map<string, number | null>();
+    lines.forEach((line) => {
+      map.set(
+        line.uid!,
+        line.remainingTimeInDays ?? line.planTimeInDays ?? null,
+      );
+    });
+    this.remainingTimeInputs = map;
+  }
+
   private loadProcess(): void {
     const uid = this.dataConfig.npiOrder?.uid;
     if (!uid) return;
@@ -732,6 +704,7 @@ export class NpiOrderProcessDialogComponent
       .subscribe({
         next: (process) => {
           this.process.set(process);
+          this.initRemainingTimeInputs(process.lines);
           this.loading.set(false);
         },
       });
