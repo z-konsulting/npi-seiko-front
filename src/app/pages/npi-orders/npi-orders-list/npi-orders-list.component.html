@@ -90,22 +90,10 @@
         <td>
           @if (npiOrder.targetDeliveryDate) {
             <p-chip
-              [class]="
-                isDateLate(npiOrder.targetDeliveryDate)
-                  ? 'chip--danger medium chip--square'
-                  : 'chip--success medium chip--square'
-              "
-              [icon]="
-                isDateLate(npiOrder.targetDeliveryDate)
-                  ? Icons.EXCLAMATION_TRIANGLE
-                  : Icons.ARROW_UP_RIGHT
-              "
+              [icon]="Icons.ARROW_UP_RIGHT"
               [label]="npiOrder.targetDeliveryDate"
-              [pTooltip]="
-                isDateLate(npiOrder.targetDeliveryDate)
-                  ? 'Target date exceeded'
-                  : ''
-              "
+              class="chip--success medium chip--square"
+              pTooltip="Customer target delivery date"
               tooltipPosition="top"
             ></p-chip>
           } @else {
@@ -116,21 +104,17 @@
           @if (npiOrder.plannedDeliveryDate) {
             <p-chip
               [class]="
-                isDateLate(npiOrder.plannedDeliveryDate)
+                plannedDeliveryDateExceedsTargetDeliveryDate(npiOrder)
                   ? 'chip--danger medium chip--square'
                   : 'chip--primary medium chip--square'
               "
               [icon]="
-                isDateLate(npiOrder.plannedDeliveryDate)
+                plannedDeliveryDateExceedsTargetDeliveryDate(npiOrder)
                   ? Icons.EXCLAMATION_TRIANGLE
                   : Icons.CALENDAR_CLOCK
               "
               [label]="npiOrder.plannedDeliveryDate"
-              [pTooltip]="
-                isDateLate(npiOrder.plannedDeliveryDate)
-                  ? 'Planned date exceeded'
-                  : ''
-              "
+              [pTooltip]="plannedDeliveryTooltip(npiOrder)"
               tooltipPosition="top"
             ></p-chip>
           } @else {
@@ -141,9 +125,19 @@
         <td>
           @if (npiOrder.forecastDeliveryDate) {
             <p-chip
-              [icon]="Icons.CHART_LINE"
+              [class]="
+                forecastDeliveryDateExceedsPlannedDeliveryDate(npiOrder)
+                  ? 'chip--danger medium chip--square'
+                  : 'chip--warn medium chip--square'
+              "
+              [icon]="
+                forecastDeliveryDateExceedsPlannedDeliveryDate(npiOrder)
+                  ? Icons.EXCLAMATION_TRIANGLE
+                  : Icons.CHART_LINE
+              "
               [label]="npiOrder.forecastDeliveryDate"
-              class="chip--warn medium chip--square"
+              [pTooltip]="forecastDeliveryTooltip(npiOrder)"
+              tooltipPosition="top"
             ></p-chip>
           } @else {
             <span class="text-secondary">—</span>

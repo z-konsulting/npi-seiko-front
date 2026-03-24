@@ -208,6 +208,36 @@ export class NpiOrdersListComponent
     return new Date(date) < new Date(new Date().toDateString());
   }
 
+  plannedDeliveryDateExceedsTargetDeliveryDate(npiOrder: NpiOrder): boolean {
+    return Boolean(
+      (npiOrder as NpiOrder & {
+        plannedDeliveryDateExceedsTargetDeliveryDate?: boolean;
+      }).plannedDeliveryDateExceedsTargetDeliveryDate,
+    );
+  }
+
+  forecastDeliveryDateExceedsPlannedDeliveryDate(npiOrder: NpiOrder): boolean {
+    return Boolean(
+      (npiOrder as NpiOrder & {
+        forecastDeliveryDateExceedsPlannedDeliveryDate?: boolean;
+      }).forecastDeliveryDateExceedsPlannedDeliveryDate,
+    );
+  }
+
+  plannedDeliveryTooltip(npiOrder: NpiOrder): string {
+    if (!npiOrder.plannedDeliveryDate) return "";
+    return this.plannedDeliveryDateExceedsTargetDeliveryDate(npiOrder)
+      ? "Planned delivery is later than target delivery"
+      : "Planned internal delivery aligned with target delivery";
+  }
+
+  forecastDeliveryTooltip(npiOrder: NpiOrder): string {
+    if (!npiOrder.forecastDeliveryDate) return "";
+    return this.forecastDeliveryDateExceedsPlannedDeliveryDate(npiOrder)
+      ? "Forecast delivery is later than planned delivery"
+      : "Forecast delivery aligned with planned delivery";
+  }
+
   archiveNpiOrder(npiOrder: NpiOrder): void {
     this.npiOrderRepo
       .archiveNpiOrder(npiOrder.uid)

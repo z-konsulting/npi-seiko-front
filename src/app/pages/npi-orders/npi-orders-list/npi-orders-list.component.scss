@@ -1,3 +1,21 @@
 .text-secondary {
   color: var(--text-color-secondary);
 }
+
+.date-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.date-caption {
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--text-color-secondary);
+  font-weight: 600;
+}
+
+.date-caption--danger {
+  color: #b42318;
+}

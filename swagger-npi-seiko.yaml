@@ -1881,6 +1881,12 @@ components:
         forecastDeliveryDate:
           type: string
           format: date
+        plannedDeliveryDateExceedsTargetDeliveryDate:
+          type: boolean
+          description: True when plannedDeliveryDate is after targetDeliveryDate
+        forecastDeliveryDateExceedsPlannedDeliveryDate:
+          type: boolean
+          description: True when forecastDeliveryDate is after plannedDeliveryDate
         shippingDate:
           type: string
           format: date

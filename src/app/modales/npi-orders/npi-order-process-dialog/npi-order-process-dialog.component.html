@@ -43,23 +43,6 @@
           [value]="line.status | processLineStatus"
         />
       }
-      @if (line.isTesting && line.status === ProcessLineStatus.COMPLETED) {
-        <p-overlay-badge
-          [value]="(line.nbFiles ?? 0).toString()"
-          class="icon-badge-without-bg"
-          severity="info"
-        >
-          <p-button
-            (click)="viewTestingFiles(line)"
-            [icon]="Icons.FOLDER"
-            [pTooltip]="'View testing files'"
-            [text]="true"
-            severity="secondary"
-            size="small"
-            tooltipPosition="top"
-          ></p-button>
-        </p-overlay-badge>
-      }
       <p-button
         (click)="toggleHistory(line)"
         [class.history-btn--active]="historyLineUid() === line.uid"
@@ -151,6 +134,24 @@
         <i [class]="Icons.CHECK"></i>
         Customer approval date: {{ line.approvalCustomerDate }}
       </span>
+    }
+    @if (line.isTesting && line.status === ProcessLineStatus.COMPLETED) {
+      <p-overlay-badge
+        [value]="(line.nbFiles ?? 0).toString()"
+        class="icon-badge-without-bg"
+        severity="info"
+      >
+        <p-button
+          (click)="viewTestingFiles(line)"
+          [icon]="Icons.FOLDER"
+          [label]="'Files'"
+          [pTooltip]="'View testing files'"
+          [text]="true"
+          severity="secondary"
+          size="small"
+          tooltipPosition="top"
+        ></p-button>
+      </p-overlay-badge>
     }
   </div>
 </ng-template>

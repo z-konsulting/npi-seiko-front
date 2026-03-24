@@ -24,8 +24,9 @@
     ></textarea>
   } @else if (type() === "number") {
     <p-inputNumber
-      (onInput)="onNumberChange($event.value)"
       (onBlur)="onBlur()"
+      (onFocus)="$any($event.target).select()"
+      (onInput)="onNumberChange($event.value)"
       [disabled]="isInputDisabled"
       [inputStyleClass]="inputClasses"
       [maxFractionDigits]="maxFractionDigits()"
