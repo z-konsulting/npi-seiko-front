@@ -13,17 +13,21 @@ import {
 import { Icons } from "../../../../models/enums/icons";
 
 const STATUS_COLORS: Record<string, string> = {
+  [NpiOrderStatus.PENDING_PRODUCTION_DATES]: "#f59e0b",
   [NpiOrderStatus.READY_TO_START]: "#3b82f6",
-  [NpiOrderStatus.STARTED]: "#f97316",
+  [NpiOrderStatus.STARTED]: "#111827",
   [NpiOrderStatus.COMPLETED]: "#48b461",
-  [NpiOrderStatus.ABORTED]: "#dc3545",
+  [NpiOrderStatus.ABORTED]: "#94a3b8",
+  [NpiOrderStatus.FAILED]: "#b91c1c",
 };
 
 const STATUS_LABELS: Record<string, string> = {
+  [NpiOrderStatus.PENDING_PRODUCTION_DATES]: "Pending Prod. Dates",
   [NpiOrderStatus.READY_TO_START]: "Ready to Production",
   [NpiOrderStatus.STARTED]: "Started",
   [NpiOrderStatus.COMPLETED]: "Completed",
   [NpiOrderStatus.ABORTED]: "Aborted",
+  [NpiOrderStatus.FAILED]: "Failed",
 };
 
 @Component({

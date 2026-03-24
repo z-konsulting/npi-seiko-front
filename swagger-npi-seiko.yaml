@@ -804,6 +804,23 @@ paths:
                 $ref: '#/components/schemas/NpiOrder'
         '400':
           $ref: '#/components/responses/BadRequest'
+  /npi-orders/{uid}/customer-failed:
+    parameters:
+      - $ref: '#/components/parameters/uidParam'
+    post:
+      tags:
+        - npi-order
+      summary: Mark a npi order as failed due to customer rejection and set the customer approval line to failed
+      operationId: customerFailedNpiOrder
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NpiOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
   /npi-orders/{uid}/files/upload:
     parameters:
       - $ref: '#/components/parameters/uidParam'
@@ -1885,6 +1902,7 @@ components:
         - STARTED
         - COMPLETED
         - ABORTED
+        - FAILED
     DayType:
       type: string
       enum:
@@ -1899,6 +1917,7 @@ components:
         - IN_PROGRESS
         - COMPLETED
         - ABORTED
+        - FAILED
     CustomError:
       type: object
       required:

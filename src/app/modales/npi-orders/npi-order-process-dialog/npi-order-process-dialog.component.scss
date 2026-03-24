@@ -47,6 +47,11 @@
     background: #fef8f8;
   }
 
+  &.is-failed {
+    opacity: 0.6;
+    background: #fef4f4;
+  }
+
   &.is-role-locked {
     border-color: var(--surface-border);
     border-style: dashed;
@@ -253,6 +258,16 @@
     }
   }
 
+  &--failed {
+    background: rgba(185, 28, 28, 0.08);
+    color: #991b1b;
+    border-color: rgba(185, 28, 28, 0.3);
+
+    &:hover:not(:disabled) {
+      background: rgba(185, 28, 28, 0.14);
+    }
+  }
+
   &--selected {
     box-shadow: 0 0 0 2px rgba(10, 132, 193, 0.2);
   }
@@ -356,6 +371,11 @@
   &--aborted {
     background: #dc3545;
     box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.3);
+  }
+
+  &--failed {
+    background: #b91c1c;
+    box-shadow: 0 0 0 1px rgba(185, 28, 28, 0.3);
   }
 }
 

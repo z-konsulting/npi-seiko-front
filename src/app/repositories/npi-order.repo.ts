@@ -107,6 +107,14 @@ export class NpiOrderRepo {
     ) as Observable<NpiOrder>;
   }
 
+  customerFailedNpiOrder(uid: string): Observable<NpiOrder> {
+    return fromRequest(
+      this.npiOrderService.customerFailedNpiOrder({
+        path: { uid },
+      }),
+    ) as Observable<NpiOrder>;
+  }
+
   archiveNpiOrder(uid: string): Observable<NpiOrder> {
     return fromRequest(
       this.npiOrderService.archiveNpiOrder({

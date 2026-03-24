@@ -15,7 +15,9 @@ export class NpiService {
 
   isFinalOrder(status: NpiOrderStatus): boolean {
     return (
-      status === NpiOrderStatus.COMPLETED || status === NpiOrderStatus.ABORTED
+      status === NpiOrderStatus.COMPLETED ||
+      status === NpiOrderStatus.ABORTED ||
+      status === NpiOrderStatus.FAILED
     );
   }
 

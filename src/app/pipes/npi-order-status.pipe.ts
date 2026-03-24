@@ -28,6 +28,8 @@ export class NpiOrderStatusPipe implements PipeTransform {
         return "COMPLETED";
       case NpiOrderStatus.ABORTED:
         return "ABORTED";
+      case NpiOrderStatus.FAILED:
+        return "FAILED";
       default:
         return "";
     }
@@ -38,14 +40,16 @@ export class NpiOrderStatusPipe implements PipeTransform {
   ): "success" | "warn" | "danger" | "secondary" | "info" | "contrast" {
     switch (value) {
       case NpiOrderStatus.PENDING_PRODUCTION_DATES:
-        return "secondary";
+        return "warn";
       case NpiOrderStatus.READY_TO_START:
         return "info";
       case NpiOrderStatus.STARTED:
-        return "warn";
+        return "contrast";
       case NpiOrderStatus.COMPLETED:
         return "success";
       case NpiOrderStatus.ABORTED:
+        return "secondary";
+      case NpiOrderStatus.FAILED:
         return "danger";
       default:
         return "secondary";

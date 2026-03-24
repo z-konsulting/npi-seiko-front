@@ -177,6 +177,9 @@
                 [class.history-marker--aborted]="
                   entry.status === ProcessLineStatus.ABORTED
                 "
+                [class.history-marker--failed]="
+                  entry.status === ProcessLineStatus.FAILED
+                "
                 [class.history-marker--completed]="
                   entry.status === ProcessLineStatus.COMPLETED
                 "
@@ -499,14 +502,14 @@
               </button>
               <button
                 (click)="pendingCustomerApprovalNoAction = 'ABORT_NPI'"
-                [class.status-option--aborted]="true"
+                [class.status-option--failed]="true"
                 [class.status-option--selected]="
                   pendingCustomerApprovalNoAction === 'ABORT_NPI'
                 "
                 class="status-option"
                 type="button"
               >
-                Abort NPI
+                Failed and abort NPI
               </button>
             </div>
           </div>
@@ -667,6 +670,7 @@
     @for (line of proc.lines; track line.uid; let i = $index) {
       <div
         [class.is-completed]="line.status === ProcessLineStatus.COMPLETED"
+        [class.is-failed]="line.status === ProcessLineStatus.FAILED"
         [class.is-editable]="editableLineIndices().has(i)"
         [class.is-role-locked]="!canEditLine(line)"
         class="process-line"

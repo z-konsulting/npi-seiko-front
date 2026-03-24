@@ -143,7 +143,7 @@ export class NpiOrderProcessDialogComponent
     const lines = this.process()?.lines ?? [];
     const editable = new Set<number>();
     lines.forEach((line, i) => {
-      if (line.status === ProcessLineStatus.COMPLETED) {
+      if (this.finalStatus(line.status)) {
         return;
       }
       if (i === 0 || lines[i - 1].status === ProcessLineStatus.COMPLETED) {
@@ -680,7 +680,8 @@ export class NpiOrderProcessDialogComponent
   private finalStatus(status: ProcessLineStatus) {
     return (
       status === ProcessLineStatus.COMPLETED ||
-      status === ProcessLineStatus.ABORTED
+      status === ProcessLineStatus.ABORTED ||
+      status === ProcessLineStatus.FAILED
     );
   }
 
@@ -717,34 +718,46 @@ export class NpiOrderProcessDialogComponent
     }
 
     if (this.pendingCustomerApprovalNoAction === "ABORT_NPI") {
-      const uid = this.npiOrder()!.uid;
-      const lineUid = line.uid!;
-      const body: ProcessLineStatusUpdateBody = {
-        status: ProcessLineStatus.ABORTED,
-      };
       this.npiOrderRepo
-        .updateNpiOrderProcessLineStatus(uid, lineUid, body)
-        .pipe(
-          switchMap(() =>
-            this.npiOrderRepo.abortNpiOrder(this.npiOrder()!.uid),
-          ),
-          takeUntilDestroyed(this.destroyRef),
-        )
+        .customerFailedNpiOrder(this.npiOrder()!.uid)
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: () => {
-            this.handleMessage.successMessage("NPI order aborted");
+          next: (order) => {
+            this.npiOrder.set(order);
+            this.handleMessage.successMessage("NPI order marked as failed");
             this.closeDialog(true);
           },
         });
       return;
     }
 
-    const currentLineIndex = this.pendingLineIndex() ?? 0;
     const firstLine = this.process()!.lines[0];
-    this.selectResetStatus(
-      firstLine,
-      ProcessLineStatus.NOT_STARTED,
-      currentLineIndex,
-    );
+    this.npiOrderRepo
+      .updateNpiOrderProcessLineStatus(this.npiOrder()!.uid, line.uid!, {
+        status: ProcessLineStatus.FAILED,
+      })
+      .pipe(
+        switchMap(() =>
+          this.npiOrderRepo.updateNpiOrderProcessLineStatus(
+            this.npiOrder()!.uid,
+            firstLine.uid!,
+            { status: ProcessLineStatus.NOT_STARTED },
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (result) => {
+          const current = this.process();
+          if (current) {
+            this.process.set({ ...current, lines: result });
+          }
+          this.historyLineUid.set(null);
+          this.clearPending();
+          this.handleMessage.successMessage(
+            "Customer approval failed and the process was restarted",
+          );
+        },
+      });
   }
 }
