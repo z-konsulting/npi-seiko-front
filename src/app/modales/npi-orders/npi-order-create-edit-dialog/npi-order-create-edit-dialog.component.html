@@ -91,6 +91,7 @@
           <label>Target Delivery Date</label>
           <p-datePicker
             [formControlName]="NpiOrderFormField.TARGET_DELIVERY_DATE"
+            [minDate]="targetDeliveryMinDate()"
             appendTo="body"
             dateFormat="yy-mm-dd"
             placeholder="Select target delivery date"

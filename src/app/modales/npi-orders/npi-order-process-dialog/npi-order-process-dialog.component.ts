@@ -642,6 +642,7 @@ export class NpiOrderProcessDialogComponent
     const current = this.process();
     if (current) {
       this.process.set({ ...current, lines: updatedLines });
+      this.initRemainingTimeInputs(updatedLines);
     }
     this.clearPending();
     const allCompleted = updatedLines.every(
@@ -763,14 +764,12 @@ export class NpiOrderProcessDialogComponent
 
   private initRemainingTimeInputs(lines: ProcessLine[]): void {
     const map = new Map<string, number | null>();
-    console.log(lines);
     lines.forEach((line) => {
       map.set(
         line.uid!,
         line.remainingTimeInDays ?? line.planTimeInDays ?? null,
       );
     });
-    console.log(map);
     this.remainingTimeInputs = map;
   }
 
@@ -829,6 +828,7 @@ export class NpiOrderProcessDialogComponent
           const current = this.process();
           if (current) {
             this.process.set({ ...current, lines: result });
+            this.initRemainingTimeInputs(result);
           }
           this.historyLineUid.set(null);
           this.clearPending();

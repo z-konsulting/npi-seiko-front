@@ -65,6 +65,11 @@ export class NpiOrderProductionDatesDialogComponent extends BaseModal implements
 
   submit(): void {
     const form = this.productionDatesForm;
+    if (form.invalid) {
+      form.markAllAsTouched();
+      return;
+    }
+
     const materialPurchaseDateValue: Date | null = form.get(NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE)?.value ?? null;
     const shippingDateValue: Date | null = form.get(NpiOrderFormField.SHIPPING_ESTIMATED_DATE)?.value ?? null;
     const customerApprovalDateValue: Date | null = form.get(NpiOrderFormField.CUSTOMER_APPROVAL_ESTIMATED_DATE)?.value ?? null;

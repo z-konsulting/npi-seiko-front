@@ -135,26 +135,31 @@ export class FormService {
           npiOrder?.materialPurchaseEstimatedDate
             ? new Date(npiOrder.materialPurchaseEstimatedDate)
             : null,
+          [Validators.required],
         ),
       [NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.materialReceivingPlanTimeInDays ?? null),
+      >(npiOrder?.materialReceivingPlanTimeInDays ?? null, [
+        Validators.required,
+      ]),
       [NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.productionPlanTimeInDays ?? null),
+      >(npiOrder?.productionPlanTimeInDays ?? null, [Validators.required]),
       [NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
-      >(npiOrder?.testingPlanTimeInDays ?? null),
+      >(npiOrder?.testingPlanTimeInDays ?? null, [Validators.required]),
       [NpiOrderFormField.SHIPPING_ESTIMATED_DATE]: new FormControl<Date | null>(
         npiOrder?.shippingEstimatedDate
           ? new Date(npiOrder.shippingEstimatedDate)
           : null,
+        [Validators.required],
       ),
       [NpiOrderFormField.CUSTOMER_APPROVAL_ESTIMATED_DATE]:
         new FormControl<Date | null>(
           npiOrder?.customerApprovalEstimatedDate
             ? new Date(npiOrder.customerApprovalEstimatedDate)
             : null,
+          [Validators.required],
         ),
     });
   }

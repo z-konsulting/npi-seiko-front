@@ -135,6 +135,7 @@ export class NpiOrderCreateEditDialogComponent
 
   submit(): void {
     if (this.npiOrderForm.invalid) {
+      this.npiOrderForm.markAllAsTouched();
       return;
     }
     this.formService.trimFormStringValues(this.npiOrderForm);
@@ -209,5 +210,9 @@ export class NpiOrderCreateEditDialogComponent
       customerId: customerId || undefined,
       productName: form.get(NpiOrderFormField.PRODUCT_NAME)?.value || undefined,
     } as NpiOrderCreate | NpiOrderUpdate;
+  }
+
+  protected targetDeliveryMinDate(): Date | null {
+    return this.npiOrderForm.get(NpiOrderFormField.ORDER_DATE)?.value ?? null;
   }
 }

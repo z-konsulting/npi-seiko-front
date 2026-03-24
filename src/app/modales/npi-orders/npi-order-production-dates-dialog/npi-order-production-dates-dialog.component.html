@@ -7,13 +7,23 @@
       </div>
       <div class="plan-time-hint" role="note">
         <i [class]="Icons.INFO_CIRCLE"></i>
-        <span>Set the estimated date for Material Purchase, then the duration (in working days) for Receiving, Production, and Testing. Weekends are excluded. Shipping and Customer Approval dates are constrained by the preceding stages.</span>
+        <span
+          >Set the estimated date for Material Purchase, then the duration (in
+          working days) for Receiving, Production, and Testing. Weekends are
+          excluded. Shipping and Customer Approval dates are constrained by the
+          preceding stages.</span
+        >
       </div>
       <div class="p-fields-row">
         <div class="p-field">
-          <label>Material Purchase Date</label>
+          <label
+            >Material Purchase Date
+            <span class="required-indicator">*</span></label
+          >
           <p-datePicker
-            [formControlName]="NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE"
+            [formControlName]="
+              NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE
+            "
             [minDate]="minMaterialPurchaseDate()"
             appendTo="body"
             dateFormat="yy-mm-dd"
@@ -22,7 +32,9 @@
         </div>
         <div class="p-field">
           <app-input-container
-            [formControlName]="NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS"
+            [formControlName]="
+              NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS
+            "
             label="Material lead time (days)"
             type="number"
           ></app-input-container>
@@ -44,7 +56,7 @@
           ></app-input-container>
         </div>
         <div class="p-field">
-          <label>Shipping date</label>
+          <label>Shipping date <span class="required-indicator">*</span></label>
           <p-datePicker
             [disabled]="shippingDateDisabled()"
             [formControlName]="NpiOrderFormField.SHIPPING_ESTIMATED_DATE"
@@ -55,10 +67,15 @@
           ></p-datePicker>
         </div>
         <div class="p-field">
-          <label>Customer approval estimated date</label>
+          <label
+            >Customer approval estimated date
+            <span class="required-indicator">*</span></label
+          >
           <p-datePicker
             [disabled]="customerApprovalDateDisabled()"
-            [formControlName]="NpiOrderFormField.CUSTOMER_APPROVAL_ESTIMATED_DATE"
+            [formControlName]="
+              NpiOrderFormField.CUSTOMER_APPROVAL_ESTIMATED_DATE
+            "
             [minDate]="minCustomerApprovalDate()"
             appendTo="body"
             dateFormat="yy-mm-dd"
@@ -72,6 +89,7 @@
     @if (!readonly()) {
       <p-button
         (click)="submit()"
+        [disabled]="productionDatesForm.invalid"
         [icon]="Icons.CHECK"
         label="Save"
         severity="success"
