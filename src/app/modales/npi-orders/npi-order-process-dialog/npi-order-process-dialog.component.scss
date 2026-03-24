@@ -442,6 +442,20 @@
   }
 }
 
+.extra-field--compact {
+  max-width: 26rem;
+}
+
+.extra-field-hint {
+  margin: 0.35rem 0 0;
+  color: var(--text-color-secondary);
+}
+
+.extra-field-hint--compact {
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
 // --- Import mode toggle (Manual date / Import from file) ---
 
 .import-mode-toggle {

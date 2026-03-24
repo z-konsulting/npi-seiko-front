@@ -1660,6 +1660,14 @@ components:
         remainingTimeInDays:
           type: number
           format: double
+        shipmentRemainingTimeInDays:
+          type: number
+          format: double
+          description: Required when completing the Testing step to override the Shipping remaining time
+        customerApprovalRemainingTimeInDays:
+          type: number
+          format: double
+          description: Required when completing the Shipment step to override the Customer Approval remaining time
         fileUid:
           $ref: '#/components/schemas/Uid'
     Process:

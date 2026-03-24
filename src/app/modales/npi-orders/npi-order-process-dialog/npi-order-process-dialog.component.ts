@@ -86,6 +86,10 @@ export class NpiOrderProcessDialogComponent
   pendingLatestDeliveryDate: Date | null = null;
   /** Manual date for shipment completion */
   pendingShippingDate: Date | null = null;
+  /** Remaining days to shipment, provided when completing testing */
+  pendingShipmentRemainingTimeInDays: number | null = null;
+  /** Remaining days to customer approval, provided when completing shipment */
+  pendingCustomerApprovalRemainingTimeInDays: number | null = null;
   /** Customer approval start date (when moving to IN_PROGRESS) */
   pendingStartingCustomerApprovalDate: Date | null = null;
   /** Customer approval final date (when decision is YES) */
@@ -161,23 +165,26 @@ export class NpiOrderProcessDialogComponent
     ProcessLineStatus.COMPLETED,
   ];
   protected excelUtils = inject(ExcelUtilsService);
+  protected readonly UserRole = UserRole;
   private npiOrderRepo = inject(NpiOrderRepo);
   private fileManageRepo = inject(FileManageRepo);
   private modalService = inject(ModalService);
   private npiService = inject(NpiService);
-  private authService = inject(AuthenticationService);
   readonly = computed(() => {
     const status = this.npiOrder()?.status;
     if (!status) return true;
     return this.npiService.isFinalOrder(status!);
   });
+  private authService = inject(AuthenticationService);
   private processLineStatusPipe = inject(NpiOrderProcessLinePipe);
-  protected readonly UserRole = UserRole;
 
   canEditLine(line: ProcessLine): boolean {
     const role = this.authService.getRole();
     if (!role) return false;
-    if (role === UserRole.ADMINISTRATOR || role === UserRole.SUPER_ADMINISTRATOR)
+    if (
+      role === UserRole.ADMINISTRATOR ||
+      role === UserRole.SUPER_ADMINISTRATOR
+    )
       return true;
     const isProcurementLine = !!(
       line.isMaterialPurchase || line.isMaterialReceiving
@@ -238,10 +245,16 @@ export class NpiOrderProcessDialogComponent
       return this.pendingLatestDeliveryDate !== null;
     }
     if (line.isShipment && target === ProcessLineStatus.COMPLETED) {
-      return this.pendingShippingDate !== null;
+      return (
+        this.pendingShippingDate !== null &&
+        this.pendingCustomerApprovalRemainingTimeInDays !== null
+      );
     }
     if (line.isTesting && target === ProcessLineStatus.COMPLETED) {
-      return this.testingFileSelected() !== null;
+      return (
+        this.testingFileSelected() !== null &&
+        this.pendingShipmentRemainingTimeInDays !== null
+      );
     }
     if (line.isCustomerApproval && target === ProcessLineStatus.IN_PROGRESS) {
       return this.pendingStartingCustomerApprovalDate !== null;
@@ -279,6 +292,8 @@ export class NpiOrderProcessDialogComponent
     this.pendingTargetStatus.set(status);
     this.pendingLatestDeliveryDate = null;
     this.pendingShippingDate = null;
+    this.pendingShipmentRemainingTimeInDays = null;
+    this.pendingCustomerApprovalRemainingTimeInDays = null;
     this.pendingStartingCustomerApprovalDate = null;
     this.pendingApprovalCustomerDate = null;
     this.pendingCustomerApprovalDecision = null;
@@ -288,6 +303,7 @@ export class NpiOrderProcessDialogComponent
     this.importSheetDisplay = 1;
     this.importColumnDisplay = 1;
     this.importRowDisplay = 1;
+    this.applyPendingDefaults(line, status);
     this.resolvePendingMinDates(line, status);
   }
 
@@ -330,10 +346,13 @@ export class NpiOrderProcessDialogComponent
         ? new Date(line.materialLatestDeliveryDate)
         : null;
       this.pendingShippingDate = null;
+      this.pendingShipmentRemainingTimeInDays = null;
+      this.pendingCustomerApprovalRemainingTimeInDays = null;
       this.pendingStartingCustomerApprovalDate = null;
       this.pendingApprovalCustomerDate = null;
       this.pendingCustomerApprovalDecision = null;
       this.pendingCustomerApprovalNoAction = null;
+      this.applyPendingDefaults(line, status);
       this.resolvePendingMinDates(line, status);
       return;
     }
@@ -378,6 +397,8 @@ export class NpiOrderProcessDialogComponent
     this.importedDeliveryDate.set(null);
     this.pendingLatestDeliveryDate = null;
     this.pendingShippingDate = null;
+    this.pendingShipmentRemainingTimeInDays = null;
+    this.pendingCustomerApprovalRemainingTimeInDays = null;
     this.pendingStartingCustomerApprovalDate = null;
     this.pendingApprovalCustomerDate = null;
     this.pendingCustomerApprovalDecision = null;
@@ -516,7 +537,9 @@ export class NpiOrderProcessDialogComponent
     targetStatus: ProcessLineStatus,
   ): void {
     if (line.isShipment && targetStatus === ProcessLineStatus.COMPLETED) {
-      this.minShippingDateProcess.set(this.getMaterialDeliveryDateFromProcess());
+      this.minShippingDateProcess.set(
+        this.getMaterialDeliveryDateFromProcess(),
+      );
     }
     if (
       line.isCustomerApproval &&
@@ -535,8 +558,49 @@ export class NpiOrderProcessDialogComponent
     }
   }
 
+  private applyPendingDefaults(
+    line: ProcessLine,
+    targetStatus: ProcessLineStatus,
+  ): void {
+    if (line.isTesting && targetStatus === ProcessLineStatus.COMPLETED) {
+      this.pendingShipmentRemainingTimeInDays =
+        this.defaultRemainingTimeFromDate(
+          this.npiOrder()?.shippingEstimatedDate,
+        );
+    }
+    if (line.isShipment && targetStatus === ProcessLineStatus.COMPLETED) {
+      this.pendingCustomerApprovalRemainingTimeInDays =
+        this.defaultRemainingTimeFromDate(
+          this.npiOrder()?.customerApprovalEstimatedDate,
+        );
+    }
+  }
+
+  private defaultRemainingTimeFromDate(
+    date: string | undefined,
+  ): number | null {
+    if (!date) return null;
+    const today = new Date();
+    const todayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
+    const target = new Date(date);
+    const targetStart = new Date(
+      target.getFullYear(),
+      target.getMonth(),
+      target.getDate(),
+    );
+    const diffMs = targetStart.getTime() - todayStart.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return Math.max(diffDays, 0);
+  }
+
   private getMaterialDeliveryDateFromProcess(): Date {
-    const materialLine = this.process()?.lines.find((l) => l.isMaterialPurchase);
+    const materialLine = this.process()?.lines.find(
+      (l) => l.isMaterialPurchase,
+    );
     const today = new Date();
     if (!materialLine?.materialLatestDeliveryDate) return today;
     const deliveryDate = new Date(materialLine.materialLatestDeliveryDate);
@@ -554,6 +618,8 @@ export class NpiOrderProcessDialogComponent
     this.pendingTargetStatus.set(null);
     this.pendingLatestDeliveryDate = null;
     this.pendingShippingDate = null;
+    this.pendingShipmentRemainingTimeInDays = null;
+    this.pendingCustomerApprovalRemainingTimeInDays = null;
     this.pendingStartingCustomerApprovalDate = null;
     this.pendingApprovalCustomerDate = null;
     this.pendingCustomerApprovalDecision = null;
@@ -638,6 +704,14 @@ export class NpiOrderProcessDialogComponent
         this.pendingShippingDate!,
       )!;
     }
+    if (
+      line.isShipment &&
+      targetStatus === ProcessLineStatus.COMPLETED &&
+      this.pendingCustomerApprovalRemainingTimeInDays !== null
+    ) {
+      body.customerApprovalRemainingTimeInDays =
+        this.pendingCustomerApprovalRemainingTimeInDays;
+    }
 
     if (
       line.isCustomerApproval &&
@@ -660,6 +734,8 @@ export class NpiOrderProcessDialogComponent
     }
     if (line.isTesting && targetStatus == ProcessLineStatus.COMPLETED) {
       body.fileUid = this.testingFileSelected()?.uid;
+      body.shipmentRemainingTimeInDays =
+        this.pendingShipmentRemainingTimeInDays ?? undefined;
     }
     this.npiOrderRepo
       .updateNpiOrderProcessLineStatus(uid, lineUid, body)
@@ -687,12 +763,14 @@ export class NpiOrderProcessDialogComponent
 
   private initRemainingTimeInputs(lines: ProcessLine[]): void {
     const map = new Map<string, number | null>();
+    console.log(lines);
     lines.forEach((line) => {
       map.set(
         line.uid!,
         line.remainingTimeInDays ?? line.planTimeInDays ?? null,
       );
     });
+    console.log(map);
     this.remainingTimeInputs = map;
   }
 

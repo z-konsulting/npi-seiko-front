@@ -178,11 +178,11 @@
                 [class.history-marker--aborted]="
                   entry.status === ProcessLineStatus.ABORTED
                 "
-                [class.history-marker--failed]="
-                  entry.status === ProcessLineStatus.FAILED
-                "
                 [class.history-marker--completed]="
                   entry.status === ProcessLineStatus.COMPLETED
+                "
+                [class.history-marker--failed]="
+                  entry.status === ProcessLineStatus.FAILED
                 "
                 [class.history-marker--in-progress]="
                   entry.status === ProcessLineStatus.IN_PROGRESS
@@ -383,6 +383,27 @@
             [showGlobalDownloadBtn]="false"
           ></app-manage-file>
         </div>
+        <div class="extra-field extra-field--compact">
+          <label>
+            Shipment Remaining Time (days)
+            <span class="required-indicator">*</span>
+          </label>
+          <p-inputNumber
+            (ngModelChange)="pendingShipmentRemainingTimeInDays = $event"
+            [min]="0"
+            [ngModel]="pendingShipmentRemainingTimeInDays"
+            placeholder="Enter remaining days"
+          ></p-inputNumber>
+          <p class="extra-field-hint extra-field-hint--compact">
+            @if (npiOrder()?.shippingEstimatedDate) {
+              Default value is computed from today to the production Shipping
+              estimated date: {{ npiOrder()?.shippingEstimatedDate }}.
+            } @else {
+              No Shipping estimated date is defined in production dates. Enter
+              the value manually.
+            }
+          </p>
+        </div>
       }
 
       <!-- Shipment: manual shipping date -->
@@ -402,6 +423,30 @@
             dateFormat="yy-mm-dd"
             placeholder="Select shipping date"
           ></p-datePicker>
+        </div>
+        <div class="extra-field extra-field--compact">
+          <label>
+            Customer Approval Remaining Time (days)
+            <span class="required-indicator">*</span>
+          </label>
+          <p-inputNumber
+            (ngModelChange)="
+              pendingCustomerApprovalRemainingTimeInDays = $event
+            "
+            [min]="0"
+            [ngModel]="pendingCustomerApprovalRemainingTimeInDays"
+            placeholder="Enter remaining days"
+          ></p-inputNumber>
+          <p class="extra-field-hint extra-field-hint--compact">
+            @if (npiOrder()?.customerApprovalEstimatedDate) {
+              Default value is computed from today to the production Customer
+              Approval estimated date:
+              {{ npiOrder()?.customerApprovalEstimatedDate }}.
+            } @else {
+              No Customer Approval estimated date is defined in production
+              dates. Enter the value manually.
+            }
+          </p>
         </div>
       }
 
@@ -631,7 +676,7 @@
           <i
             [class]="Icons.CLOCK"
             class="remaining-time-inline__icon"
-            pTooltip="Remaining time"
+            pTooltip="Remaining days"
           ></i>
           <p-inputNumber
             (ngModelChange)="remainingTimeInputs.set(line.uid!, $event)"
@@ -671,8 +716,8 @@
     @for (line of proc.lines; track line.uid; let i = $index) {
       <div
         [class.is-completed]="line.status === ProcessLineStatus.COMPLETED"
-        [class.is-failed]="line.status === ProcessLineStatus.FAILED"
         [class.is-editable]="editableLineIndices().has(i)"
+        [class.is-failed]="line.status === ProcessLineStatus.FAILED"
         [class.is-role-locked]="!canEditLine(line)"
         class="process-line"
       >
