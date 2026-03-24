@@ -12,6 +12,7 @@ import { map } from "rxjs/operators";
 import { FileSelected } from "../../components/manage-file/manage-file.component";
 import { ManagePreviewFileComponent } from "../../components/manage-preview-file/manage-preview-file.component";
 import { NpiOrderCreateEditDialogComponent } from "../../modales/npi-orders/npi-order-create-edit-dialog/npi-order-create-edit-dialog.component";
+import { NpiOrderProductionDatesDialogComponent } from "../../modales/npi-orders/npi-order-production-dates-dialog/npi-order-production-dates-dialog.component";
 import { NpiOrderProcessDialogComponent } from "../../modales/npi-orders/npi-order-process-dialog/npi-order-process-dialog.component";
 import { ManageFileDialogComponent } from "../../components/manage-file-dialog/manage-file-dialog.component";
 import { UserCreateEditDialogComponent } from "../../modales/admin/user-create-edit-dialog/user-create-edit-dialog.component";
@@ -149,6 +150,19 @@ export class ModalService {
         editMode,
         npiOrder,
       },
+    });
+    return this.waitForDialogResult<boolean>(this.ref);
+  }
+
+  showNpiOrderProductionDatesModal(npiOrder: NpiOrder, readonly: boolean = false) {
+    this.ref = this.dialogService.open(NpiOrderProductionDatesDialogComponent, {
+      header: `Production Dates — ${npiOrder.purchaseOrderNumber ?? ""}`,
+      draggable: true,
+      modal: true,
+      closable: true,
+      resizable: false,
+      width: "60rem",
+      data: { npiOrder, readonly },
     });
     return this.waitForDialogResult<boolean>(this.ref);
   }

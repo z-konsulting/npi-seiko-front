@@ -746,6 +746,30 @@ paths:
                 format: binary
         '400':
           $ref: '#/components/responses/BadRequest'
+  /npi-orders/{uid}/production-dates:
+    parameters:
+      - $ref: '#/components/parameters/uidParam'
+    put:
+      tags:
+        - npi-order
+      summary: Update production dates and durations of a npi order
+      operationId: updateNpiOrderProductionDates
+      requestBody:
+        description: production dates and durations
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NpiOrderProductionDatesUpdate'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NpiOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
   /npi-orders/{uid}/archive:
     parameters:
       - $ref: '#/components/parameters/uidParam'
@@ -1692,6 +1716,27 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/NpiOrder"
+    NpiOrderProductionDatesUpdate:
+      type: object
+      properties:
+        materialPurchaseEstimatedDate:
+          type: string
+          format: date
+        materialReceivingPlanTimeInDays:
+          type: number
+          format: double
+        productionPlanTimeInDays:
+          type: number
+          format: double
+        testingPlanTimeInDays:
+          type: number
+          format: double
+        shippingEstimatedDate:
+          type: string
+          format: date
+        customerApprovalEstimatedDate:
+          type: string
+          format: date
     NpiOrderCreate:
       type: object
       required:
@@ -1699,12 +1744,6 @@ components:
         - workOrderId
         - partNumber
         - quantity
-        - materialPurchaseEstimatedDate
-        - materialReceivingPlanTimeInDays
-        - productionPlanTimeInDays
-        - testingPlanTimeInDays
-        - shippingEstimatedDate
-        - customerApprovalEstimatedDate
       properties:
         purchaseOrderNumber:
           type: string
@@ -1724,24 +1763,6 @@ components:
           $ref: '#/components/schemas/Uid'
         productName:
           type: string
-        materialPurchaseEstimatedDate:
-          type: string
-          format: date
-        materialReceivingPlanTimeInDays:
-          type: number
-          format: double
-        productionPlanTimeInDays:
-          type: number
-          format: double
-        testingPlanTimeInDays:
-          type: number
-          format: double
-        shippingEstimatedDate:
-          type: string
-          format: date
-        customerApprovalEstimatedDate:
-          type: string
-          format: date
         filesIds:
           type: array
           items:
@@ -1772,24 +1793,6 @@ components:
           $ref: '#/components/schemas/Uid'
         productName:
           type: string
-        materialPurchaseEstimatedDate:
-          type: string
-          format: date
-        materialReceivingPlanTimeInDays:
-          type: number
-          format: double
-        productionPlanTimeInDays:
-          type: number
-          format: double
-        testingPlanTimeInDays:
-          type: number
-          format: double
-        shippingEstimatedDate:
-          type: string
-          format: date
-        customerApprovalEstimatedDate:
-          type: string
-          format: date
     NpiOrder:
       type: object
       required:
@@ -1877,6 +1880,7 @@ components:
     NpiOrderStatus:
       type: string
       enum:
+        - PENDING_PRODUCTION_DATES
         - READY_TO_START
         - STARTED
         - COMPLETED

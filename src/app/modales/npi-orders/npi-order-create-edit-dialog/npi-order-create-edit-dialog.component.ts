@@ -78,21 +78,6 @@ export class NpiOrderCreateEditDialogComponent
     return !this.npiService.isUpdatable(status!);
   });
 
-  /** Minimum selectable date for material purchase: order date */
-  minMaterialPurchaseDate = signal<Date | null>(null);
-
-  /** Minimum selectable date for shipping: materialPurchaseDate + receiving + production + testing days */
-  minShippingDate = signal<Date | null>(null);
-
-  /** Minimum selectable date for customer approval: shippingEstimatedDate + 1 day */
-  minCustomerApprovalDate = signal<Date | null>(null);
-
-  /** Shipping date is only enabled when all 4 upstream fields are filled */
-  shippingDateDisabled = signal<boolean>(true);
-
-  /** Customer approval date is only enabled when shipping date is set */
-  customerApprovalDateDisabled = signal<boolean>(true);
-
   ngOnInit(): void {
     if (this.config.data) {
       this.editMode.set(this.config.data.editMode);
@@ -110,10 +95,6 @@ export class NpiOrderCreateEditDialogComponent
     if (this.editMode()) {
       this.loadFiles();
     }
-    this.watchOrderDateConstraints();
-    this.watchShippingConstraints();
-    this.watchCustomerApprovalConstraints();
-    this.computeInitialMinDates();
   }
 
   manageFiles() {
@@ -165,193 +146,6 @@ export class NpiOrderCreateEditDialogComponent
     }
   }
 
-  private computeInitialMinDates(): void {
-    this.updateMinMaterialPurchaseDate();
-    this.updateMinShippingDate();
-    this.updateMinCustomerApprovalDate();
-    this.updateShippingDateDisabled();
-    this.updateCustomerApprovalDateDisabled();
-  }
-
-  /**
-   * Watch orderDate to update the minimum material purchase date,
-   * and cascade-clear downstream dates if they become invalid.
-   */
-  private watchOrderDateConstraints(): void {
-    this.npiOrderForm
-      .get(NpiOrderFormField.ORDER_DATE)
-      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.updateMinMaterialPurchaseDate();
-        this.clearMaterialPurchaseDateIfInvalid();
-      });
-  }
-
-  /**
-   * Watch fields that affect the minimum shipping date:
-   * materialPurchaseEstimatedDate, materialReceivingPlanTimeInDays,
-   * productionPlanTimeInDays, testingPlanTimeInDays.
-   * Any change always resets both shipping and customer approval dates.
-   */
-  private watchShippingConstraints(): void {
-    const shippingConstraintFields = [
-      NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE,
-      NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS,
-      NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS,
-      NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS,
-    ];
-
-    shippingConstraintFields.forEach((field) => {
-      this.npiOrderForm
-        .get(field)
-        ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-          this.updateMinShippingDate();
-          this.updateShippingDateDisabled();
-          this.resetShippingAndCustomerApprovalDates();
-        });
-    });
-  }
-
-  /**
-   * Watch shippingEstimatedDate to update the minimum customer approval date
-   * and its disabled state.
-   */
-  private watchCustomerApprovalConstraints(): void {
-    this.npiOrderForm
-      .get(NpiOrderFormField.SHIPPING_ESTIMATED_DATE)
-      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.updateMinCustomerApprovalDate();
-        this.updateCustomerApprovalDateDisabled();
-      });
-  }
-
-  private updateMinMaterialPurchaseDate(): void {
-    const orderDate: Date | null = this.npiOrderForm.get(
-      NpiOrderFormField.ORDER_DATE,
-    )?.value;
-    this.minMaterialPurchaseDate.set(orderDate ?? null);
-  }
-
-  /** Reset material purchase date (and cascade) if it is before the order date */
-  private clearMaterialPurchaseDateIfInvalid(): void {
-    const purchaseDate: Date | null = this.npiOrderForm.get(
-      NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE,
-    )?.value;
-    const minDate = this.minMaterialPurchaseDate();
-
-    if (purchaseDate && minDate && purchaseDate < minDate) {
-      this.npiOrderForm
-        .get(NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE)
-        ?.setValue(null);
-      // cascade: shipping and customer approval will be cleared via their own watchers
-    }
-  }
-
-  private updateMinShippingDate(): void {
-    const purchaseDate: Date | null = this.npiOrderForm.get(
-      NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE,
-    )?.value;
-    const receivingDays: number | null = this.npiOrderForm.get(
-      NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS,
-    )?.value;
-    const productionDays: number | null = this.npiOrderForm.get(
-      NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS,
-    )?.value;
-    const testingDays: number | null = this.npiOrderForm.get(
-      NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS,
-    )?.value;
-
-    if (
-      purchaseDate == null ||
-      receivingDays == null ||
-      productionDays == null ||
-      testingDays == null
-    ) {
-      this.minShippingDate.set(null);
-      return;
-    }
-
-    const totalDays = receivingDays + productionDays + testingDays;
-    const minDate = this.addBusinessDays(new Date(purchaseDate), totalDays + 1);
-    this.minShippingDate.set(minDate);
-  }
-
-  private updateMinCustomerApprovalDate(): void {
-    const shippingDate: Date | null = this.npiOrderForm.get(
-      NpiOrderFormField.SHIPPING_ESTIMATED_DATE,
-    )?.value;
-
-    if (shippingDate == null) {
-      this.minCustomerApprovalDate.set(null);
-      return;
-    }
-
-    const minDate = new Date(shippingDate);
-    minDate.setDate(minDate.getDate() + 1);
-    this.minCustomerApprovalDate.set(minDate);
-  }
-
-  /**
-   * Always reset both shipping and customer approval dates when any upstream
-   * field (material purchase, receiving, production, testing) changes.
-   */
-  private resetShippingAndCustomerApprovalDates(): void {
-    this.npiOrderForm
-      .get(NpiOrderFormField.SHIPPING_ESTIMATED_DATE)
-      ?.setValue(null, { emitEvent: false });
-    this.npiOrderForm
-      .get(NpiOrderFormField.CUSTOMER_APPROVAL_ESTIMATED_DATE)
-      ?.setValue(null, { emitEvent: false });
-    this.minCustomerApprovalDate.set(null);
-    this.customerApprovalDateDisabled.set(true);
-  }
-
-  private updateShippingDateDisabled(): void {
-    const purchaseDate: Date | null = this.npiOrderForm.get(
-      NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE,
-    )?.value;
-    const receivingDays: number | null = this.npiOrderForm.get(
-      NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS,
-    )?.value;
-    const productionDays: number | null = this.npiOrderForm.get(
-      NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS,
-    )?.value;
-    const testingDays: number | null = this.npiOrderForm.get(
-      NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS,
-    )?.value;
-
-    const allFilled =
-      purchaseDate != null &&
-      receivingDays != null &&
-      productionDays != null &&
-      testingDays != null;
-
-    this.shippingDateDisabled.set(!allFilled);
-  }
-
-  /** Adds business days (Mon–Fri) to a date, skipping weekends. */
-  private addBusinessDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    let remaining = days;
-    while (remaining > 0) {
-      result.setDate(result.getDate() + 1);
-      const day = result.getDay();
-      if (day !== 0 && day !== 6) {
-        remaining--;
-      }
-    }
-    return result;
-  }
-
-  private updateCustomerApprovalDateDisabled(): void {
-    const shippingDate: Date | null = this.npiOrderForm.get(
-      NpiOrderFormField.SHIPPING_ESTIMATED_DATE,
-    )?.value;
-    this.customerApprovalDateDisabled.set(shippingDate == null);
-  }
-
   private setSelectedCustomer() {
     if (!this.npiOrderSelected()?.customer) return;
     const defaultCustomer = this.customers().find(
@@ -397,14 +191,6 @@ export class NpiOrderCreateEditDialogComponent
       form.get(NpiOrderFormField.ORDER_DATE)?.value ?? null;
     const targetDeliveryDateValue: Date | null =
       form.get(NpiOrderFormField.TARGET_DELIVERY_DATE)?.value ?? null;
-    const materialPurchaseDateValue: Date | null =
-      form.get(NpiOrderFormField.MATERIAL_PURCHASE_ESTIMATED_DATE)?.value ??
-      null;
-    const shippingDateValue: Date | null =
-      form.get(NpiOrderFormField.SHIPPING_ESTIMATED_DATE)?.value ?? null;
-    const customerApprovalDateValue: Date | null =
-      form.get(NpiOrderFormField.CUSTOMER_APPROVAL_ESTIMATED_DATE)?.value ??
-      null;
     const customerId: Customer | null =
       form.get(NpiOrderFormField.CUSTOMER)?.value?.uid ?? null;
 
@@ -422,24 +208,6 @@ export class NpiOrderCreateEditDialogComponent
         : new Date().toISOString().split("T")[0],
       customerId: customerId || undefined,
       productName: form.get(NpiOrderFormField.PRODUCT_NAME)?.value || undefined,
-      materialPurchaseEstimatedDate: materialPurchaseDateValue
-        ? RegexPatterns.enDateFormatToString(materialPurchaseDateValue)
-        : undefined,
-      materialReceivingPlanTimeInDays: form.get(
-        NpiOrderFormField.MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS,
-      )?.value,
-      productionPlanTimeInDays: form.get(
-        NpiOrderFormField.PRODUCTION_PLAN_TIME_IN_DAYS,
-      )?.value,
-      testingPlanTimeInDays: form.get(
-        NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS,
-      )?.value,
-      shippingEstimatedDate: shippingDateValue
-        ? RegexPatterns.enDateFormatToString(shippingDateValue)
-        : undefined,
-      customerApprovalEstimatedDate: customerApprovalDateValue
-        ? RegexPatterns.enDateFormatToString(customerApprovalDateValue)
-        : undefined,
     } as NpiOrderCreate | NpiOrderUpdate;
   }
 }

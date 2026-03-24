@@ -90,10 +90,22 @@
         <td>
           @if (npiOrder.targetDeliveryDate) {
             <p-chip
-              [icon]="isDateLate(npiOrder.targetDeliveryDate) ? Icons.EXCLAMATION_TRIANGLE : Icons.ARROW_UP_RIGHT"
+              [class]="
+                isDateLate(npiOrder.targetDeliveryDate)
+                  ? 'chip--danger medium chip--square'
+                  : 'chip--success medium chip--square'
+              "
+              [icon]="
+                isDateLate(npiOrder.targetDeliveryDate)
+                  ? Icons.EXCLAMATION_TRIANGLE
+                  : Icons.ARROW_UP_RIGHT
+              "
               [label]="npiOrder.targetDeliveryDate"
-              [class]="isDateLate(npiOrder.targetDeliveryDate) ? 'chip--danger medium chip--square' : 'chip--success medium chip--square'"
-              [pTooltip]="isDateLate(npiOrder.targetDeliveryDate) ? 'Target date exceeded' : ''"
+              [pTooltip]="
+                isDateLate(npiOrder.targetDeliveryDate)
+                  ? 'Target date exceeded'
+                  : ''
+              "
               tooltipPosition="top"
             ></p-chip>
           } @else {
@@ -103,10 +115,22 @@
         <td>
           @if (npiOrder.plannedDeliveryDate) {
             <p-chip
-              [icon]="isDateLate(npiOrder.plannedDeliveryDate) ? Icons.EXCLAMATION_TRIANGLE : Icons.CALENDAR_CLOCK"
+              [class]="
+                isDateLate(npiOrder.plannedDeliveryDate)
+                  ? 'chip--danger medium chip--square'
+                  : 'chip--primary medium chip--square'
+              "
+              [icon]="
+                isDateLate(npiOrder.plannedDeliveryDate)
+                  ? Icons.EXCLAMATION_TRIANGLE
+                  : Icons.CALENDAR_CLOCK
+              "
               [label]="npiOrder.plannedDeliveryDate"
-              [class]="isDateLate(npiOrder.plannedDeliveryDate) ? 'chip--danger medium chip--square' : 'chip--primary medium chip--square'"
-              [pTooltip]="isDateLate(npiOrder.plannedDeliveryDate) ? 'Planned date exceeded' : ''"
+              [pTooltip]="
+                isDateLate(npiOrder.plannedDeliveryDate)
+                  ? 'Planned date exceeded'
+                  : ''
+              "
               tooltipPosition="top"
             ></p-chip>
           } @else {
@@ -137,6 +161,20 @@
             "
             [severity]="
               npiService.isUpdatable(npiOrder.status) ? 'primary' : 'success'
+            "
+            [text]="true"
+            tooltipPosition="top"
+          ></p-button>
+          <p-button
+            (click)="openProductionDatesDialog(npiOrder)"
+            [icon]="Icons.CALENDAR_CLOCK"
+            [pTooltip]="
+              isProductionDatesEditable(npiOrder.status)
+                ? 'Set Production Dates'
+                : 'View Production Dates'
+            "
+            [severity]="
+              isProductionDatesEditable(npiOrder.status) ? 'warn' : 'primary'
             "
             [text]="true"
             tooltipPosition="top"

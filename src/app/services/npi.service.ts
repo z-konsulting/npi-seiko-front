@@ -7,6 +7,7 @@ import { NpiOrder, NpiOrderStatus } from "../../client/npiSeiko";
 export class NpiService {
   canAbort(status: NpiOrderStatus): boolean {
     return (
+      status === NpiOrderStatus.PENDING_PRODUCTION_DATES ||
       status === NpiOrderStatus.READY_TO_START ||
       status === NpiOrderStatus.STARTED
     );

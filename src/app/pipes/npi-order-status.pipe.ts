@@ -18,6 +18,8 @@ export class NpiOrderStatusPipe implements PipeTransform {
 
   private getLabel(value: NpiOrderStatus): string {
     switch (value) {
+      case NpiOrderStatus.PENDING_PRODUCTION_DATES:
+        return "PENDING PROD. DATES";
       case NpiOrderStatus.READY_TO_START:
         return "READY TO START";
       case NpiOrderStatus.STARTED:
@@ -35,6 +37,8 @@ export class NpiOrderStatusPipe implements PipeTransform {
     value: NpiOrderStatus,
   ): "success" | "warn" | "danger" | "secondary" | "info" | "contrast" {
     switch (value) {
+      case NpiOrderStatus.PENDING_PRODUCTION_DATES:
+        return "secondary";
       case NpiOrderStatus.READY_TO_START:
         return "info";
       case NpiOrderStatus.STARTED:

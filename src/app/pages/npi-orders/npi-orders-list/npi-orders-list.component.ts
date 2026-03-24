@@ -19,6 +19,7 @@ import {
   ArchivedFilter,
   NpiOrder,
   NpiOrdersPaginated,
+  NpiOrderStatus,
 } from "../../../../client/npiSeiko";
 import { NoDoubleClickDirective } from "../../../directives/no-double-click.directive";
 import { BaseListComponent } from "../../../models/classes/base-list-component";
@@ -71,6 +72,7 @@ export class NpiOrdersListComponent
   ];
   protected readonly TableColsTitle = TableColsTitle;
   protected readonly Icons = Icons;
+  protected readonly NpiOrderStatus = NpiOrderStatus;
   protected npiService = inject(NpiService);
   private npiOrderRepo = inject(NpiOrderRepo);
   private handleMessage = inject(HandleToastMessageService);
@@ -130,6 +132,25 @@ export class NpiOrdersListComponent
       )
       .subscribe(() => {
         this.loadData(this.lastTableLazyLoadEvent);
+      });
+  }
+
+  isProductionDatesEditable(status: NpiOrderStatus): boolean {
+    return (
+      status === NpiOrderStatus.PENDING_PRODUCTION_DATES ||
+      status === NpiOrderStatus.READY_TO_START
+    );
+  }
+
+  openProductionDatesDialog(npiOrder: NpiOrder): void {
+    const readonly = !this.isProductionDatesEditable(npiOrder.status);
+    this.modalService
+      .showNpiOrderProductionDatesModal(npiOrder, readonly)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((updated?: boolean) => {
+        if (updated) {
+          this.loadData(this.lastTableLazyLoadEvent);
+        }
       });
   }
 

@@ -4,6 +4,7 @@ import {
   NpiOrder,
   NpiOrder2 as NpiOrderSdk,
   NpiOrderCreate,
+  NpiOrderProductionDatesUpdate,
   NpiOrderSearch,
   NpiOrdersPaginated,
   NpiOrderUpdate,
@@ -90,6 +91,12 @@ export class NpiOrderRepo {
         body,
       }),
     ) as Observable<NpiOrder>;
+  }
+
+  updateNpiOrderProductionDates(uid: string, body: NpiOrderProductionDatesUpdate): Observable<NpiOrder> {
+    return fromRequest(
+      this.npiOrderService.updateNpiOrderProductionDates({ path: { uid }, body }),
+    );
   }
 
   abortNpiOrder(uid: string): Observable<NpiOrder> {
