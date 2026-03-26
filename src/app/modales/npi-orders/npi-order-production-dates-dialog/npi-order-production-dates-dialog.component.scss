@@ -59,3 +59,24 @@
     line-height: 1.5;
   }
 }
+
+// --- Computed shipping date hint ---
+
+.computed-date-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--text-color-secondary);
+
+  i {
+    color: var(--main-color);
+    font-size: 0.8125rem;
+  }
+
+  strong {
+    color: var(--text-color);
+    font-weight: 600;
+  }
+}

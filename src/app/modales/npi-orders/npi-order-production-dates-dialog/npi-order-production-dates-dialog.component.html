@@ -9,9 +9,10 @@
         <i [class]="Icons.INFO_CIRCLE"></i>
         <span
           >Set the estimated date for Material Purchase, then the duration (in
-          working days) for Receiving, Production, and Testing. Weekends are
-          excluded. Shipping and Customer Approval dates are constrained by the
-          preceding stages.</span
+          working days) for Receiving, Production, Testing, and Shipping.
+          Weekends are excluded. The Shipping date is computed automatically.
+          Customer Approval date is constrained by the computed Shipping
+          date.</span
         >
       </div>
       <div class="p-fields-row">
@@ -56,15 +57,11 @@
           ></app-input-container>
         </div>
         <div class="p-field">
-          <label>Shipping date <span class="required-indicator">*</span></label>
-          <p-datePicker
-            [disabled]="shippingDateDisabled()"
-            [formControlName]="NpiOrderFormField.SHIPPING_ESTIMATED_DATE"
-            [minDate]="minShippingDate()"
-            appendTo="body"
-            dateFormat="yy-mm-dd"
-            placeholder="Fill upstream fields first"
-          ></p-datePicker>
+          <app-input-container
+            [formControlName]="NpiOrderFormField.SHIPPING_PLAN_TIME_IN_DAYS"
+            label="Shipping time (days)"
+            type="number"
+          ></app-input-container>
         </div>
         <div class="p-field">
           <label
@@ -79,7 +76,7 @@
             [minDate]="minCustomerApprovalDate()"
             appendTo="body"
             dateFormat="yy-mm-dd"
-            placeholder="Select shipping date first"
+            placeholder="Fill shipping duration first"
           ></p-datePicker>
         </div>
       </div>

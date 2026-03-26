@@ -148,12 +148,9 @@ export class FormService {
       [NpiOrderFormField.TESTING_PLAN_TIME_IN_DAYS]: new FormControl<
         number | null
       >(npiOrder?.testingPlanTimeInDays ?? null, [Validators.required]),
-      [NpiOrderFormField.SHIPPING_ESTIMATED_DATE]: new FormControl<Date | null>(
-        npiOrder?.shippingEstimatedDate
-          ? new Date(npiOrder.shippingEstimatedDate)
-          : null,
-        [Validators.required],
-      ),
+      [NpiOrderFormField.SHIPPING_PLAN_TIME_IN_DAYS]: new FormControl<
+        number | null
+      >(npiOrder?.shippingPlanTimeInDays ?? null, [Validators.required]),
       [NpiOrderFormField.CUSTOMER_APPROVAL_ESTIMATED_DATE]:
         new FormControl<Date | null>(
           npiOrder?.customerApprovalEstimatedDate

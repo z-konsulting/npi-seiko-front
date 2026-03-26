@@ -395,13 +395,7 @@
             placeholder="Enter remaining days"
           ></p-inputNumber>
           <p class="extra-field-hint extra-field-hint--compact">
-            @if (npiOrder()?.shippingEstimatedDate) {
-              Default value is computed from today to the production Shipping
-              estimated date: {{ npiOrder()?.shippingEstimatedDate }}.
-            } @else {
-              No Shipping estimated date is defined in production dates. Enter
-              the value manually.
-            }
+            Enter the remaining working days until the shipment date.
           </p>
         </div>
       }
@@ -506,23 +500,6 @@
             </button>
           </div>
         </div>
-
-        @if (pendingCustomerApprovalDecision === "YES") {
-          <div class="extra-field">
-            <label>
-              Approval Customer Date
-              <span class="required-indicator">*</span>
-            </label>
-            <p-datePicker
-              (ngModelChange)="pendingApprovalCustomerDate = $event"
-              [minDate]="minApprovalCustomerDate()"
-              [ngModel]="pendingApprovalCustomerDate"
-              appendTo="body"
-              dateFormat="yy-mm-dd"
-              placeholder="Select approval customer date"
-            ></p-datePicker>
-          </div>
-        }
 
         @if (pendingCustomerApprovalDecision === "NO") {
           <div class="extra-field">

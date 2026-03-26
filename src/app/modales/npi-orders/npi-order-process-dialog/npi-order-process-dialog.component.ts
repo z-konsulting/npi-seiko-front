@@ -92,8 +92,6 @@ export class NpiOrderProcessDialogComponent
   pendingCustomerApprovalRemainingTimeInDays: number | null = null;
   /** Customer approval start date (when moving to IN_PROGRESS) */
   pendingStartingCustomerApprovalDate: Date | null = null;
-  /** Customer approval final date (when decision is YES) */
-  pendingApprovalCustomerDate: Date | null = null;
   /** Decision when customer approval is completed */
   pendingCustomerApprovalDecision: "YES" | "NO" | null = null;
   /** Action chosen when customer approval decision is NO */
@@ -110,9 +108,6 @@ export class NpiOrderProcessDialogComponent
 
   /** Minimum date for starting customer approval: shippingDate from the shipment line */
   minStartingCustomerApprovalDate = signal<Date | null>(null);
-
-  /** Minimum date for approval customer date: startingCustomerApprovalDate from the customer approval line */
-  minApprovalCustomerDate = signal<Date | null>(null);
 
   /** UID of the line currently in edit (reset) mode */
   editingLineUid = signal<string | null>(null);
@@ -264,7 +259,7 @@ export class NpiOrderProcessDialogComponent
         return false;
       }
       if (this.pendingCustomerApprovalDecision === "YES") {
-        return this.pendingApprovalCustomerDate !== null;
+        return true;
       }
       if (this.pendingCustomerApprovalDecision === "NO") {
         return this.pendingCustomerApprovalNoAction !== null;
@@ -295,7 +290,6 @@ export class NpiOrderProcessDialogComponent
     this.pendingShipmentRemainingTimeInDays = null;
     this.pendingCustomerApprovalRemainingTimeInDays = null;
     this.pendingStartingCustomerApprovalDate = null;
-    this.pendingApprovalCustomerDate = null;
     this.pendingCustomerApprovalDecision = null;
     this.pendingCustomerApprovalNoAction = null;
     this.importMode.set(false);
@@ -349,7 +343,6 @@ export class NpiOrderProcessDialogComponent
       this.pendingShipmentRemainingTimeInDays = null;
       this.pendingCustomerApprovalRemainingTimeInDays = null;
       this.pendingStartingCustomerApprovalDate = null;
-      this.pendingApprovalCustomerDate = null;
       this.pendingCustomerApprovalDecision = null;
       this.pendingCustomerApprovalNoAction = null;
       this.applyPendingDefaults(line, status);
@@ -400,7 +393,6 @@ export class NpiOrderProcessDialogComponent
     this.pendingShipmentRemainingTimeInDays = null;
     this.pendingCustomerApprovalRemainingTimeInDays = null;
     this.pendingStartingCustomerApprovalDate = null;
-    this.pendingApprovalCustomerDate = null;
     this.pendingCustomerApprovalDecision = null;
     this.pendingCustomerApprovalNoAction = null;
     this.importSheetDisplay = 1;
@@ -549,13 +541,6 @@ export class NpiOrderProcessDialogComponent
         this.getShippingDateFromProcess(),
       );
     }
-    if (
-      line.isCustomerApproval &&
-      targetStatus === ProcessLineStatus.COMPLETED
-    ) {
-      const raw = line.startingCustomerApprovalDate;
-      this.minApprovalCustomerDate.set(raw ? new Date(raw) : null);
-    }
   }
 
   private applyPendingDefaults(
@@ -563,10 +548,7 @@ export class NpiOrderProcessDialogComponent
     targetStatus: ProcessLineStatus,
   ): void {
     if (line.isTesting && targetStatus === ProcessLineStatus.COMPLETED) {
-      this.pendingShipmentRemainingTimeInDays =
-        this.defaultRemainingTimeFromDate(
-          this.npiOrder()?.shippingEstimatedDate,
-        );
+      this.pendingShipmentRemainingTimeInDays = null;
     }
     if (line.isShipment && targetStatus === ProcessLineStatus.COMPLETED) {
       this.pendingCustomerApprovalRemainingTimeInDays =
@@ -621,7 +603,6 @@ export class NpiOrderProcessDialogComponent
     this.pendingShipmentRemainingTimeInDays = null;
     this.pendingCustomerApprovalRemainingTimeInDays = null;
     this.pendingStartingCustomerApprovalDate = null;
-    this.pendingApprovalCustomerDate = null;
     this.pendingCustomerApprovalDecision = null;
     this.pendingCustomerApprovalNoAction = null;
     this.importMode.set(false);
@@ -724,15 +705,6 @@ export class NpiOrderProcessDialogComponent
       )!;
     }
 
-    if (
-      line.isCustomerApproval &&
-      targetStatus === ProcessLineStatus.COMPLETED &&
-      this.pendingApprovalCustomerDate
-    ) {
-      body.approvalCustomerDate = RegexPatterns.enDateFormatToString(
-        this.pendingApprovalCustomerDate!,
-      )!;
-    }
     if (line.isTesting && targetStatus == ProcessLineStatus.COMPLETED) {
       body.fileUid = this.testingFileSelected()?.uid;
       body.shipmentRemainingTimeInDays =

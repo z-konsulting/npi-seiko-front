@@ -1654,9 +1654,6 @@ components:
         startingCustomerApprovalDate:
           type: string
           format: date
-        approvalCustomerDate:
-          type: string
-          format: date
         remainingTimeInDays:
           type: number
           format: double
@@ -1756,9 +1753,9 @@ components:
         testingPlanTimeInDays:
           type: number
           format: double
-        shippingEstimatedDate:
-          type: string
-          format: date
+        shippingPlanTimeInDays:
+          type: number
+          format: double
         customerApprovalEstimatedDate:
           type: string
           format: date
@@ -1865,9 +1862,9 @@ components:
         testingPlanTimeInDays:
           type: number
           format: double
-        shippingEstimatedDate:
-          type: string
-          format: date
+        shippingPlanTimeInDays:
+          type: number
+          format: double
         customerApprovalEstimatedDate:
           type: string
           format: date

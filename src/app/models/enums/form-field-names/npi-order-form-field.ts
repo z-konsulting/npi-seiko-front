@@ -11,6 +11,6 @@ export enum NpiOrderFormField {
   MATERIAL_RECEIVING_PLAN_TIME_IN_DAYS = "materialReceivingPlanTimeInDays",
   PRODUCTION_PLAN_TIME_IN_DAYS = "productionPlanTimeInDays",
   TESTING_PLAN_TIME_IN_DAYS = "testingPlanTimeInDays",
-  SHIPPING_ESTIMATED_DATE = "shippingEstimatedDate",
+  SHIPPING_PLAN_TIME_IN_DAYS = "shippingPlanTimeInDays",
   CUSTOMER_APPROVAL_ESTIMATED_DATE = "customerApprovalEstimatedDate",
 }
